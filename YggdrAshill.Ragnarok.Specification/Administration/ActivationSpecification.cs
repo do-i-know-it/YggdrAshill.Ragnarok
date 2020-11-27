@@ -46,7 +46,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var observation = new Activation(null);
+                var activation = new Activation(null);
             });
         }
     }
