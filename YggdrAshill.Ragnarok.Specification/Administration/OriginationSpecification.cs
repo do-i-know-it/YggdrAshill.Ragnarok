@@ -3,21 +3,21 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
-    [TestFixture(TestOf = typeof(Initiation))]
-    internal class InitiationSpecification
+    [TestFixture(TestOf = typeof(Origination))]
+    internal class OriginationSpecification
     {
         [Test]
-        public void ShouldExecuteFunctionWhenHasInitiated()
+        public void ShouldExecuteFunctionWhenHasOriginated()
         {
             var expected = false;
-            var initiation = new Initiation(() =>
+            var origination = new Origination(() =>
             {
                 expected = true;
 
                 return new Termination();
             });
 
-            var termination = initiation.Initiate();
+            var termination = origination.Originate();
 
             Assert.IsTrue(expected);
 
@@ -25,10 +25,10 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldTerminateAfterHasInitiated()
+        public void ShouldTerminateAfterHasOriginated()
         {
             var expected = false;
-            var initiation = new Initiation(() =>
+            var origination = new Origination(() =>
             {
                 return new Termination(() =>
                 {
@@ -36,7 +36,7 @@ namespace YggdrAshill.Ragnarok.Specification
                 });
             });
 
-            var termination = initiation.Initiate();
+            var termination = origination.Originate();
 
             termination.Terminate();
 
@@ -48,7 +48,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var initiation = new Initiation(null);
+                var origination = new Origination(null);
             });
         }
     }
