@@ -30,11 +30,31 @@ namespace YggdrAshill.Ragnarok.Specification
                 expected = true;
             });
 
-            executionList.Collect(execution);
+            var termination = executionList.Collect(execution);
 
             executionList.Execute();
 
             Assert.IsTrue(expected);
+
+            termination.Terminate();
+        }
+
+        [Test]
+        public void NotCollectedShouldNotExecuteWhenHasExecuted()
+        {
+            var expected = false;
+            var execution = new Execution(() =>
+            {
+                expected = true;
+            });
+
+            var termination = executionList.Collect(execution);
+
+            termination.Terminate();
+
+            executionList.Execute();
+
+            Assert.IsFalse(expected);
         }
 
         [Test]

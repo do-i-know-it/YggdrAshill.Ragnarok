@@ -4,6 +4,6 @@ namespace YggdrAshill.Ragnarok
 {
     public interface IExecutionCollection
     {
-        void Collect(IExecution execution);
+        ITermination Collect(IExecution execution);
     }
 }

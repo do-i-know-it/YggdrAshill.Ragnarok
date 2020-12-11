@@ -19,19 +19,25 @@ namespace YggdrAshill.Ragnarok
             }
         }
 
-        public void Collect(IExecution execution)
+        public ITermination Collect(IExecution execution)
         {
             if (execution == null)
             {
                 throw new ArgumentNullException(nameof(execution));
             }
 
-            if (executionList.Contains(execution))
+            if (!executionList.Contains(execution))
             {
-                return;
+                executionList.Add(execution);
             }
 
-            executionList.Add(execution);
+            return new Termination(() =>
+            {
+                if (executionList.Contains(execution))
+                {
+                    executionList.Remove(execution);
+                }
+            });
         }
 
         public void Terminate()
