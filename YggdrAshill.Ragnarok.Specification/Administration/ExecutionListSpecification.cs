@@ -17,6 +17,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TearDown]
         public void TearDown()
         {
+            executionList.Terminate();
             executionList = default;
         }
 
@@ -34,6 +35,24 @@ namespace YggdrAshill.Ragnarok.Specification
             executionList.Execute();
 
             Assert.IsTrue(expected);
+        }
+
+        [Test]
+        public void CollectedShouldNotExecuteAfterHasTerminated()
+        {
+            var expected = false;
+            var execution = new Execution(() =>
+            {
+                expected = true;
+            });
+
+            executionList.Collect(execution);
+
+            executionList.Terminate();
+
+            executionList.Execute();
+
+            Assert.IsFalse(expected);
         }
 
         [Test]
