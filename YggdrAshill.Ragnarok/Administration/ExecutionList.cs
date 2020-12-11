@@ -6,7 +6,8 @@ namespace YggdrAshill.Ragnarok
 {
     public sealed class ExecutionList :
         IExecution,
-        IExecutionCollection
+        IExecutionCollection,
+        ITermination
     {
         private readonly List<IExecution> executionList = new List<IExecution>();
 
@@ -31,6 +32,11 @@ namespace YggdrAshill.Ragnarok
             }
 
             executionList.Add(execution);
+        }
+
+        public void Terminate()
+        {
+            executionList.Clear();
         }
     }
 }
