@@ -1,8 +1,7 @@
-﻿using YggdrAshill.Ragnarok.Administration;
-using YggdrAshill.Ragnarok.Periodization;
+﻿using YggdrAshill.Ragnarok.Periodization;
 using YggdrAshill.Ragnarok.Progression;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Unification
 {
     public interface IExecutionCollection
     {

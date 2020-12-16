@@ -1,11 +1,11 @@
-﻿using YggdrAshill.Ragnarok.Administration;
-using System;
-using YggdrAshill.Ragnarok.Periodization;
+﻿using YggdrAshill.Ragnarok.Periodization;
 using YggdrAshill.Ragnarok.Progression;
+using YggdrAshill.Ragnarok.Unification;
+using System;
 
 namespace YggdrAshill.Ragnarok
 {
-    public static class AdministrationExtension
+    public static class UnificationExtension
     {
         public static void Collect(this ITermination termination, ITerminationCollection collection)
         {
@@ -21,7 +21,7 @@ namespace YggdrAshill.Ragnarok
             collection.Collect(termination);
         }
 
-        public static void Collect(this IExecution execution, IExecutionCollection collection)
+        public static ITermination Collect(this IExecution execution, IExecutionCollection collection)
         {
             if (execution == null)
             {
@@ -32,7 +32,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(collection));
             }
 
-            collection.Collect(execution);
+            return collection.Collect(execution);
         }
     }
 }
