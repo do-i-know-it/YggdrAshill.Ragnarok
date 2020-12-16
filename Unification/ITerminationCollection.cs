@@ -1,6 +1,6 @@
-﻿using YggdrAshill.Ragnarok.Administration;
+﻿using YggdrAshill.Ragnarok.Periodization;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Unification
 {
     public interface ITerminationCollection
     {

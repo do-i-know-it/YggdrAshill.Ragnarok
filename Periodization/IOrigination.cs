@@ -1,4 +1,4 @@
-﻿namespace YggdrAshill.Ragnarok.Administration
+﻿namespace YggdrAshill.Ragnarok.Periodization
 {
     public interface IOrigination
     {

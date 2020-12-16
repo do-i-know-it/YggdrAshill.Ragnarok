@@ -1,4 +1,4 @@
-﻿using YggdrAshill.Ragnarok.Administration;
+﻿using YggdrAshill.Ragnarok.Periodization;
 using System;
 
 namespace YggdrAshill.Ragnarok
@@ -18,6 +18,22 @@ namespace YggdrAshill.Ragnarok
             }
 
             this.onOriginated = onOriginated;
+        }
+
+        public Origination(Action onTerminated)
+        {
+            if (onTerminated == null)
+            {
+                throw new ArgumentNullException(nameof(onTerminated));
+            }
+
+            onOriginated = () =>
+            {
+                return new Termination(() =>
+                {
+                    onTerminated.Invoke();
+                });
+            };
         }
 
         public Origination()

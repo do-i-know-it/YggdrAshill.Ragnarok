@@ -1,5 +1,4 @@
-﻿using YggdrAshill.Ragnarok.Administration;
-using System;
+﻿using System;
 
 namespace YggdrAshill.Ragnarok
 {

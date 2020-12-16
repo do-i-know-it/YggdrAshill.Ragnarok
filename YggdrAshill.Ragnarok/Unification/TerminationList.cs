@@ -1,12 +1,12 @@
-﻿using YggdrAshill.Ragnarok.Administration;
-using System.Collections.Generic;
+﻿using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Unification;
 using System;
+using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     public sealed class TerminationList :
-        ITermination,
-        ITerminationCollection
+        ITerminationList
     {
         private readonly List<ITermination> terminationList = new List<ITermination>();
 

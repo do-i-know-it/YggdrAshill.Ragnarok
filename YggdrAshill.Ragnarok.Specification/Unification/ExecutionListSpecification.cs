@@ -40,7 +40,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void NotCollectedShouldNotExecuteWhenHasExecuted()
+        public void TerminatedShouldNotExecuteWhenHasExecuted()
         {
             var expected = false;
             var execution = new Execution(() =>

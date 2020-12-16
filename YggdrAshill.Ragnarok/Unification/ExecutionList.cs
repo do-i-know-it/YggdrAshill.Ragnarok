@@ -1,13 +1,13 @@
-﻿using YggdrAshill.Ragnarok.Administration;
-using System.Collections.Generic;
+﻿using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Progression;
+using YggdrAshill.Ragnarok.Unification;
 using System;
+using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     public sealed class ExecutionList :
-        IExecution,
-        IExecutionCollection,
-        ITermination
+        IExecutionList
     {
         private readonly List<IExecution> executionList = new List<IExecution>();
 

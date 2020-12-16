@@ -1,9 +1,0 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>YggdrAshill.Ragnarok.Administration</AssemblyName>
-    <RootNamespace>YggdrAshill.Ragnarok.Administration</RootNamespace>
-  </PropertyGroup>
-
-</Project>

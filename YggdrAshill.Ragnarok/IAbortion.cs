@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YggdrAshill.Ragnarok.Administration
+namespace YggdrAshill.Ragnarok
 {
     public interface IAbortion
     {
