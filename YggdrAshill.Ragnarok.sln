@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YggdrAshill.Ragnarok", "Ygg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YggdrAshill.Ragnarok.Specification", "YggdrAshill.Ragnarok.Specification\YggdrAshill.Ragnarok.Specification.csproj", "{68C259FE-DA1D-4445-9CF4-7C58D07A9AFB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Administration", "Administration\Administration.csproj", "{1ED92CFF-008B-4865-AA36-D23C88E5B0C4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Periodization", "Periodization\Periodization.csproj", "{2619D22C-3BBB-43FE-857C-3AA9C49E485D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progression", "Progression\Progression.csproj", "{3B10218B-3A4B-418E-B68A-E678187E50ED}"
@@ -29,10 +27,6 @@ Global
 		{68C259FE-DA1D-4445-9CF4-7C58D07A9AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68C259FE-DA1D-4445-9CF4-7C58D07A9AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68C259FE-DA1D-4445-9CF4-7C58D07A9AFB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1ED92CFF-008B-4865-AA36-D23C88E5B0C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1ED92CFF-008B-4865-AA36-D23C88E5B0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1ED92CFF-008B-4865-AA36-D23C88E5B0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1ED92CFF-008B-4865-AA36-D23C88E5B0C4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2619D22C-3BBB-43FE-857C-3AA9C49E485D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2619D22C-3BBB-43FE-857C-3AA9C49E485D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2619D22C-3BBB-43FE-857C-3AA9C49E485D}.Release|Any CPU.ActiveCfg = Release|Any CPU
