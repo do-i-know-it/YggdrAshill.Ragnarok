@@ -1,4 +1,4 @@
-﻿using YggdrAshill.Ragnarok.Administration;
+﻿using YggdrAshill.Ragnarok.Progression;
 using System;
 
 namespace YggdrAshill.Ragnarok

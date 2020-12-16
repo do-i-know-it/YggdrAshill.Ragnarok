@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Progression;
 
 namespace YggdrAshill.Ragnarok
 {
