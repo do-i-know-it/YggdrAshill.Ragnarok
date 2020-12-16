@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Administration\Administration.csproj" />
     <ProjectReference Include="..\Periodization\Periodization.csproj" />
+    <ProjectReference Include="..\Progression\Progression.csproj" />
   </ItemGroup>
 
 </Project>
