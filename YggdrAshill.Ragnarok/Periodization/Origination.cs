@@ -20,6 +20,22 @@ namespace YggdrAshill.Ragnarok
             this.onOriginated = onOriginated;
         }
 
+        public Origination(Action onTerminated)
+        {
+            if (onTerminated == null)
+            {
+                throw new ArgumentNullException(nameof(onTerminated));
+            }
+
+            onOriginated = () =>
+            {
+                return new Termination(() =>
+                {
+                    onTerminated.Invoke();
+                });
+            };
+        }
+
         public Origination()
         {
             onOriginated = () =>
