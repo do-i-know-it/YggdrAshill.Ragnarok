@@ -7,7 +7,9 @@ namespace YggdrAshill.Ragnarok
 {
     public static class UnificationExtension
     {
-        public static void Collect(this ITerminationCollection collection, Action onTerminated)
+        #region ITermination
+
+        public static void Bind(this ITerminationCollection collection, Action onTerminated)
         {
             if (collection == null)
             {
@@ -18,10 +20,10 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(onTerminated));
             }
 
-            collection.Collect(new Termination(onTerminated));
+            collection.Bind(new Termination(onTerminated));
         }
 
-        public static void Collect(this ITermination termination, ITerminationCollection collection)
+        public static void Bind(this ITermination termination, ITerminationCollection collection)
         {
             if (termination == null)
             {
@@ -32,10 +34,14 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(collection));
             }
 
-            collection.Collect(termination);
+            collection.Bind(termination);
         }
 
-        public static ITermination Collect(this IExecutionCollection collection, Action onExecuted)
+        #endregion
+
+        #region IExecution
+
+        public static ITermination Bind(this IExecutionCollection collection, Action onExecuted)
         {
             if (collection == null)
             {
@@ -46,10 +52,10 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(onExecuted));
             }
 
-            return collection.Collect(new Execution(onExecuted));
+            return collection.Bind(new Execution(onExecuted));
         }
 
-        public static ITermination Collect(this IExecution execution, IExecutionCollection collection)
+        public static ITermination Bind(this IExecution execution, IExecutionCollection collection)
         {
             if (execution == null)
             {
@@ -60,10 +66,14 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(collection));
             }
 
-            return collection.Collect(execution);
+            return collection.Bind(execution);
         }
 
-        public static IOrigination Collect(this IActivation activation, IExecutionCollection collection)
+        #endregion
+
+        #region IActivation
+
+        public static IOrigination Bind(this IActivation activation, IExecutionCollection collection)
         {
             if (activation == null)
             {
@@ -76,8 +86,10 @@ namespace YggdrAshill.Ragnarok
 
             return new Origination(() =>
             {
-                return activation.Activate().Collect(collection);
+                return activation.Activate().Bind(collection);
             });
         }
+
+        #endregion
     }
 }

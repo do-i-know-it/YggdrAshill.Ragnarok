@@ -22,7 +22,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CollectedShouldExecuteWhenHasExecuted()
+        public void BindedShouldExecuteWhenHasExecuted()
         {
             var expected = false;
             var execution = new Execution(() =>
@@ -30,7 +30,7 @@ namespace YggdrAshill.Ragnarok.Specification
                 expected = true;
             });
 
-            var termination = executionList.Collect(execution);
+            var termination = executionList.Bind(execution);
 
             executionList.Execute();
 
@@ -48,7 +48,7 @@ namespace YggdrAshill.Ragnarok.Specification
                 expected = true;
             });
 
-            var termination = executionList.Collect(execution);
+            var termination = executionList.Bind(execution);
 
             termination.Terminate();
 
@@ -58,7 +58,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CollectedShouldNotExecuteAfterHasTerminated()
+        public void BindedShouldNotExecuteAfterHasTerminated()
         {
             var expected = false;
             var execution = new Execution(() =>
@@ -66,7 +66,7 @@ namespace YggdrAshill.Ragnarok.Specification
                 expected = true;
             });
 
-            executionList.Collect(execution);
+            executionList.Bind(execution);
 
             executionList.Terminate();
 
@@ -76,11 +76,11 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotCollectNull()
+        public void CannotBindNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                executionList.Collect(null);
+                executionList.Bind(null);
             });
         }
     }

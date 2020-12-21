@@ -19,7 +19,7 @@ namespace YggdrAshill.Ragnarok
             }
         }
 
-        public ITermination Collect(IExecution execution)
+        public ITermination Bind(IExecution execution)
         {
             if (execution == null)
             {

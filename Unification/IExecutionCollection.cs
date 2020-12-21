@@ -5,6 +5,6 @@ namespace YggdrAshill.Ragnarok.Unification
 {
     public interface IExecutionCollection
     {
-        ITermination Collect(IExecution execution);
+        ITermination Bind(IExecution execution);
     }
 }
