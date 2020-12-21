@@ -21,7 +21,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CollectedShouldTerminateWhenHasTerminated()
+        public void BindedShouldTerminateWhenHasTerminated()
         {
             var expected = false;
             var termination = new Termination(() =>
@@ -29,7 +29,7 @@ namespace YggdrAshill.Ragnarok.Specification
                 expected = true;
             });
 
-            terminationList.Collect(termination);
+            terminationList.Bind(termination);
 
             terminationList.Terminate();
 
@@ -37,11 +37,11 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotCollectNull()
+        public void CannotBindNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                terminationList.Collect(null);
+                terminationList.Bind(null);
             });
         }
     }

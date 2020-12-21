@@ -10,7 +10,7 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly List<ITermination> terminationList = new List<ITermination>();
 
-        public void Collect(ITermination termination)
+        public void Bind(ITermination termination)
         {
             if (termination == null)
             {

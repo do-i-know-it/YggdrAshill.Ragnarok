@@ -4,6 +4,6 @@ namespace YggdrAshill.Ragnarok.Unification
 {
     public interface ITerminationCollection
     {
-        void Collect(ITermination termination);
+        void Bind(ITermination termination);
     }
 }
