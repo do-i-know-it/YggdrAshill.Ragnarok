@@ -1,4 +1,5 @@
-﻿using System;
+﻿using YggdrAshill.Ragnarok.Violation;
+using System;
 
 namespace YggdrAshill.Ragnarok
 {
