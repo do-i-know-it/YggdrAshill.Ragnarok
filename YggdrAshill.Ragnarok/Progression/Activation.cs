@@ -20,22 +20,6 @@ namespace YggdrAshill.Ragnarok
             this.onActivated = onActivated;
         }
 
-        public Activation(Action onExecuted)
-        {
-            if (onExecuted == null)
-            {
-                throw new ArgumentNullException(nameof(onExecuted));
-            }
-
-            onActivated = () =>
-            {
-                return new Execution(() =>
-                {
-                    onExecuted.Invoke();
-                });
-            };
-        }
-
         public Activation()
         {
             onActivated = () =>

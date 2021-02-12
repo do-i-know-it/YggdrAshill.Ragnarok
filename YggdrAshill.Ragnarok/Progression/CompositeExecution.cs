@@ -1,23 +1,15 @@
 ﻿using YggdrAshill.Ragnarok.Periodization;
 using YggdrAshill.Ragnarok.Progression;
-using YggdrAshill.Ragnarok.Unification;
 using System;
 using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    public sealed class ExecutionList :
-        IExecutionList
+    public sealed class CompositeExecution :
+        IExecution,
+        ITermination
     {
         private readonly List<IExecution> executionList = new List<IExecution>();
-
-        public void Execute()
-        {
-            foreach (var execution in executionList)
-            {
-                execution.Execute();
-            }
-        }
 
         public ITermination Bind(IExecution execution)
         {
@@ -38,6 +30,14 @@ namespace YggdrAshill.Ragnarok
                     executionList.Remove(execution);
                 }
             });
+        }
+
+        public void Execute()
+        {
+            foreach (var execution in executionList)
+            {
+                execution.Execute();
+            }
         }
 
         public void Terminate()
