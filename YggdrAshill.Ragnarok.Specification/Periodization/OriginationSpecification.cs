@@ -44,20 +44,11 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotBeGeneratedWithNullFunction()
+        public void CannotBeGeneratedWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var origination = new Origination(null);
-            });
-        }
-
-        [Test]
-        public void CannotBeGeneratedWithNullAction()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var origination = new Origination((Action)null);
             });
         }
     }
