@@ -1,12 +1,11 @@
 ﻿using YggdrAshill.Ragnarok.Progression;
-using YggdrAshill.Ragnarok.Violation;
 using System;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Violation
 {
     public static class ViolationExtension
     {
-        public static IExecution Bind(this IExecution execution, Action<Exception> abortion)
+        public static IExecution Bind(this IExecution execution, IAbortion abortion)
         {
             if (execution == null)
             {
@@ -17,7 +16,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(abortion));
             }
 
-            return execution.Bind(new Abortion(abortion));
+            return new ExecutionWithAbortion(execution, abortion);
         }
     }
 }
