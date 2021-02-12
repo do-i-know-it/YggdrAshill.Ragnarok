@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>YggdrAshill.Ragnarok.Violation</AssemblyName>
+    <RootNamespace>YggdrAshill.Ragnarok.Violation</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Periodization\Periodization.csproj" />
     <ProjectReference Include="..\Progression\Progression.csproj" />
-    <ProjectReference Include="..\Violation\Violation.csproj" />
   </ItemGroup>
 
 </Project>
