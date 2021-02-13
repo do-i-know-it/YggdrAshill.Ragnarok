@@ -1,23 +1,45 @@
 # Implementation of YggdrAshill.Ragnarok
 
-This module implements interfaces defined in all modules below.
+This module provides
 
-- [Periodization](./Periodization.md).
-- [Progression](./Progression.md).
-- [Violation](./Violation.md).
+- implementations
+- extensions
+
+for modules below.
+
+- [Periodization](./Periodization.md)
+- [Progression](./Progression.md)
+- [Violation](./Violation.md)
 
 ## Dependencies
 
-This module depends on
+This module depends on below.
 
-- [Periodization](./Periodization.md).
-- [Progression](./Progression.md).
-- [Violation](./Violation.md).
+- [Periodization](./Periodization.md)
+- [Progression](./Progression.md)
+- [Violation](./Violation.md)
 
 ## Architecture
 
-No architecture because this module implements interfaces defined in all modules above.
+This module implements
+
+- interfaces
+- extensions
+
+in order developers to use this framework in ease.
 
 ## Implementation
 
-Now writing...
+This module provides simple implementations for
+
+- [Periodization](./Periodization.md)
+- [Progression](./Progression.md)
+- [Violation](./Violation.md)
+
+generated with `System.Action` or `System.Function`.  
+Also, this module provides useful extensions for
+
+- [Periodization](./Periodization.md)
+- [Progression](./Progression.md)
+
+to use `System.Action` or `System.Function`.

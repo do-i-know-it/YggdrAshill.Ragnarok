@@ -1,4 +1,18 @@
-# YggdrAshill.Ragnarok
+# YggdrAshill.Ragnarok: an application lifecycle framework
+
+Ragnarok defines how to
+
+- Initialize
+- Execute
+- Abort
+- Finalize
+
+applications for mainly XR (VR/AR/MR).  
+
+This framework is able to isolate definitions from implementations for specific platforms.
+
+- ex) [Unity](https://unity.com/ja)
+- ex) [Windows Presentation Foundation (WPF)](https://docs.microsoft.com/ja-jp/visualstudio/designers/getting-started-with-wpf?view=vs-2019)
 
 <!-- ## Specifications
 
@@ -14,9 +28,7 @@ Now writing... -->
 
 ## Dependencies
 
-Ragnarok depends on
-
-- Now writing...
+Ragnarok depends on .NET Standard 2.0.
 
 ## Installation
 
@@ -27,9 +39,9 @@ In future, we will deploy dlls built to this repository, but now you should
 1. Build for any CPU as Debug or Release.
 1. Include built dlls to your project.
 
-## Usage
+<!-- ## Usage
 
-Now writing samples for this framework.
+Now writing samples for this framework. -->
 
 ## Architecture
 
@@ -39,9 +51,9 @@ Ragnarok consists of core modules below.
 - [Progression](./Documentation/Progression.md)
 - [Violation](./Documentation/Violation.md)
 
-### Implementation
+## Implementation
 
-Ragnarok also includes [Implementation](./Documentation/Implementation.md) to implement interfaces defined all modules in this component.
+Ragnarok includes [Implementation](./Documentation/Implementation.md) to provide implementations and extensions for above.
 
 ## Known issues
 
@@ -54,13 +66,6 @@ Nothing now.
 - Sets up build pipeline.
   - auto testing
   - auto building
-- Writes documents completely.
-  - [Periodization](./Documentation/Periodization.md)
-  - [Progression](./Documentation/Progression.md)
-  - [Violation](./Documentation/Violation.md)
-  - [Implementation](./Documentation/Implementation.md)
-  - samples
-  - templates for Pull requests, issue, and contributing guidelines.
 - Writes document comments in codes completely.
   - [Periodization](./Documentation/Periodization.md)
   - [Progression](./Documentation/Progression.md)
@@ -69,16 +74,25 @@ Nothing now.
 - Writes test codes for specification completely.
   - [Violation](./Documentation/Violation.md)
   - [Implementation](./Documentation/Implementation.md)
+- Adds templates.
+  - pull request
+  - issue
+  - contributing guidelines
+- Adds samples.
 
 ### Version 1.0.0 ~
 
-Nothing now.
+- Adds definitions for life cycle events.
+  - ex) onInitialized
+  - ex) onPaused
+  - ex) onResumed
+  - ex) onFinalized
 
 ## License
 
-Ragnarok is under the MIT License, see [LICENSE](./LICENSE.txt).
+Ragnarok is under the [MIT License](https://opensource.org/licenses/mit-license.php), see [LICENSE](./LICENSE.txt).
 
 ## Remarks
 
-Ragnarok is a part of the framework of YggdrAshill.  
-We will produce other frameworks for YggdrAshill.
+Ragnarok is a part of YggdrAshill framework.  
+Other frameworks will be produced soon for YggdrAshill.
