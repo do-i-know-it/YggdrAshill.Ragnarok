@@ -8,10 +8,10 @@ Ragnarok defines how to
 - Finalize
 
 applications for mainly XR (VR/AR/MR).  
-
 This framework is able to isolate definitions from implementations for specific platforms.
 
 - ex) [Unity](https://unity.com/ja)
+- ex) [Xamarin](https://docs.microsoft.com/ja-jp/xamarin/get-started/what-is-xamarin)
 - ex) [Windows Presentation Foundation (WPF)](https://docs.microsoft.com/ja-jp/visualstudio/designers/getting-started-with-wpf?view=vs-2019)
 
 <!-- ## Specifications
@@ -63,9 +63,6 @@ Nothing now.
 
 ### ~ Version 1.0.0
 
-- Sets up build pipeline.
-  - auto testing
-  - auto building
 - Writes document comments in codes completely.
   - [Periodization](./Documentation/Periodization.md)
   - [Progression](./Documentation/Progression.md)
