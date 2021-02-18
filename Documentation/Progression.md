@@ -1,6 +1,6 @@
 # Progression
 
-Progression defines how to xxx.
+Progression defines how to perform applications.
 
 ## Dependencies
 
@@ -12,11 +12,12 @@ Nothing.
 
 | Word | Abstraction |
 |:-----------|:------------|
+| Execution | Token to execute process. |
 | Activation | Token to provide `Execution`. |
-| Execution | Token to execute. |
 
-Now writing...
+`Activation` creates `Execution`.
+Every time `Execution` is executed, it process some task.
 
 ## Implementation
 
-Nothing because this module only defines how to xxx.
+Nothing because this module only defines how to perform applications.

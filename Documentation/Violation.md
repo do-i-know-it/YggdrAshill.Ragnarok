@@ -1,6 +1,6 @@
 # Violation
 
-Violation expands [Progression](./Progression.md) to define how to xxx.
+Violation expands [Progression](./Progression.md) to define how to deal with exceptions thrown in applications.
 
 ## Dependencies
 
@@ -12,11 +12,10 @@ This module depends on [Progression](./Progression.md).
 
 | Word | Abstraction |
 |:-----------|:------------|
-| Activation | Token to provide `Execution`. |
-| Execution | Token to execute. |
+| Abortion | Token to abort when `Execution` has thrown exceptions. |
 
-Now writing...
+`Abortion` can be bound to `Execution` to deal with exceptions thrown in `Execution`.
 
 ## Implementation
 
-Nothing except internal implementations for some interfaces of [Progression](./Progression.md), because this module only defines how to xxx.
+Nothing except internal implementations for some interfaces of [Progression](./Progression.md), because this module only defines how to deal with exceptions thrown in applications.
