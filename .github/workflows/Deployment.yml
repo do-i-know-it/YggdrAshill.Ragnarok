@@ -33,7 +33,6 @@ jobs:
     needs: validation
     env:
       BUILD_FILE: build
-      MAX_BUILD_NUMBER: 65535
       ARTIFACT_DIRECTORY: ARTIFACTS
       CONFIGURATION: Release
     steps:
@@ -46,8 +45,6 @@ jobs:
       - name: Configure information
         shell: cmd
         run : |
-          set /a BUILD_NUMBER=%GITHUB_RUN_NUMBER%%%MAX_BUILD_NUMBER%
-          echo BUILD_NUMBER=%BUILD_NUMBER%>> %GITHUB_ENV%
           set REPOSITORY_NAME=%GITHUB_REPOSITORY:${{ github.repository_owner }}/=%
           echo REPOSITORY_NAME=%REPOSITORY_NAME%>> %GITHUB_ENV%
 
@@ -58,7 +55,6 @@ jobs:
           InputPath=%GITHUB_WORKSPACE%^
           ;OutputPath=%GITHUB_WORKSPACE%/%ARTIFACT_DIRECTORY%^
           ;Configuration=%CONFIGURATION%^
-          ;BuildNumber=%BUILD_NUMBER%
             
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
