@@ -24,7 +24,7 @@
             <BuildProperty Include="GenerateDocumentationFile=true" />
             <BuildProperty Include="OutputPath=$(OutputPath)" />
             <BuildProperty Include="Configuration=$(Configuration)" />
-            <BuildProperty Include="Version=$(MajorVersion).$(MinorVersion).$(BuildNumber)" />
+            <BuildProperty Include="Version=$(MajorVersion).$(MinorVersion).$(Revision)" />
             <BuildProperty Include="AssemblyVersion=$(MajorVersion).$(MinorVersion).$(BuildNumber).$(Revision)" />
         </ItemGroup>
 
