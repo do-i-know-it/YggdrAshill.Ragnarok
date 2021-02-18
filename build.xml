@@ -1,0 +1,34 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Validation">
+    <PropertyGroup>
+        <InputPath></InputPath>
+        <OutputPath></OutputPath>
+        <Configuration></Configuration>
+        <MajorVersion>0</MajorVersion>
+        <MinorVersion>6</MinorVersion>
+        <Revision>0</Revision>
+        <BuildNumber>0</BuildNumber>
+    </PropertyGroup>
+    
+    <Target Name="Validation">
+        <Error Condition="'$(InputPath)' == ''" Text="`InputPath` is empty."/>
+        <Error Condition="'$(OutputPath)' == ''" Text="`OutputPath` is empty."/>
+        <Error Condition="'$(Configuration)' == ''" Text="`Configuration` is empty."/>
+        <Error Condition="'$(BuildNumber)' == ''" Text="`BuildNumber` is empty."/>
+        <Error Condition="'$(Configuration)' != 'Debug' And '$(Configuration)' != 'Release'" Text="`Configuration` is invalid: $(Configuration)."/>
+    </Target>
+
+    <Target Name="Construction" AfterTargets="Validation">
+        <ItemGroup>
+            <EntryPointFilePath Include="$(InputPath)/YggdrAshill.Ragnarok/YggdrAshill.Ragnarok.csproj" />
+
+            <BuildProperty Include="GenerateDocumentationFile=true" />
+            <BuildProperty Include="OutputPath=$(OutputPath)" />
+            <BuildProperty Include="Configuration=$(Configuration)" />
+            <BuildProperty Include="Version=$(MajorVersion).$(MinorVersion).$(BuildNumber)" />
+            <BuildProperty Include="AssemblyVersion=$(MajorVersion).$(MinorVersion).$(BuildNumber).$(Revision)" />
+        </ItemGroup>
+
+        <MSBuild Targets="restore" Projects="@(EntryPointFilePath)" />
+        <MSBuild Projects="@(EntryPointFilePath)" Properties="@(BuildProperty)" />
+    </Target>
+</Project>
