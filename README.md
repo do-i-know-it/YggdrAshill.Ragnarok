@@ -32,16 +32,16 @@ Ragnarok depends on .NET Standard 2.0.
 
 ## Installation
 
-In future, we will deploy dlls built to this repository, but now you should
+Developers should
 
-1. Clone this repository.
-1. Open cloned directory with Visual Studio.
-1. Build for any CPU as Debug or Release.
-1. Include built dlls to your project.
+1. Go to [Release pages](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/releases).
+1. Download the latest version.
 
-<!-- ## Usage
+to use this framework.
 
-Now writing samples for this framework. -->
+## Usage
+
+Now writing samples for this framework.
 
 ## Architecture
 

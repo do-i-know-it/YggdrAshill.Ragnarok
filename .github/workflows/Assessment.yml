@@ -1,15 +1,12 @@
-name: Development
+name: Assessment
 
 on:
   push:
     branches:    
-      - '**'
-      - '!main'
-      - '!develop'
-      - '!release/**'
+      - 'release/**'
   pull_request:
     branches:
-      - develop
+      - main
     types:
       - opened
       - synchronize
@@ -39,7 +36,9 @@ jobs:
     env:
       BUILD_FILE: build
       ARTIFACT_DIRECTORY: ARTIFACTS
-      CONFIGURATION: Debug
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -51,7 +50,7 @@ jobs:
         shell: cmd
         run : |
           set REPOSITORY_NAME=%GITHUB_REPOSITORY:${{ github.repository_owner }}/=%
-          set ARTIFACT_FILE=%REPOSITORY_NAME%_%GITHUB_WORKFLOW%_%CONFIGURATION%_%GITHUB_RUN_NUMBER%
+          set ARTIFACT_FILE=%REPOSITORY_NAME%_%GITHUB_WORKFLOW%_${{ matrix.configuration }}_%GITHUB_RUN_NUMBER%
           echo REPOSITORY_NAME=%REPOSITORY_NAME%>> %GITHUB_ENV%
           echo ARTIFACT_FILE=%ARTIFACT_FILE%>> %GITHUB_ENV%
 
@@ -61,7 +60,7 @@ jobs:
           dotnet msbuild %GITHUB_WORKSPACE%/%BUILD_FILE%.xml -p:^
           InputPath=%GITHUB_WORKSPACE%^
           ;OutputPath=%GITHUB_WORKSPACE%/%ARTIFACT_DIRECTORY%^
-          ;Configuration=%CONFIGURATION%^
+          ;Configuration=${{ matrix.configuration }}^
             
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
