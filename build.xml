@@ -13,7 +13,6 @@
         <Error Condition="'$(InputPath)' == ''" Text="`InputPath` is empty."/>
         <Error Condition="'$(OutputPath)' == ''" Text="`OutputPath` is empty."/>
         <Error Condition="'$(Configuration)' == ''" Text="`Configuration` is empty."/>
-        <Error Condition="'$(BuildNumber)' == ''" Text="`BuildNumber` is empty."/>
         <Error Condition="'$(Configuration)' != 'Debug' And '$(Configuration)' != 'Release'" Text="`Configuration` is invalid: $(Configuration)."/>
     </Target>
 
