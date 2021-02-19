@@ -1,0 +1,69 @@
+name: Assessment
+
+on:
+  push:
+    branches:    
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  validation:
+    runs-on: windows-2019
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Add MSBuild to Path
+        uses: microsoft/setup-msbuild@v1.0.2
+      
+      - name: Restore solution
+        shell: cmd
+        run: dotnet restore
+
+      - name: Test solution
+        shell: cmd
+        run: dotnet test
+  
+  construction:
+    runs-on: windows-2019
+    needs: validation
+    env:
+      BUILD_FILE: build
+      ARTIFACT_DIRECTORY: ARTIFACTS
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Add MSBuild to Path
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Configure information
+        shell: cmd
+        run : |
+          set REPOSITORY_NAME=%GITHUB_REPOSITORY:${{ github.repository_owner }}/=%
+          set ARTIFACT_FILE=%REPOSITORY_NAME%_%GITHUB_WORKFLOW%_${{ matrix.configuration }}_%GITHUB_RUN_NUMBER%
+          echo REPOSITORY_NAME=%REPOSITORY_NAME%>> %GITHUB_ENV%
+          echo ARTIFACT_FILE=%ARTIFACT_FILE%>> %GITHUB_ENV%
+
+      - name: Build artifacts
+        shell: cmd
+        run : |
+          dotnet msbuild %GITHUB_WORKSPACE%/%BUILD_FILE%.xml -p:^
+          InputPath=%GITHUB_WORKSPACE%^
+          ;OutputPath=%GITHUB_WORKSPACE%/%ARTIFACT_DIRECTORY%^
+          ;Configuration=${{ matrix.configuration }}^
+            
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          path: ${{ github.workspace }}/${{ env.ARTIFACT_DIRECTORY }}
+          name: ${{ env.ARTIFACT_FILE }}
