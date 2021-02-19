@@ -63,6 +63,11 @@ Nothing now.
 
 ### ~ Version 1.0.0
 
+- Adds templates.
+  - release note
+  - pull request
+  - issue
+  - contributing guidelines
 - Writes document comments in codes completely.
   - [Periodization](./Documentation/Periodization.md)
   - [Progression](./Documentation/Progression.md)
@@ -71,11 +76,6 @@ Nothing now.
 - Writes test codes for specification completely.
   - [Violation](./Documentation/Violation.md)
   - [Implementation](./Documentation/Implementation.md)
-- Adds templates.
-  - pull request
-  - issue
-  - contributing guidelines
-- Adds samples.
 
 ### Version 1.0.0 ~
 
