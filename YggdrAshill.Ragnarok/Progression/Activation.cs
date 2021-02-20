@@ -3,6 +3,9 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
+    /// <summary>
+    /// Implementation of <see cref="IActivation"/>.
+    /// </summary>
     public sealed class Activation :
         IActivation
     {
