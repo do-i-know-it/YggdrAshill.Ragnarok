@@ -64,14 +64,6 @@ Nothing now.
 ### ~ Version 1.0.0
 
 - Adds contributing guidelines.
-- Writes document comments in codes completely.
-  - [Periodization](./Documentation/Periodization.md)
-  - [Progression](./Documentation/Progression.md)
-  - [Violation](./Documentation/Violation.md)
-  - [Implementation](./Documentation/Implementation.md)
-- Writes test codes for specification completely.
-  - [Violation](./Documentation/Violation.md)
-  - [Implementation](./Documentation/Implementation.md)
 
 ### Version 1.0.0 ~
 
