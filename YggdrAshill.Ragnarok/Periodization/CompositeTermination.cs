@@ -38,7 +38,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// Executes each <see cref="ITermination"/> when this has terminated
+        /// Executes each <see cref="ITermination"/> when this has terminated.
         /// </summary>
         public void Terminate()
         {
