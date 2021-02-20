@@ -3,6 +3,9 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
+    /// <summary>
+    /// Implementation of <see cref="IOrigination"/>.
+    /// </summary>
     public sealed class Origination :
         IOrigination
     {
@@ -10,6 +13,15 @@ namespace YggdrAshill.Ragnarok
 
         #region Constructor
 
+        /// <summary>
+        /// Constructs an instance.
+        /// </summary>
+        /// <param name="onOriginated">
+        /// <see cref="Func{ITermination}"/> executed when this has originated.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="onOriginated"/> is null.
+        /// </exception>
         public Origination(Func<ITermination> onOriginated)
         {
             if (onOriginated == null)
@@ -20,6 +32,9 @@ namespace YggdrAshill.Ragnarok
             this.onOriginated = onOriginated;
         }
 
+        /// <summary>
+        /// Constructs an instance to do nothing when this has originated.
+        /// </summary>
         public Origination()
         {
             onOriginated = () =>
@@ -32,6 +47,7 @@ namespace YggdrAshill.Ragnarok
 
         #region IOrigination
 
+        /// <inheritdoc/>
         public ITermination Originate()
         {
             return onOriginated.Invoke();
