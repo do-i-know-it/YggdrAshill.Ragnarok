@@ -41,7 +41,7 @@ to use this framework.
 
 ## Usage
 
-Now writing samples for this framework.
+Please see [Sample application](./Samples/Program.cs).
 
 ## Architecture
 
