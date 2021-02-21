@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Periodization", "Periodizat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progression", "Progression\Progression.csproj", "{3B10218B-3A4B-418E-B68A-E678187E50ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Violation", "Violation\Violation.csproj", "{F7C5E1F1-A107-42EE-A2C7-ED2D3666CEBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Violation", "Violation\Violation.csproj", "{F7C5E1F1-A107-42EE-A2C7-ED2D3666CEBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Samples", "Samples\Samples.csproj", "{07228844-E269-4EB9-B0DA-C7353EABB9BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{F7C5E1F1-A107-42EE-A2C7-ED2D3666CEBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7C5E1F1-A107-42EE-A2C7-ED2D3666CEBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7C5E1F1-A107-42EE-A2C7-ED2D3666CEBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07228844-E269-4EB9-B0DA-C7353EABB9BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07228844-E269-4EB9-B0DA-C7353EABB9BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07228844-E269-4EB9-B0DA-C7353EABB9BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07228844-E269-4EB9-B0DA-C7353EABB9BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>YggdrAshill.Ragnarok.Samples</AssemblyName>
+    <RootNamespace>YggdrAshill.Ragnarok.Samples</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Periodization\Periodization.csproj" />
+    <ProjectReference Include="..\Progression\Progression.csproj" />
+    <ProjectReference Include="..\Violation\Violation.csproj" />
+    <ProjectReference Include="..\YggdrAshill.Ragnarok\YggdrAshill.Ragnarok.csproj" />
+  </ItemGroup>
+
+</Project>
