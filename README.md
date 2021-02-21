@@ -57,9 +57,11 @@ Ragnarok includes [Implementation](./Documentation/Implementation.md) to provide
 
 ## Known issues
 
-Nothing now.
+Please see [issues](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/issues).
 
 ## Future works
+
+Please see [GitHub Project for road map](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/projects/1).
 
 ### ~ Version 1.0.0
 
