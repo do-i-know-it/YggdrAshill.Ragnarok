@@ -8,6 +8,8 @@ This module defines how to
 
 applications, infrastructures, and so on.
 
+This module also defines how to handle error.
+
 ## Dependencies
 
 Nothing.
@@ -21,13 +23,15 @@ Nothing.
 | Origination | Token to initialize. |
 | Termination | Token to finalize. |
 | Execution | Token to perform. |
-| Procession | Token to process. |
+| Period | Term from `Origination` to `Termination`. |
+| Process | `Period` for `Execution`. |
 | Abortion | Token to abort exception. |
 
 `Origination` initializes applications, infrastructures, and so on.
-`Termination` finalizes them.
+`Termination` finalizes applications, infrastructures, and so on.
 `Execution` performs task.
-`Procession` is a sequence to initialize, perform and finalize them.
+`Period` is `Origination` and `Termination`.
+`Process` is `Period` and `Execution`.
 
 `Abortion` can be bound to `Origination`, `Termination` and `Execution` to deal with exceptions thrown in them.
 
