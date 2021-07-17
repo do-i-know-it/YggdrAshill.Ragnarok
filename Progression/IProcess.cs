@@ -1,11 +1,10 @@
 namespace YggdrAshill.Ragnarok.Progression
 {
     /// <summary>
-    /// Token to process.
+    /// <see cref="IPeriod"/> for <see cref="IExecution"/>.
     /// </summary>
-    public interface IProcession :
-        IOrigination,
-        ITermination,
+    public interface IProcess :
+        IPeriod,
         IExecution
     {
         

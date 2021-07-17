@@ -188,6 +188,52 @@ namespace YggdrAshill.Ragnarok
             composite.Bind(termination);
         }
 
+        /// <summary>
+        /// Converts <see cref="ITermination"/> into <see cref="IDisposable"/>.
+        /// </summary>
+        /// <param name="termination">
+        /// <see cref="ITermination"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="IDisposable"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="termination"/> is null.
+        /// </exception>
+        public static IDisposable ToDisposable(this ITermination termination)
+        {
+            if (termination == null)
+            {
+                throw new ArgumentNullException(nameof(termination));
+            }
+
+            return new Disposable(termination);
+        }
+        private sealed class Disposable :
+            IDisposable
+        {
+            private readonly ITermination termination;
+
+            private bool disposed;
+
+            internal Disposable(ITermination termination)
+            {
+                this.termination = termination;
+            }
+
+            public void Dispose()
+            {
+                if (disposed)
+                {
+                    throw new ObjectDisposedException(nameof(ITermination));
+                }
+
+                termination.Terminate();
+
+                disposed = true;
+            }
+        }
+
         #endregion
 
         #region Execute
@@ -280,68 +326,6 @@ namespace YggdrAshill.Ragnarok
             }
 
             return composite.Bind(execution);
-        }
-
-        #endregion
-
-        #region Process
-
-        /// <summary>
-        /// Binds <see cref="IProcession"/> to <see cref="IAbortion"/>.
-        /// </summary>
-        /// <param name="procession">
-        /// <see cref="IProcession"/> to bind.
-        /// </param>
-        /// <param name="abortion">
-        /// <see cref="Action{T}"/> to abort <see cref="Exception"/>.
-        /// </param>
-        /// <returns>
-        /// <see cref="IProcession"/> bounded.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="abortion"/> is null.
-        /// </exception>
-        public static IProcession Bind(this IProcession procession, Action<Exception> abortion)
-        {
-            if (procession == null)
-            {
-                throw new ArgumentNullException(nameof(procession));
-            }
-            if (abortion == null)
-            {
-                throw new ArgumentNullException(nameof(abortion));
-            }
-
-            return procession.Bind(Abortion.Of(abortion));
-        }
-
-        /// <summary>
-        /// Binds <see cref="IProcession"/> to <see cref="IAbortion"/>.
-        /// </summary>
-        /// <param name="procession">
-        /// <see cref="IProcession"/> to bind.
-        /// </param>
-        /// <param name="abortion">
-        /// <see cref="Action"/> to execute when this has aborted.
-        /// </param>
-        /// <returns>
-        /// <see cref="IProcession"/> bounded.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="abortion"/> is null.
-        /// </exception>
-        public static IProcession Bind(this IProcession procession, Action abortion)
-        {
-            if (procession == null)
-            {
-                throw new ArgumentNullException(nameof(procession));
-            }
-            if (abortion == null)
-            {
-                throw new ArgumentNullException(nameof(abortion));
-            }
-
-            return procession.Bind(Abortion.Of(abortion));
         }
 
         #endregion
