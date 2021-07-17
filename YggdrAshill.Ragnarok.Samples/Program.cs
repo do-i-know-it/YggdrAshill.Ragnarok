@@ -1,4 +1,4 @@
-using System;
+using YggdrAshill.Ragnarok.Progression;
 
 namespace YggdrAshill.Ragnarok.Samples
 {
@@ -6,27 +6,18 @@ namespace YggdrAshill.Ragnarok.Samples
     {
         private static void Main(string[] arguments)
         {
-            var application = new Application();
+            var application = new ConsoleApplicationForSample();
 
-            var procession = application.Bind(exception =>
+            var origination = application.Origination().Bind(new AbortOnConsoleApplicationForSample());
+            var execution = application.Execution().Bind(new AbortOnConsoleApplicationForSample());
+            var termination = application.Termination().Bind(new AbortOnConsoleApplicationForSample());
+
+            using (termination.ToDisposable())
             {
-                if (exception == null)
-                {
-                    throw new ArgumentNullException(nameof(exception));
-                }
+                origination.Originate();
 
-                Console.WriteLine($"Errored: {exception}");
-                Environment.Exit(-1);
-            });
-
-            procession.Originate();
-
-            while (application.runninng)
-            {
-                procession.Execute();
+                execution.Execute();
             }
-
-            procession.Terminate();
         }
     }
 }

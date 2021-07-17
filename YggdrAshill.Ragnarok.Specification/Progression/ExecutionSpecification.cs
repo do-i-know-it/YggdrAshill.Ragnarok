@@ -25,7 +25,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = Execution.Of(null);
+                var execution = Execution.Of(default);
             });
         }
     }

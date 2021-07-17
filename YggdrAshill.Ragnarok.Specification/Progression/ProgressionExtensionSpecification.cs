@@ -5,67 +5,51 @@ using System;
 namespace YggdrAshill.Ragnarok.Specification
 {
     [TestFixture(TestOf = typeof(ProgressionExtension))]
-    internal class ProgressionExtensionSpecification :
-        IOrigination,
-        ITermination,
-        IExecution,
-        IAbortion
+    internal class ProgressionExtensionSpecification
     {
-        private bool originated;
-        public void Originate()
-        {
-            originated = true;
-        }
-
-        private bool terminated;
-        public void Terminate()
-        {
-            terminated = true;
-        }
-
-        private bool executed;
-        public void Execute()
-        {
-            executed = true;
-        }
-
-        private bool aborted;
-        public void Abort(Exception exception)
-        {
-            if (exception == null)
-            {
-                throw new ArgumentNullException(nameof(exception));
-            }
-
-            aborted = true;
-        }
-
-        private IOrigination origination;
-
-        private ITermination termination;
-
-        private IExecution execution;
+        private IProcess process;
 
         private IAbortion abortion;
+
+        private bool originated;
+        
+        private bool executed;
+        
+        private bool terminated;
+
+        private bool aborted;
 
         [SetUp]
         public void SetUp()
         {
             originated = false;
 
+            executed = false;
+
             terminated = false;
 
-            executed = false;
+            process = Process.Of(() =>
+            {
+                originated = true;
+            }, () =>
+            {
+                executed = true;
+            }, () =>
+            {
+                terminated = true;
+            });
 
             aborted = false;
 
-            origination = this;
+            abortion = Abortion.Of(exception =>
+            {
+                if (exception == null)
+                {
+                    throw new ArgumentNullException(nameof(exception));
+                }
 
-            termination = this;
-
-            execution = this;
-
-            abortion = this;
+                aborted = true;
+            });
         }
 
         [Test]
@@ -73,7 +57,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var composite = new CompositeOrigination();
 
-            origination.Bind(composite);
+            process.Origination().Bind(composite);
 
             composite.Originate();
 
@@ -81,29 +65,29 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldBindTermination()
-        {
-            var composite = new CompositeTermination();
-
-            termination.Bind(composite);
-
-            composite.Terminate();
-
-            Assert.IsTrue(terminated);
-        }
-
-        [Test]
         public void ShouldBindExecution()
         {
             var composite = new CompositeExecution();
 
-            var termination = execution.Bind(composite);
+            var termination = process.Execution().Bind(composite);
 
             composite.Execute();
 
             Assert.IsTrue(executed);
 
             termination.Terminate();
+        }
+
+        [Test]
+        public void ShouldBindTermination()
+        {
+            var composite = new CompositeTermination();
+
+            process.Termination().Bind(composite);
+
+            composite.Terminate();
+
+            Assert.IsTrue(terminated);
         }
 
         [Test]
@@ -127,16 +111,7 @@ namespace YggdrAshill.Ragnarok.Specification
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                origination.Bind(default(CompositeOrigination));
-            });
-
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                default(ITermination).Bind(new CompositeTermination());
-            });
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                termination.Bind(default(CompositeTermination));
+                process.Origination().Bind(default(CompositeOrigination));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
@@ -145,9 +120,18 @@ namespace YggdrAshill.Ragnarok.Specification
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                execution.Bind(default(CompositeExecution));
+                process.Execution().Bind(default(CompositeExecution));
             });
 
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                default(ITermination).Bind(new CompositeTermination());
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                process.Termination().Bind(default(CompositeTermination));
+            });
+          
             Assert.Throws<ArgumentNullException>(() =>
             {
                 default(IAbortion).Bind(new CompositeAbortion());
