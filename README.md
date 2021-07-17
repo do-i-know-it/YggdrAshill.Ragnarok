@@ -2,10 +2,10 @@
 
 Ragnarok defines how to
 
-- Initialize
-- Execute
-- Abort
-- Finalize
+- initialize
+- perform
+- finalize
+- abort
 
 applications for mainly XR (VR/AR/MR).  
 This framework is able to isolate definitions from implementations for specific platforms.
@@ -14,21 +14,9 @@ This framework is able to isolate definitions from implementations for specific 
 - ex) [Xamarin](https://docs.microsoft.com/ja-jp/xamarin/get-started/what-is-xamarin)
 - ex) [Windows Presentation Foundation (WPF)](https://docs.microsoft.com/ja-jp/visualstudio/designers/getting-started-with-wpf?view=vs-2019)
 
-<!-- ## Specifications
-
-Now writing...
-
-### Normal scenarios
-
-Now writing...
-
-### Abnormal scenarios
-
-Now writing... -->
-
 ## Dependencies
 
-Ragnarok depends on .NET Standard 2.0.
+This framework depends on .NET Standard 2.0.
 
 ## Installation
 
@@ -41,31 +29,25 @@ to use this framework.
 
 ## Usage
 
-Now writing samples for this framework.
+Please see [Sample application](./Samples/Program.cs).
 
 ## Architecture
 
-Ragnarok consists of core modules below.
+This framework consists of core modules below.
 
-- [Periodization](./Documentation/Periodization.md)
 - [Progression](./Documentation/Progression.md)
-- [Violation](./Documentation/Violation.md)
 
 ## Implementation
 
-Ragnarok includes [Implementation](./Documentation/Implementation.md) to provide implementations and extensions for above.
+This framework includes [Implementation](./Documentation/Implementation.md) to provide implementations and extensions for above.
 
 ## Known issues
 
-Nothing now.
+Please see [issues](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/issues).
 
 ## Future works
 
-### ~ Version 1.0.0
-
-- Adds contributing guidelines.
-
-### Version 1.0.0 ~
+Please see [GitHub Project for road map](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/projects/1).
 
 - Adds definitions for life cycle events.
   - ex) onInitialized
@@ -75,9 +57,9 @@ Nothing now.
 
 ## License
 
-Ragnarok is under the [MIT License](https://opensource.org/licenses/mit-license.php), see [LICENSE](./LICENSE.txt).
+This framework is under the [MIT License](https://opensource.org/licenses/mit-license.php), see [LICENSE](./LICENSE.txt).
 
 ## Remarks
 
-Ragnarok is a part of YggdrAshill framework.  
+This framework is a part of YggdrAshill framework.  
 Other frameworks will be produced soon for YggdrAshill.

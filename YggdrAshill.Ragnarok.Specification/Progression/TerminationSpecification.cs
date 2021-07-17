@@ -3,19 +3,19 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
-    [TestFixture(TestOf = typeof(Execution))]
-    internal class ExecutionSpecification
+    [TestFixture(TestOf = typeof(Termination))]
+    internal class TerminationSpecification
     {
         [Test]
-        public void ShouldExecuteActionWhenHasExecuted()
+        public void ShouldExecuteActionWhenHasTerminated()
         {
             var expected = false;
-            var execution = Execution.Of(() =>
+            var origination = Termination.Of(() =>
             {
                 expected = true;
             });
 
-            execution.Execute();
+            origination.Terminate();
 
             Assert.IsTrue(expected);
         }
@@ -25,7 +25,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = Execution.Of(null);
+                var origination = Termination.Of(null);
             });
         }
     }

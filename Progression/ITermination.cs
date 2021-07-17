@@ -1,7 +1,7 @@
-﻿namespace YggdrAshill.Ragnarok.Periodization
+namespace YggdrAshill.Ragnarok.Progression
 {
     /// <summary>
-    /// Token to stop, end or finalize.
+    /// Token to finalize.
     /// </summary>
     public interface ITermination
     {

@@ -1,4 +1,3 @@
-﻿using YggdrAshill.Ragnarok.Periodization;
 using YggdrAshill.Ragnarok.Progression;
 using System;
 using System.Collections.Generic;
@@ -6,41 +5,22 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implemenation of <see cref="IExecution"/>.
-    /// Collects other tokens of <see cref="IExecution"/> to execute when this has executed.
+    /// <see cref="IExecution"/> to execute each of connected <see cref="IExecution"/> simultaneously.
     /// </summary>
     public sealed class CompositeExecution :
         IExecution,
-        ITermination
+        IDisposable
     {
         private readonly List<IExecution> executionList = new List<IExecution>();
 
-        /// <summary>
-        /// Binds <see cref="ITermination"/>.
-        /// </summary>
-        /// <param name="execution">
-        /// <see cref="IExecution"/> to bind.
-        /// </param>
-        /// <param name="execution"></param>
-        /// <returns>
-        /// <see cref="ITermination"/> to disconnect <paramref name="execution"/>.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="execution"/> is null.
-        /// </exception>
-        public ITermination Bind(IExecution execution)
+        internal ITermination Bind(IExecution execution)
         {
-            if (execution == null)
-            {
-                throw new ArgumentNullException(nameof(execution));
-            }
-
             if (!executionList.Contains(execution))
             {
                 executionList.Add(execution);
             }
 
-            return new Termination(() =>
+            return Termination.Of(() =>
             {
                 if (executionList.Contains(execution))
                 {
@@ -49,9 +29,7 @@ namespace YggdrAshill.Ragnarok
             });
         }
 
-        /// <summary>
-        /// Executes each <see cref="IExecution"/> when this has executed.
-        /// </summary>
+        /// <inheritdoc/>
         public void Execute()
         {
             foreach (var execution in executionList)
@@ -60,10 +38,8 @@ namespace YggdrAshill.Ragnarok
             }
         }
 
-        /// <summary>
-        /// Clear List for <see cref="IExecution"/>.
-        /// </summary>
-        public void Terminate()
+        /// <inheritdoc/>
+        public void Dispose()
         {
             executionList.Clear();
         }

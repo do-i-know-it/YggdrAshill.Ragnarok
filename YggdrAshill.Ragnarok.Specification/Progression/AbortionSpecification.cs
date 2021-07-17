@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System;
 
 namespace YggdrAshill.Ragnarok.Specification
@@ -10,7 +10,7 @@ namespace YggdrAshill.Ragnarok.Specification
         public void ShouldExecuteActionWhenHasAborted()
         {
             var expected = false;
-            var abortion = new Abortion(_ =>
+            var abortion = Abortion.Of(() =>
             {
                 expected = true;
             });
@@ -25,14 +25,19 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var abortion = new Abortion(null);
+                var abortion = Abortion.Of(default(Action<Exception>));
+            });
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var abortion = Abortion.Of(default(Action));
             });
         }
 
         [Test]
         public void CannotAbortWithNull()
         {
-            var abortion = new Abortion();
+            var abortion = Abortion.None;
 
             Assert.Throws<ArgumentNullException>(() =>
             {

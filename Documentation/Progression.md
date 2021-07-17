@@ -1,6 +1,12 @@
 # Progression
 
-Progression defines how to perform applications.
+This module defines how to
+
+- initialize
+- perform
+- finalize
+
+applications, infrastructures, and so on.
 
 ## Dependencies
 
@@ -12,12 +18,25 @@ Nothing.
 
 | Word | Abstraction |
 |:-----------|:------------|
-| Execution | Token to execute process. |
-| Activation | Token to provide `Execution`. |
+| Origination | Token to initialize. |
+| Termination | Token to finalize. |
+| Execution | Token to perform. |
+| Procession | Token to process. |
+| Abortion | Token to abort exception. |
 
-`Activation` creates `Execution`.
-Every time `Execution` is executed, it process some task.
+`Origination` initializes applications, infrastructures, and so on.
+`Termination` finalizes them.
+`Execution` performs task.
+`Procession` is a sequence to initialize, perform and finalize them.
+
+`Abortion` can be bound to `Origination`, `Termination` and `Execution` to deal with exceptions thrown in them.
 
 ## Implementation
 
-Nothing because this module only defines how to perform applications.
+Nothing because this module only defines how to
+
+- initialize
+- perform
+- finalize
+
+applications, infrastructures, and so on.

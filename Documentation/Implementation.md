@@ -5,19 +5,11 @@ This module provides
 - implementations
 - extensions
 
-for modules below.
-
-- [Periodization](./Periodization.md)
-- [Progression](./Progression.md)
-- [Violation](./Violation.md)
+for [Progression](./Progression.md).
 
 ## Dependencies
 
-This module depends on below.
-
-- [Periodization](./Periodization.md)
-- [Progression](./Progression.md)
-- [Violation](./Violation.md)
+This module depends [Progression](./Progression.md).
 
 ## Architecture
 
@@ -30,16 +22,9 @@ in order developers to use this framework in ease.
 
 ## Implementation
 
-This module provides simple implementations for
+This module provides
 
-- [Periodization](./Periodization.md)
-- [Progression](./Progression.md)
-- [Violation](./Violation.md)
+- implementations
+- extensions
 
-generated with `System.Action` or `System.Function`.  
-Also, this module provides useful extensions for
-
-- [Periodization](./Periodization.md)
-- [Progression](./Progression.md)
-
-to use `System.Action` or `System.Function`.
+for [Progression](./Progression.md) with `System.Action` or `System.Function`.

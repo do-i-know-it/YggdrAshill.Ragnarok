@@ -1,21 +1,21 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using System;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
-    [TestFixture(TestOf = typeof(Termination))]
-    internal class TerminationSpecification
+    [TestFixture(TestOf = typeof(Origination))]
+    internal class OriginationSpecification
     {
         [Test]
-        public void ShouldExecuteActionWhenHasTerminated()
+        public void ShouldExecuteActionWhenHasOriginated()
         {
             var expected = false;
-            var termination = new Termination(() =>
+            var origination = Origination.Of(() =>
             {
                 expected = true;
             });
 
-            termination.Terminate();
+            origination.Originate();
 
             Assert.IsTrue(expected);
         }
@@ -25,7 +25,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var termination = new Termination(null);
+                var origination = Origination.Of(null);
             });
         }
     }

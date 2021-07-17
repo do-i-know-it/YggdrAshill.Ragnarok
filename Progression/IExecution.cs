@@ -1,7 +1,7 @@
 ﻿namespace YggdrAshill.Ragnarok.Progression
 {
     /// <summary>
-    /// Token to execute process.
+    /// Token to process.
     /// </summary>
     public interface IExecution
     {
