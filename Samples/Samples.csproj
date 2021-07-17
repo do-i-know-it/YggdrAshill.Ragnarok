@@ -8,9 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Periodization\Periodization.csproj" />
     <ProjectReference Include="..\Progression\Progression.csproj" />
-    <ProjectReference Include="..\Violation\Violation.csproj" />
     <ProjectReference Include="..\YggdrAshill.Ragnarok\YggdrAshill.Ragnarok.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿using YggdrAshill.Ragnarok.Progression;
+using YggdrAshill.Ragnarok.Progression;
 using System;
 
 namespace YggdrAshill.Ragnarok
@@ -9,50 +9,44 @@ namespace YggdrAshill.Ragnarok
     public sealed class Execution :
         IExecution
     {
-        private readonly Action onExecuted;
-
-        #region Constructor
-
         /// <summary>
-        /// Constructs an instance.
+        /// Creates <see cref="Execution"/>.
         /// </summary>
-        /// <param name="onExecuted">
-        /// <see cref="Action"/> executed when this has executed.
+        /// <param name="execution">
+        /// <see cref="Action"/> to execute.
         /// </param>
+        /// <returns>
+        /// <see cref="Execution"/>.
+        /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="onExecuted"/> is null.
+        /// Thrown if <paramref name="execution"/> is null.
         /// </exception>
-        public Execution(Action onExecuted)
+        public static Execution Of(Action execution)
         {
-            if (onExecuted == null)
+            if (execution == null)
             {
-                throw new ArgumentNullException(nameof(onExecuted));
+                throw new ArgumentNullException(nameof(execution));
             }
 
-            this.onExecuted = onExecuted;
+            return new Execution(execution);
         }
 
         /// <summary>
-        /// Constructs an instance to do nothing when this has executed.
+        /// <see cref="Execution"/> to execute none.
         /// </summary>
-        public Execution()
+        public static Execution None { get; } = Of(() => { });
+
+        private readonly Action onExecuted;
+
+        private Execution(Action onExecuted)
         {
-            onExecuted = () =>
-            {
-
-            };
+            this.onExecuted = onExecuted;
         }
-
-        #endregion
-
-        #region IExecution
 
         /// <inheritdoc/>
         public void Execute()
         {
             onExecuted.Invoke();
         }
-
-        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+using YggdrAshill.Ragnarok.Progression;
+using System;
 
 namespace YggdrAshill.Ragnarok.Samples
 {
@@ -7,64 +8,62 @@ namespace YggdrAshill.Ragnarok.Samples
     /// </summary>
     internal sealed class Program
     {
-        internal static void Main(string[] arguments)
+        private static void Main(string[] arguments)
         {
             // Defines how to initialize sample application.
-            var origination = new Origination(() =>
+            var origination = Origination.Of(() =>
             {
                 Console.WriteLine("Originated.");
-
-                return new Termination(() =>
-                {
-                    Console.WriteLine("Terminated.");
-                    Environment.Exit(0);
-                });
             });
 
-            // Initializes this application, and gets token to finalize it.
-            var termination = origination.Originate();
-
-
-            // Defines how to set up game loop execution.
-            var activation = new Activation(() =>
+            // Defines how to finalize sample application.
+            var termination = Termination.Of(() =>
             {
-                Console.WriteLine("Activated.");
-
-                return new Execution(() =>
-                {
-                    Console.WriteLine($"");
-                    Console.WriteLine($"Please enter some text.");
-                    Console.Write($"\"Exit\" can exit this application:");
-
-                    var input = Console.ReadLine();
-
-                    if (input.ToLower() == "error")
-                    {
-                        throw new Exception("Error has occurred.");
-                    }
-                    
-                    if (input.ToLower() == "exit")
-                    {
-                        termination.Terminate();
-                    }
-
-                    Console.WriteLine($"Executed: {input}");
-                });
+                Console.WriteLine("Terminated.");
+                Environment.Exit(0);
             });
 
-            // Activates game loop, and gets token to execute.
-            var execution 
-                = activation.Activate()
-                .Bind(exception =>
-                {
-                    Console.WriteLine($"Errored: {exception}");
-                    Environment.Exit(-1);
-                });
-
-            while (true)
+            // Defines how to abort sample application.
+            var abortion = Abortion.Of(exception =>
             {
-                execution.Execute();
+                Console.WriteLine($"Errored: {exception}");
+                Environment.Exit(-1);
+            });
+
+            var activated = true;
+
+            // Defines how to execute sample application.
+            var execution = Execution.Of(() =>
+            {
+                Console.WriteLine($"");
+                Console.WriteLine($"Please enter some text.");
+                Console.Write($"\"Exit\" can exit this application:");
+
+                var input = Console.ReadLine();
+
+                if (input.ToLower() == "error")
+                {
+                    throw new Exception("Error has occurred.");
+                }
+
+                if (input.ToLower() == "exit")
+                {
+                    activated = false;
+                }
+
+                Console.WriteLine($"Executed: {input}");
+            });
+
+            var loop = execution.Bind(abortion);
+
+            origination.Originate();
+
+            while (activated)
+            {
+                loop.Execute();
             }
+
+            termination.Terminate();
         }
     }
 }
