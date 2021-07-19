@@ -10,7 +10,7 @@ namespace YggdrAshill.Ragnarok
         ITermination
     {
         /// <summary>
-        /// Creates <see cref="Termination"/>.
+        /// Executes <see cref="Action"/>.
         /// </summary>
         /// <param name="termination">
         /// <see cref="Action"/> to terminate.
@@ -32,7 +32,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// <see cref="Termination"/> to terminate none.
+        /// Executes none.
         /// </summary>
         public static Termination None { get; } = Of(() => { });
 

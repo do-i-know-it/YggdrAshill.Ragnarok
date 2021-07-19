@@ -49,7 +49,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// <see cref="IProcess"/> to do nothing when this has originated, executed and terminated.
+        /// <see cref="IProcess"/> to execute none.
         /// </summary>
         public static Process None { get; } = new Process(Origination.None, Execution.None, Termination.None);
 

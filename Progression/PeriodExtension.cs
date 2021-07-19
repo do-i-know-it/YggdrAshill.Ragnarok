@@ -11,10 +11,10 @@ namespace YggdrAshill.Ragnarok.Progression
         /// Converts <see cref="IPeriod"/> into <see cref="IOrigination"/>.
         /// </summary>
         /// <param name="period">
-        /// <see cref="IPeriod"/>.
+        /// <see cref="IPeriod"/> to convert.
         /// </param>
         /// <returns>
-        /// <see cref="IOrigination"/>.
+        /// <see cref="IOrigination"/> converted.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="period"/> is null.
@@ -33,10 +33,10 @@ namespace YggdrAshill.Ragnarok.Progression
         /// Converts <see cref="IPeriod"/> into <see cref="ITermination"/>.
         /// </summary>
         /// <param name="period">
-        /// <see cref="IPeriod"/>.
+        /// <see cref="IPeriod"/> to convert.
         /// </param>
         /// <returns>
-        /// <see cref="ITermination"/>.
+        /// <see cref="ITermination"/> converted.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="period"/> is null.

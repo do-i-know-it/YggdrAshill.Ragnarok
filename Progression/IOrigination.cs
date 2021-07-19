@@ -1,12 +1,12 @@
 namespace YggdrAshill.Ragnarok.Progression
 {
     /// <summary>
-    /// Token to initialize.
+    /// Token to <see cref="Originate"/>.
     /// </summary>
     public interface IOrigination
     {
         /// <summary>
-        /// Originates.
+        /// Initializes.
         /// </summary>
         void Originate();
     }

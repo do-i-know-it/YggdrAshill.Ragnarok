@@ -40,7 +40,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// <see cref="Period"/> to do nothing when this has originated and terminated.
+        /// <see cref="Period"/> to execute none.
         /// </summary>
         public static Period None { get; } = new Period(Origination.None, Termination.None);
 

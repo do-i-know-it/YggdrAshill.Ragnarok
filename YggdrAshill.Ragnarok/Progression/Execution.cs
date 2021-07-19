@@ -10,7 +10,7 @@ namespace YggdrAshill.Ragnarok
         IExecution
     {
         /// <summary>
-        /// Creates <see cref="Execution"/>.
+        /// Executes <see cref="Action"/>.
         /// </summary>
         /// <param name="execution">
         /// <see cref="Action"/> to execute.
@@ -32,7 +32,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// <see cref="Execution"/> to execute none.
+        /// Executes none.
         /// </summary>
         public static Execution None { get; } = Of(() => { });
 
