@@ -11,7 +11,7 @@ namespace YggdrAshill.Ragnarok.Progression
         #region Originate
 
         /// <summary>
-        /// Combine <see cref="IOrigination"/> and <see cref="IOrigination"/>.
+        /// Combines <see cref="IOrigination"/> and <see cref="IOrigination"/>.
         /// </summary>
         /// <param name="condition">
         /// <see cref="ICondition"/> to decide which <see cref="IOrigination"/> should be executed.
@@ -88,7 +88,7 @@ namespace YggdrAshill.Ragnarok.Progression
         #region Terminate
 
         /// <summary>
-        /// Combine <see cref="ITermination"/> and <see cref="ITermination"/>.
+        /// Combines <see cref="ITermination"/> and <see cref="ITermination"/>.
         /// </summary>
         /// <param name="condition">
         /// <see cref="ICondition"/> to decide which <see cref="ITermination"/> should be executed.
@@ -165,7 +165,7 @@ namespace YggdrAshill.Ragnarok.Progression
         #region Execute
 
         /// <summary>
-        /// Combine <see cref="IExecution"/> and <see cref="IExecution"/>.
+        /// Combines <see cref="IExecution"/> and <see cref="IExecution"/>.
         /// </summary>
         /// <param name="condition">
         /// <see cref="ICondition"/> to decide which <see cref="IExecution"/> should be executed.
@@ -279,8 +279,12 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <summary>
         /// Multiplies one <see cref="ICondition"/> and another <see cref="ICondition"/>.
         /// </summary>
-        /// <param name="first"></param>
-        /// <param name="second"></param>
+        /// <param name="first">
+        /// <see cref="ICondition"/> to multilpy.
+        /// </param>
+        /// <param name="second">
+        /// <see cref="ICondition"/> to multilpy.
+        /// </param>
         /// <returns>
         /// <see cref="ICondition"/> multiplied.
         /// </returns>
@@ -326,8 +330,12 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <summary>
         /// Adds one <see cref="ICondition"/> and another <see cref="ICondition"/>.
         /// </summary>
-        /// <param name="first"></param>
-        /// <param name="second"></param>
+        /// <param name="first">
+        /// <see cref="ICondition"/> to add.
+        /// </param>
+        /// <param name="second">
+        /// <see cref="ICondition"/> to add.
+        /// </param>
         /// <returns>
         /// <see cref="ICondition"/> added.
         /// </returns>

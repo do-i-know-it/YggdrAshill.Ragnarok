@@ -8,6 +8,74 @@ namespace YggdrAshill.Ragnarok
     /// </summary>
     public static class ProgressionExtension
     {
+        #region ICondition
+
+        /// <summary>
+        /// Multiplies <see cref="ICondition"/> and <see cref="Func{TResult}"/>.
+        /// </summary>
+        /// <param name="first">
+        /// <see cref="ICondition"/> to multiply.
+        /// </param>
+        /// <param name="second">
+        /// <see cref="Func{TResult}"/> to multiply.
+        /// </param>
+        /// <returns>
+        /// <see cref="ICondition"/> multiplied.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="first"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="second"/> is null.
+        /// </exception>
+        public static ICondition And(this ICondition first, Func<bool> second)
+        {
+            if (first == null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+            if (second == null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
+
+            return first.And(Condition.Of(second));
+        }
+
+        /// <summary>
+        /// Adds <see cref="ICondition"/> and <see cref="Func{TResult}"/>.
+        /// </summary>
+        /// <param name="first">
+        /// <see cref="ICondition"/> to add.
+        /// </param>
+        /// <param name="second">
+        /// <see cref="Func{TResult}"/> to add.
+        /// </param>
+        /// <returns>
+        /// <see cref="ICondition"/> added.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="first"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="second"/> is null.
+        /// </exception>
+        public static ICondition Or(this ICondition first, Func<bool> second)
+        {
+            if (first == null)
+            {
+                throw new ArgumentNullException(nameof(first));
+            }
+            if (second == null)
+            {
+                throw new ArgumentNullException(nameof(second));
+            }
+
+            return first.Or(Condition.Of(second));
+        }
+
+        #endregion
+
         #region Originate
 
         /// <summary>

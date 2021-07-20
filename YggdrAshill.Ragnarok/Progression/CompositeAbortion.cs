@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Executes each of connected <see cref="IAbortion"/> simultaneously.
+    /// Executes each of bound <see cref="IAbortion"/> simultaneously.
     /// </summary>
     public sealed class CompositeAbortion :
         IAbortion,

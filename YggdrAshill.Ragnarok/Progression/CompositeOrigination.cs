@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Executes each of connected <see cref="IOrigination"/> simultaneously.
+    /// Executes each of bound <see cref="IOrigination"/> simultaneously.
     /// </summary>
     public sealed class CompositeOrigination :
         IOrigination,
