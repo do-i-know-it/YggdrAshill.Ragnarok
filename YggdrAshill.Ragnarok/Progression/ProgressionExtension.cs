@@ -127,7 +127,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(abortion));
             }
 
-            return termination.Bind(abortion);
+            return termination.Bind(Abortion.Of(abortion));
         }
 
         /// <summary>
@@ -156,7 +156,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(abortion));
             }
 
-            return termination.Bind(abortion);
+            return termination.Bind(Abortion.Of(abortion));
         }
 
         /// <summary>
@@ -264,7 +264,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(abortion));
             }
 
-            return execution.Bind(abortion);
+            return execution.Bind(Abortion.Of(abortion));
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(abortion));
             }
 
-            return execution.Bind(abortion);
+            return execution.Bind(Abortion.Of(abortion));
         }
 
         /// <summary>
