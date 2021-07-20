@@ -4,18 +4,18 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
-    [TestFixture(TestOf = typeof(ExecutionExtension))]
-    internal class ExecutionExtensionSpecification
+    [TestFixture(TestOf = typeof(OriginationExtension))]
+    internal class OriginationExtensionSpecification
     {
         [TestCase(true)]
         [TestCase(false)]
         public void ShouldBeBoundToCondition(bool expected)
         {
-            var execution = new FakeExecution();
+            var origination = new FakeOrigination();
 
-            execution.When(new FakeCondition(expected)).Execute();
+            origination.When(new FakeCondition(expected)).Originate();
 
-            Assert.AreEqual(expected, execution.Executed);
+            Assert.AreEqual(expected, origination.Originated);
         }
 
         private static object[] TestSuiteForAbortion => new[]
@@ -28,12 +28,12 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource("TestSuiteForAbortion")]
         public void ShouldBeBoundToAbortion(Exception expected)
         {
-            var execution = new ErroredExection(expected);
+            var origination = new ErroredOrigination(expected);
             var abortion = new FakeAbortion();
 
-            execution.Bind(abortion).Execute();
+            origination.Bind(abortion).Originate();
 
-            Assert.AreEqual(execution.Expected, abortion.Aborted);
+            Assert.AreEqual(origination.Expected, abortion.Aborted);
         }
 
         [Test]
@@ -41,22 +41,22 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = default(IExecution).When(new FakeCondition(false));
+                var origination = default(IOrigination).When(new FakeCondition(false));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = new FakeExecution().When(default);
+                var origination = new FakeOrigination().When(default);
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = default(IExecution).Bind(new FakeAbortion());
+                var origination = default(IOrigination).Bind(new FakeAbortion());
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = new FakeExecution().Bind(default(IAbortion));
+                var origination = new FakeOrigination().Bind(default(IAbortion));
             });
         }
     }

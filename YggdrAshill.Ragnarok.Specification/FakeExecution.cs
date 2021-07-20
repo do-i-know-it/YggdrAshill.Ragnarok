@@ -5,7 +5,7 @@ namespace YggdrAshill.Ragnarok.Specification
     internal class FakeExecution :
         IExecution
     {
-        internal bool Executed { get; set; } = false;
+        internal bool Executed { get; private set; }
 
         public void Execute()
         {

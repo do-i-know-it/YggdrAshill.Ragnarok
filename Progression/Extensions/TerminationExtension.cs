@@ -1,120 +1,120 @@
-using System;
+﻿using System;
 
 namespace YggdrAshill.Ragnarok.Progression
 {
     /// <summary>
-    /// Defines extensions for <see cref="IExecution"/>.
+    /// Defines extensions for <see cref="ITermination"/>.
     /// </summary>
-    public static class ExecutionExtension
+    public static class TerminationExtension
     {
         /// <summary>
-        /// Binds <see cref="IExecution"/> to <see cref="ICondition"/>.
+        /// Binds <see cref="ITermination"/> to <see cref="ICondition"/>.
         /// </summary>
-        /// <param name="execution">
-        /// <see cref="IExecution"/> to bind.
+        /// <param name="termination">
+        /// <see cref="ITermination"/> to bind.
         /// </param>
         /// <param name="condition">
         /// <see cref="ICondition"/> to bind.
         /// </param>
         /// <returns>
-        /// <see cref="IExecution"/> bound.
+        /// <see cref="ITermination"/> bound.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="execution"/> is null.
+        /// Thrown if <paramref name="termination"/> is null.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="condition"/> is null.
         /// </exception>
-        public static IExecution When(this IExecution execution, ICondition condition)
+        public static ITermination When(this ITermination termination, ICondition condition)
         {
-            if (execution == null)
+            if (termination == null)
             {
-                throw new ArgumentNullException(nameof(execution));
+                throw new ArgumentNullException(nameof(termination));
             }
             if (condition == null)
             {
                 throw new ArgumentNullException(nameof(condition));
             }
 
-            return new ExecuteWhenConditionIsSatisfied(condition, execution);
+            return new TerminateWhenConditionIsSatisfied(condition, termination);
         }
-        private sealed class ExecuteWhenConditionIsSatisfied :
-            IExecution
+        private sealed class TerminateWhenConditionIsSatisfied :
+            ITermination
         {
             private readonly ICondition condition;
 
-            private readonly IExecution execution;
+            private readonly ITermination termination;
 
-            internal ExecuteWhenConditionIsSatisfied(ICondition condition, IExecution execution)
+            internal TerminateWhenConditionIsSatisfied(ICondition condition, ITermination termination)
             {
                 this.condition = condition;
 
-                this.execution = execution;
+                this.termination = termination;
             }
 
             /// <inheritdoc/>
-            public void Execute()
+            public void Terminate()
             {
                 if (!condition.IsSatisfied)
                 {
                     return;
                 }
 
-                execution.Execute();
+                termination.Terminate();
             }
         }
 
         /// <summary>
-        /// Binds <see cref="IExecution"/> to <see cref="IAbortion"/>.
+        /// Binds <see cref="ITermination"/> to <see cref="IAbortion"/>.
         /// </summary>
-        /// <param name="execution">
-        /// <see cref="IExecution"/> to bind.
+        /// <param name="termination">
+        /// <see cref="ITermination"/> to bind.
         /// </param>
         /// <param name="abortion">
         /// <see cref="IAbortion"/> to bind.
         /// </param>
         /// <returns>
-        /// <see cref="IExecution"/> bounded.
+        /// <see cref="ITermination"/> bounded.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="execution"/> is null.
+        /// Thrown if <paramref name="termination"/> is null.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
         /// </exception>
-        public static IExecution Bind(this IExecution execution, IAbortion abortion)
+        public static ITermination Bind(this ITermination termination, IAbortion abortion)
         {
-            if (execution == null)
+            if (termination == null)
             {
-                throw new ArgumentNullException(nameof(execution));
+                throw new ArgumentNullException(nameof(termination));
             }
             if (abortion == null)
             {
                 throw new ArgumentNullException(nameof(abortion));
             }
 
-            return new AbortWhenExecutionHasErrored(execution, abortion);
+            return new AbortWhenTerminationHasErrored(termination, abortion);
         }
-        private sealed class AbortWhenExecutionHasErrored :
-            IExecution
+        private sealed class AbortWhenTerminationHasErrored :
+            ITermination
         {
-            private readonly IExecution execution;
+            private readonly ITermination termination;
 
             private readonly IAbortion abortion;
 
-            internal AbortWhenExecutionHasErrored(IExecution execution, IAbortion abortion)
+            internal AbortWhenTerminationHasErrored(ITermination termination, IAbortion abortion)
             {
-                this.execution = execution;
+                this.termination = termination;
 
                 this.abortion = abortion;
             }
 
             /// <inheritdoc/>
-            public void Execute()
+            public void Terminate()
             {
                 try
                 {
-                    execution.Execute();
+                    termination.Terminate();
                 }
                 catch (Exception exception)
                 {

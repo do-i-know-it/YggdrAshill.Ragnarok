@@ -1,21 +1,21 @@
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using YggdrAshill.Ragnarok.Progression;
 using System;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
-    [TestFixture(TestOf = typeof(ExecutionExtension))]
-    internal class ExecutionExtensionSpecification
+    [TestFixture(TestOf = typeof(TerminationExtension))]
+    internal class TerminationExtensionSpecification
     {
         [TestCase(true)]
         [TestCase(false)]
         public void ShouldBeBoundToCondition(bool expected)
         {
-            var execution = new FakeExecution();
+            var termination = new FakeTermination();
 
-            execution.When(new FakeCondition(expected)).Execute();
+            termination.When(new FakeCondition(expected)).Terminate();
 
-            Assert.AreEqual(expected, execution.Executed);
+            Assert.AreEqual(expected, termination.Terminated);
         }
 
         private static object[] TestSuiteForAbortion => new[]
@@ -28,12 +28,12 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource("TestSuiteForAbortion")]
         public void ShouldBeBoundToAbortion(Exception expected)
         {
-            var execution = new ErroredExection(expected);
+            var termination = new ErroredTermination(expected);
             var abortion = new FakeAbortion();
 
-            execution.Bind(abortion).Execute();
+            termination.Bind(abortion).Terminate();
 
-            Assert.AreEqual(execution.Expected, abortion.Aborted);
+            Assert.AreEqual(termination.Expected, abortion.Aborted);
         }
 
         [Test]
@@ -41,22 +41,22 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = default(IExecution).When(new FakeCondition(false));
+                var termination = default(ITermination).When(new FakeCondition(false));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = new FakeExecution().When(default);
+                var termination = new FakeTermination().When(default);
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = default(IExecution).Bind(new FakeAbortion());
+                var termination = default(ITermination).Bind(new FakeAbortion());
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = new FakeExecution().Bind(default(IAbortion));
+                var termination = new FakeTermination().Bind(default(IAbortion));
             });
         }
     }

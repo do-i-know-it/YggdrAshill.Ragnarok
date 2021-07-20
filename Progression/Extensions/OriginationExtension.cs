@@ -3,118 +3,118 @@ using System;
 namespace YggdrAshill.Ragnarok.Progression
 {
     /// <summary>
-    /// Defines extensions for <see cref="IExecution"/>.
+    /// Defines extensions for <see cref="IOrigination"/>.
     /// </summary>
-    public static class ExecutionExtension
+    public static class OriginationExtension
     {
         /// <summary>
-        /// Binds <see cref="IExecution"/> to <see cref="ICondition"/>.
+        /// Binds <see cref="IOrigination"/> to <see cref="ICondition"/>.
         /// </summary>
-        /// <param name="execution">
-        /// <see cref="IExecution"/> to bind.
+        /// <param name="origination">
+        /// <see cref="IOrigination"/> to bind.
         /// </param>
         /// <param name="condition">
         /// <see cref="ICondition"/> to bind.
         /// </param>
         /// <returns>
-        /// <see cref="IExecution"/> bound.
+        /// <see cref="IOrigination"/> bound.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="execution"/> is null.
+        /// Thrown if <paramref name="origination"/> is null.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="condition"/> is null.
         /// </exception>
-        public static IExecution When(this IExecution execution, ICondition condition)
+        public static IOrigination When(this IOrigination origination, ICondition condition)
         {
-            if (execution == null)
+            if (origination == null)
             {
-                throw new ArgumentNullException(nameof(execution));
+                throw new ArgumentNullException(nameof(origination));
             }
             if (condition == null)
             {
                 throw new ArgumentNullException(nameof(condition));
             }
 
-            return new ExecuteWhenConditionIsSatisfied(condition, execution);
+            return new OriginateWhenConditionIsSatisfied(condition, origination);
         }
-        private sealed class ExecuteWhenConditionIsSatisfied :
-            IExecution
+        private sealed class OriginateWhenConditionIsSatisfied :
+            IOrigination
         {
             private readonly ICondition condition;
 
-            private readonly IExecution execution;
+            private readonly IOrigination origination;
 
-            internal ExecuteWhenConditionIsSatisfied(ICondition condition, IExecution execution)
+            internal OriginateWhenConditionIsSatisfied(ICondition condition, IOrigination origination)
             {
                 this.condition = condition;
 
-                this.execution = execution;
+                this.origination = origination;
             }
 
             /// <inheritdoc/>
-            public void Execute()
+            public void Originate()
             {
                 if (!condition.IsSatisfied)
                 {
                     return;
                 }
 
-                execution.Execute();
+                origination.Originate();
             }
         }
 
         /// <summary>
-        /// Binds <see cref="IExecution"/> to <see cref="IAbortion"/>.
+        /// Binds <see cref="IOrigination"/> to <see cref="IAbortion"/>.
         /// </summary>
-        /// <param name="execution">
-        /// <see cref="IExecution"/> to bind.
+        /// <param name="origination">
+        /// <see cref="IOrigination"/> to bind.
         /// </param>
         /// <param name="abortion">
         /// <see cref="IAbortion"/> to bind.
         /// </param>
         /// <returns>
-        /// <see cref="IExecution"/> bounded.
+        /// <see cref="IOrigination"/> bounded.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="execution"/> is null.
+        /// Thrown if <paramref name="origination"/> is null.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
         /// </exception>
-        public static IExecution Bind(this IExecution execution, IAbortion abortion)
+        public static IOrigination Bind(this IOrigination origination, IAbortion abortion)
         {
-            if (execution == null)
+            if (origination == null)
             {
-                throw new ArgumentNullException(nameof(execution));
+                throw new ArgumentNullException(nameof(origination));
             }
             if (abortion == null)
             {
                 throw new ArgumentNullException(nameof(abortion));
             }
 
-            return new AbortWhenExecutionHasErrored(execution, abortion);
+            return new AbortWhenOriginationHasErrored(origination, abortion);
         }
-        private sealed class AbortWhenExecutionHasErrored :
-            IExecution
+        private sealed class AbortWhenOriginationHasErrored :
+            IOrigination
         {
-            private readonly IExecution execution;
+            private readonly IOrigination origination;
 
             private readonly IAbortion abortion;
 
-            internal AbortWhenExecutionHasErrored(IExecution execution, IAbortion abortion)
+            internal AbortWhenOriginationHasErrored(IOrigination origination, IAbortion abortion)
             {
-                this.execution = execution;
+                this.origination = origination;
 
                 this.abortion = abortion;
             }
 
             /// <inheritdoc/>
-            public void Execute()
+            public void Originate()
             {
                 try
                 {
-                    execution.Execute();
+                    origination.Originate();
                 }
                 catch (Exception exception)
                 {
