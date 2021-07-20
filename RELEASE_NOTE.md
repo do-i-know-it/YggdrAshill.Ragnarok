@@ -1,4 +1,4 @@
-# Release notes for version 1.1.0
+# Release notes for version 1.0.0
 
 - Added definitions for Progression.
 - Added implementations for Progression.
