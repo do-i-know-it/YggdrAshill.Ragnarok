@@ -7,6 +7,24 @@ namespace YggdrAshill.Ragnarok.Progression
     /// </summary>
     public static class ExecutionExtension
     {
+        /// <summary>
+        /// <see cref="IExecution.Execute"/> when <see cref="ICondition.IsSatisfied"/>.
+        /// </summary>
+        /// <param name="execution">
+        /// <see cref="IExecution"/>.
+        /// </param>
+        /// <param name="condition">
+        /// <see cref="ICondition"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="IExecution"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="execution"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="condition"/> is null.
+        /// </exception>
         public static IExecution When(this IExecution execution, ICondition condition)
         {
             if (execution == null)
@@ -20,7 +38,7 @@ namespace YggdrAshill.Ragnarok.Progression
 
             return new Execution(condition, execution);
         }
-        internal sealed class Execution :
+        private sealed class Execution :
             IExecution
         {
             private readonly ICondition condition;
