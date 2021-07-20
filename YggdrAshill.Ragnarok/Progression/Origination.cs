@@ -10,7 +10,7 @@ namespace YggdrAshill.Ragnarok
         IOrigination
     {
         /// <summary>
-        /// Creates <see cref="Origination"/>.
+        /// Executes <see cref="Action"/>.
         /// </summary>
         /// <param name="origination">
         /// <see cref="Action"/> to originate.
@@ -32,7 +32,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// <see cref="Origination"/> to originate none.
+        /// Executes none.
         /// </summary>
         public static Origination None { get; } = Of(() => { });
 

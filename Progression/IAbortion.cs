@@ -3,12 +3,12 @@ using System;
 namespace YggdrAshill.Ragnarok.Progression
 {
     /// <summary>
-    /// Token to abort.
+    /// Token to <see cref="Abort(Exception)"/>.
     /// </summary>
     public interface IAbortion
     {
         /// <summary>
-        /// Aborts when <see cref="Exception"/> has been thrown.
+        /// Aborts thrown <see cref="Exception"/> .
         /// </summary>
         /// <param name="exception">
         /// <see cref="Exception"/> thrown.

@@ -1,12 +1,12 @@
 namespace YggdrAshill.Ragnarok.Progression
 {
     /// <summary>
-    /// Token to finalize.
+    /// Token to <see cref="Terminate"/>.
     /// </summary>
     public interface ITermination
     {
         /// <summary>
-        /// Terminates. 
+        /// Finalize. 
         /// </summary>
         void Terminate();
     }

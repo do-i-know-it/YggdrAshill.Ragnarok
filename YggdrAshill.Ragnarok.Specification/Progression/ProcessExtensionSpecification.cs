@@ -5,41 +5,16 @@ using System;
 namespace YggdrAshill.Ragnarok.Specification
 {
     [TestFixture(TestOf = typeof(ProcessExtension))]
-    internal class ProcessExtensionSpecification :
-        IProcess
+    internal class ProcessExtensionSpecification
     {
-        private bool expected;
-        public void Execute()
-        {
-            expected = true;
-        }
-
-        public void Originate()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Terminate()
-        {
-            throw new NotImplementedException();
-        }
-
-        private IProcess process;
-
-        [SetUp]
-        public void SetUp()
-        {
-            expected = false;
-
-            process = this;
-        }
-
         [Test]
         public void ShouldConvertProcessIntoExecution()
         {
+            var process = new FakeProcess();
+
             process.Execution().Execute();
 
-            Assert.IsTrue(expected);
+            Assert.IsTrue(process.Executed);
         }
 
         [Test]

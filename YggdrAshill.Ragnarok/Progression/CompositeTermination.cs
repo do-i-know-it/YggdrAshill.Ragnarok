@@ -5,23 +5,13 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// <see cref="ITermination"/> to execute each of connected <see cref="ITermination"/> simultaneously.
+    /// Executes each of bound <see cref="ITermination"/> simultaneously.
     /// </summary>
     public sealed class CompositeTermination :
         ITermination,
         IDisposable
     {
         private readonly List<ITermination> terminationList = new List<ITermination>();
-
-        internal void Bind(ITermination termination)
-        {
-            if (terminationList.Contains(termination))
-            {
-                return;
-            }
-
-            terminationList.Add(termination);
-        }
 
         /// <inheritdoc/>
         public void Terminate()
@@ -38,6 +28,16 @@ namespace YggdrAshill.Ragnarok
         public void Dispose()
         {
             Terminate();
+        }
+
+        internal void Bind(ITermination termination)
+        {
+            if (terminationList.Contains(termination))
+            {
+                return;
+            }
+
+            terminationList.Add(termination);
         }
     }
 }

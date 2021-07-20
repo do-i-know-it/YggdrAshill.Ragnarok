@@ -5,31 +5,14 @@ using System;
 namespace YggdrAshill.Ragnarok.Specification
 {
     [TestFixture(TestOf = typeof(PeriodExtension))]
-    internal class PeriodExtensionSpecification :
-        IPeriod
+    internal class PeriodExtensionSpecification
     {
-        private bool originated;
-        public void Originate()
-        {
-            originated = true;
-        }
-
-        private bool terminated;
-        public void Terminate()
-        {
-            terminated = true;
-        }
-
-        private IPeriod period;
+        private FakePeriod period;
 
         [SetUp]
         public void SetUp()
         {
-            originated = false;
-
-            terminated = false;
-
-            period = this;
+            period = new FakePeriod();
         }
 
         [Test]
@@ -37,7 +20,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             period.Origination().Originate();
 
-            Assert.IsTrue(originated);
+            Assert.IsTrue(period.Originated);
         }
 
         [Test]
@@ -45,7 +28,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             period.Termination().Terminate();
 
-            Assert.IsTrue(terminated);
+            Assert.IsTrue(period.Terminated);
         }
 
         [Test]

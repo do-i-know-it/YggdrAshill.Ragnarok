@@ -1,13 +1,13 @@
 namespace YggdrAshill.Ragnarok.Progression
 {
     /// <summary>
-    /// Token to <see cref="Originate"/>.
+    /// Detects condition is satisfied.
     /// </summary>
-    public interface IOrigination
+    public interface ICondition
     {
         /// <summary>
-        /// Initializes.
+        /// This is satisfied.
         /// </summary>
-        void Originate();
+        bool IsSatisfied { get; }
     }
 }

@@ -7,13 +7,46 @@ namespace YggdrAshill.Ragnarok
         IPeriod
     {
         /// <summary>
-        /// Creates <see cref="Period"/>.
+        /// Executes <see cref="IOrigination"/> and <see cref="ITermination"/>.
         /// </summary>
         /// <param name="origination">
-        /// <see cref="Action"/> to originate.
+        /// <see cref="IOrigination"/> to originate <see cref="Period"/>.
         /// </param>
         /// <param name="termination">
-        /// <see cref="Action"/> to terminate.
+        /// <see cref="ITermination"/> to terminate <see cref="Period"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="Period"/> created.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="origination"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="termination"/> is null.
+        /// </exception>
+        public static Period Of(IOrigination origination, ITermination termination)
+        {
+            if (origination == null)
+            {
+                throw new ArgumentNullException(nameof(origination));
+            }
+
+            if (termination == null)
+            {
+                throw new ArgumentNullException(nameof(termination));
+            }
+
+            return new Period(origination, termination);
+        }
+
+        /// <summary>
+        /// Executes <see cref="Action"/> and <see cref="Action"/>.
+        /// </summary>
+        /// <param name="origination">
+        /// <see cref="Action"/> to originate <see cref="Period"/>.
+        /// </param>
+        /// <param name="termination">
+        /// <see cref="Action"/> to terminate <see cref="Period"/>.
         /// </param>
         /// <returns>
         /// <see cref="Period"/>.
@@ -40,15 +73,15 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// <see cref="Period"/> to do nothing when this has originated and terminated.
+        /// Executes none.
         /// </summary>
         public static Period None { get; } = new Period(Origination.None, Termination.None);
 
-        private readonly Origination origination;
+        private readonly IOrigination origination;
 
-        private readonly Termination termination;
+        private readonly ITermination termination;
 
-        private Period(Origination origination, Termination termination)
+        private Period(IOrigination origination, ITermination termination)
         {
             this.origination = origination;
 

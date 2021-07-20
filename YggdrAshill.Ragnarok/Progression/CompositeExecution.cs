@@ -5,13 +5,28 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// <see cref="IExecution"/> to execute each of connected <see cref="IExecution"/> simultaneously.
+    /// Executes each of bound <see cref="IExecution"/> simultaneously.
     /// </summary>
     public sealed class CompositeExecution :
         IExecution,
         IDisposable
     {
         private readonly List<IExecution> executionList = new List<IExecution>();
+
+        /// <inheritdoc/>
+        public void Execute()
+        {
+            foreach (var execution in executionList)
+            {
+                execution.Execute();
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            executionList.Clear();
+        }
 
         internal ITermination Bind(IExecution execution)
         {
@@ -27,21 +42,6 @@ namespace YggdrAshill.Ragnarok
                     executionList.Remove(execution);
                 }
             });
-        }
-
-        /// <inheritdoc/>
-        public void Execute()
-        {
-            foreach (var execution in executionList)
-            {
-                execution.Execute();
-            }
-        }
-
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            executionList.Clear();
         }
     }
 }

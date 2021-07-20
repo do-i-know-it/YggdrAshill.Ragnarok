@@ -10,13 +10,13 @@ namespace YggdrAshill.Ragnarok
         IAbortion
     {
         /// <summary>
-        /// Creates <see cref="Abortion"/>.
+        /// Executes <see cref="Action{T}"/>.
         /// </summary>
         /// <param name="abortion">
         /// <see cref="Action{T}"/> to abort <see cref="Exception"/>.
         /// </param>
         /// <returns>
-        /// <see cref="Abortion"/>.
+        /// <see cref="Abortion"/> created.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
@@ -32,13 +32,13 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// Creates <see cref="Abortion"/>.
+        /// Executes <see cref="Action"/>.
         /// </summary>
         /// <param name="abortion">
         /// <see cref="Action"/> to abort <see cref="Exception"/>.
         /// </param>
         /// <returns>
-        /// <see cref="Abortion"/>.
+        /// <see cref="Abortion"/> created.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
@@ -62,7 +62,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// <see cref="Abortion"/> to abort none.
+        /// Executes none.
         /// </summary>
         public static Abortion None { get; } = Of(() => { });
 
