@@ -26,6 +26,7 @@ Nothing.
 | Period | Term from `Origination` to `Termination`. |
 | Process | `Period` for `Execution`. |
 | Abortion | Token to abort exception. |
+| Condition | Decides if or which `Origination`, `Execution` and `Termination` executes. |
 
 `Origination` initializes applications, infrastructures, and so on.
 `Termination` finalizes applications, infrastructures, and so on.
@@ -34,6 +35,8 @@ Nothing.
 `Process` is `Period` and `Execution`.
 
 `Abortion` can be bound to `Origination`, `Termination` and `Execution` to deal with exceptions thrown in them.
+
+`Condition` Decides if or which `Origination`, `Execution` and `Termination` executes.
 
 ## Implementation
 
