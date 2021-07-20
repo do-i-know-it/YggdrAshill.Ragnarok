@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Executes each of bounded <see cref="ITermination"/> simultaneously.
+    /// Executes each of bound <see cref="ITermination"/> simultaneously.
     /// </summary>
     public sealed class CompositeTermination :
         ITermination,

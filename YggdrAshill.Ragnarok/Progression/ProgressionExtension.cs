@@ -20,7 +20,7 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="Action{T}"/> to abort <see cref="Exception"/>.
         /// </param>
         /// <returns>
-        /// <see cref="IOrigination"/> bounded.
+        /// <see cref="IOrigination"/> bound.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
@@ -49,7 +49,7 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="Action"/> to execute when this has aborted.
         /// </param>
         /// <returns>
-        /// <see cref="IOrigination"/> bounded.
+        /// <see cref="IOrigination"/> bound.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
@@ -111,7 +111,7 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="Action{T}"/> to abort <see cref="Exception"/>.
         /// </param>
         /// <returns>
-        /// <see cref="ITermination"/> bounded.
+        /// <see cref="ITermination"/> bound.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
@@ -140,7 +140,7 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="Action"/> to execute when this has aborted.
         /// </param>
         /// <returns>
-        /// <see cref="ITermination"/> bounded.
+        /// <see cref="ITermination"/> bound.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
@@ -248,7 +248,7 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="Action{T}"/> to abort <see cref="Exception"/>.
         /// </param>
         /// <returns>
-        /// <see cref="IExecution"/> bounded.
+        /// <see cref="IExecution"/> bound.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
@@ -277,7 +277,7 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="Action"/> to execute when this has aborted.
         /// </param>
         /// <returns>
-        /// <see cref="IExecution"/> bounded.
+        /// <see cref="IExecution"/> bound.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.

@@ -74,7 +74,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <see cref="IAbortion"/> to bind.
         /// </param>
         /// <returns>
-        /// <see cref="IExecution"/> bounded.
+        /// <see cref="IExecution"/> bound.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="execution"/> is null.
