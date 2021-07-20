@@ -7,103 +7,234 @@ namespace YggdrAshill.Ragnarok.Specification
     [TestFixture(TestOf = typeof(ProgressionExtension))]
     internal class ProgressionExtensionSpecification
     {
-        private IProcess process;
+        private static object[] TestSuiteForAbortion => new[]
+        {
+            new Exception(),
+            new NotImplementedException(),
+            new NotSupportedException(),
+            new InvalidOperationException(),
+        };
 
-        private IAbortion abortion;
+        private FakeOrigination origination;
 
-        private bool originated;
-        
-        private bool executed;
-        
-        private bool terminated;
+        private FakeExecution  execution;
 
-        private bool aborted;
+        private FakeTermination termination;
+
+        private FakeAbortion abortion;
 
         [SetUp]
         public void SetUp()
         {
-            originated = false;
+            origination = new FakeOrigination();
 
-            executed = false;
+            execution = new FakeExecution();
 
-            terminated = false;
+            termination = new FakeTermination();
 
-            process = Process.Of(() =>
-            {
-                originated = true;
-            }, () =>
-            {
-                executed = true;
-            }, () =>
-            {
-                terminated = true;
-            });
+            abortion = new FakeAbortion();
+        }
 
-            aborted = false;
+        [TestCase(true)]
+        [TestCase(false)]
+        public void OriginationShouldBeBoundToCondition(bool expected)
+        {
+            origination.When(() => expected).Originate();
 
-            abortion = Abortion.Of(exception =>
+            Assert.AreEqual(expected, origination.Originated);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ExecutionShouldBeBoundToCondition(bool expected)
+        {
+            execution.When(() => expected).Execute();
+
+            Assert.AreEqual(expected, execution.Executed);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TerminationShouldBeBoundToCondition(bool expected)
+        {
+            termination.When(() => expected).Terminate();
+
+            Assert.AreEqual(expected, termination.Terminated);
+        }
+
+        [TestCaseSource("TestSuiteForAbortion")]
+        public void OriginationShouldBeBoundToAbortion(Exception expected)
+        {
+            var aborted = default(Exception);
+            new ErroredOrigination(expected).Bind(exception =>
             {
                 if (exception == null)
                 {
                     throw new ArgumentNullException(nameof(exception));
                 }
 
-                aborted = true;
-            });
+                aborted = exception;
+            }).Originate();
+
+            Assert.AreEqual(expected, aborted);
+        }
+
+        [TestCaseSource("TestSuiteForAbortion")]
+        public void TerminationShouldBeBoundToAbortion(Exception expected)
+        {
+            var aborted = default(Exception);
+            new ErroredTermination(expected).Bind(exception =>
+            {
+                if (exception == null)
+                {
+                    throw new ArgumentNullException(nameof(exception));
+                }
+
+                aborted = exception;
+            }).Terminate();
+
+            Assert.AreEqual(expected, aborted);
+        }
+
+        [TestCaseSource("TestSuiteForAbortion")]
+        public void ExecutionShouldBeBoundToAbortion(Exception expected)
+        {
+            var aborted = default(Exception);
+            new ErroredExecution(expected).Bind(exception =>
+            {
+                if (exception == null)
+                {
+                    throw new ArgumentNullException(nameof(exception));
+                }
+
+                aborted = exception;
+            }).Execute();
+
+            Assert.AreEqual(expected, aborted);
         }
 
         [Test]
-        public void ShouldBindOrigination()
+        public void OriginationShouldBeBoundToComposite()
         {
             var composite = new CompositeOrigination();
 
-            process.Origination().Bind(composite);
+            origination.Bind(composite);
 
             composite.Originate();
 
-            Assert.IsTrue(originated);
+            Assert.IsTrue(origination.Originated);
         }
 
         [Test]
-        public void ShouldBindExecution()
+        public void ExecutionShouldBeBoundToComposite()
         {
             var composite = new CompositeExecution();
 
-            var termination = process.Execution().Bind(composite);
+            var termination = execution.Bind(composite);
 
             composite.Execute();
 
-            Assert.IsTrue(executed);
+            Assert.IsTrue(execution.Executed);
 
             termination.Terminate();
         }
 
         [Test]
-        public void ShouldBindTermination()
+        public void TerminationShouldBeBoundToComposite()
         {
             var composite = new CompositeTermination();
 
-            process.Termination().Bind(composite);
+            termination.Bind(composite);
 
             composite.Terminate();
 
-            Assert.IsTrue(terminated);
+            Assert.IsTrue(termination.Terminated);
         }
-
-        [Test]
-        public void ShouldBindAbortion()
+        
+        [TestCaseSource("TestSuiteForAbortion")]
+        public void AbortionShouldBeBoundToComposite(Exception expected)
         {
             var composite = new CompositeAbortion();
 
             abortion.Bind(composite);
 
-            composite.Abort(new Exception());
+            composite.Abort(expected);
 
-            Assert.IsTrue(aborted);
+            Assert.AreEqual(expected, abortion.Aborted);
         }
 
         [Test]
-        public void CannotBindWithNull()
+        public void TerminationShouldBeConvertedIntoDisposable()
+        {
+            termination.ToDisposable().Dispose();
+
+            Assert.IsTrue(termination.Terminated);
+        }
+
+        [Test]
+        public void CannotBeBoundToConditionWithNull()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var origination = default(IOrigination).When(() => false);
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var origination = Origination.None.When(default);
+            });
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var execution = default(IExecution).When(() => false);
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var execution = Execution.None.When(default);
+            });
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var termination = default(ITermination).When(() => false);
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var termination = Termination.None.When(default);
+            });
+        }
+
+        [Test]
+        public void CannotBeBoundToAbortionWithNull()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var origination = default(IOrigination).Bind(_ => { });
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var origination = Origination.None.Bind(default(Action<Exception>));
+            });
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var execution = default(IExecution).Bind(_ => { });
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var execution = Execution.None.Bind(default(Action<Exception>));
+            });
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var termination = default(ITermination).Bind(_ => { });
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var termination = Termination.None.Bind(default(Action<Exception>));
+            });
+        }
+
+        [Test]
+        public void CannotBeBoundToCompositeWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -111,16 +242,16 @@ namespace YggdrAshill.Ragnarok.Specification
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                process.Origination().Bind(default(CompositeOrigination));
+                Origination.None.Bind(default(CompositeOrigination));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                default(IExecution).Bind(new CompositeExecution());
+                var termination = default(IExecution).Bind(new CompositeExecution());
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                process.Execution().Bind(default(CompositeExecution));
+                var termination = Execution.None.Bind(default(CompositeExecution));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
@@ -129,7 +260,7 @@ namespace YggdrAshill.Ragnarok.Specification
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                process.Termination().Bind(default(CompositeTermination));
+                Termination.None.Bind(default(CompositeTermination));
             });
           
             Assert.Throws<ArgumentNullException>(() =>
@@ -138,7 +269,16 @@ namespace YggdrAshill.Ragnarok.Specification
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                abortion.Bind(default);
+                Abortion.None.Bind(default);
+            });
+        }
+
+        [Test]
+        public void CannotBeConvertedIntoDisposableWithNull()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var disposable = default(ITermination).ToDisposable();
             });
         }
     }

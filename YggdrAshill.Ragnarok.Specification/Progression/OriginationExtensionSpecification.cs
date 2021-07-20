@@ -46,7 +46,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var origination = new FakeOrigination().When(default);
+                var origination = new FakeOrigination().When(default(ICondition));
             });
 
             Assert.Throws<ArgumentNullException>(() =>

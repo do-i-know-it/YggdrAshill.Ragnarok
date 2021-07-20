@@ -1,12 +1,12 @@
-﻿using YggdrAshill.Ragnarok.Progression;
+using YggdrAshill.Ragnarok.Progression;
 using System;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
-    internal class ErroredExection :
+    internal class ErroredExecution :
         IExecution
     {
-        internal ErroredExection(Exception expected)
+        internal ErroredExecution(Exception expected)
         {
             Expected = expected;
         }

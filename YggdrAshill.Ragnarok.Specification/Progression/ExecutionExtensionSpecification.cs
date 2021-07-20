@@ -28,7 +28,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource("TestSuiteForAbortion")]
         public void ShouldBeBoundToAbortion(Exception expected)
         {
-            var execution = new ErroredExection(expected);
+            var execution = new ErroredExecution(expected);
             var abortion = new FakeAbortion();
 
             execution.Bind(abortion).Execute();
