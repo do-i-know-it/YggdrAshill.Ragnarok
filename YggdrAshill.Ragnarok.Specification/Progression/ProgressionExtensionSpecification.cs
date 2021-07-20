@@ -66,15 +66,17 @@ namespace YggdrAshill.Ragnarok.Specification
         public void OriginationShouldBeBoundToAbortion(Exception expected)
         {
             var aborted = default(Exception);
-            new ErroredOrigination(expected).Bind(exception =>
-            {
-                if (exception == null)
+            new ErroredOrigination(expected)
+                .Bind(exception =>
                 {
-                    throw new ArgumentNullException(nameof(exception));
-                }
+                    if (exception == null)
+                    {
+                        throw new ArgumentNullException(nameof(exception));
+                    }
 
-                aborted = exception;
-            }).Originate();
+                    aborted = exception;
+                })
+                .Originate();
 
             Assert.AreEqual(expected, aborted);
         }
@@ -83,15 +85,17 @@ namespace YggdrAshill.Ragnarok.Specification
         public void TerminationShouldBeBoundToAbortion(Exception expected)
         {
             var aborted = default(Exception);
-            new ErroredTermination(expected).Bind(exception =>
-            {
-                if (exception == null)
+            new ErroredTermination(expected)
+                .Bind(exception =>
                 {
-                    throw new ArgumentNullException(nameof(exception));
-                }
+                    if (exception == null)
+                    {
+                        throw new ArgumentNullException(nameof(exception));
+                    }
 
-                aborted = exception;
-            }).Terminate();
+                    aborted = exception;
+                })
+                .Terminate();
 
             Assert.AreEqual(expected, aborted);
         }
@@ -100,15 +104,17 @@ namespace YggdrAshill.Ragnarok.Specification
         public void ExecutionShouldBeBoundToAbortion(Exception expected)
         {
             var aborted = default(Exception);
-            new ErroredExecution(expected).Bind(exception =>
-            {
-                if (exception == null)
+            new ErroredExecution(expected)
+                .Bind(exception =>
                 {
-                    throw new ArgumentNullException(nameof(exception));
-                }
+                    if (exception == null)
+                    {
+                        throw new ArgumentNullException(nameof(exception));
+                    }
 
-                aborted = exception;
-            }).Execute();
+                    aborted = exception;
+                })
+                .Execute();
 
             Assert.AreEqual(expected, aborted);
         }
