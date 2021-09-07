@@ -6,7 +6,7 @@ namespace YggdrAshill.Ragnarok.Progression
     public interface IOrigination
     {
         /// <summary>
-        /// Initializes.
+        /// Originates.
         /// </summary>
         void Originate();
     }

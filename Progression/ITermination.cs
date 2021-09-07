@@ -6,7 +6,7 @@ namespace YggdrAshill.Ragnarok.Progression
     public interface ITermination
     {
         /// <summary>
-        /// Finalize. 
+        /// Terminates. 
         /// </summary>
         void Terminate();
     }
