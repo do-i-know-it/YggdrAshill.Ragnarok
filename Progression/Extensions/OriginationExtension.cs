@@ -25,6 +25,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="condition"/> is null.
         /// </exception>
+        [Obsolete]
         public static IOrigination When(this IOrigination origination, ICondition condition)
         {
             if (origination == null)
@@ -82,6 +83,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
         /// </exception>
+        [Obsolete]
         public static IOrigination Bind(this IOrigination origination, IAbortion abortion)
         {
             if (origination == null)

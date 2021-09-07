@@ -25,6 +25,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="condition"/> is null.
         /// </exception>
+        [Obsolete]
         public static ITermination When(this ITermination termination, ICondition condition)
         {
             if (termination == null)
@@ -82,6 +83,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
         /// </exception>
+        [Obsolete]
         public static ITermination Bind(this ITermination termination, IAbortion abortion)
         {
             if (termination == null)

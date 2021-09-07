@@ -34,6 +34,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="unsatisfied"/> is null.
         /// </exception>
+        [Obsolete]
         public static IOrigination Combine(this ICondition condition, IOrigination satisfied, IOrigination unsatisfied)
         {
             if (condition == null)
@@ -111,6 +112,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="unsatisfied"/> is null.
         /// </exception>
+        [Obsolete]
         public static ITermination Combine(this ICondition condition, ITermination satisfied, ITermination unsatisfied)
         {
             if (condition == null)
@@ -188,6 +190,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="unsatisfied"/> is null.
         /// </exception>
+        [Obsolete]
         public static IExecution Combine(this ICondition condition, IExecution satisfied, IExecution unsatisfied)
         {
             if (condition == null)

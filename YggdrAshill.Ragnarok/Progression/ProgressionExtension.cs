@@ -96,6 +96,7 @@ namespace YggdrAshill.Ragnarok
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="condition"/> is null.
         /// </exception>
+        [Obsolete]
         public static IOrigination When(this IOrigination origination, Func<bool> condition)
         {
             if (origination == null)
@@ -125,6 +126,7 @@ namespace YggdrAshill.Ragnarok
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
         /// </exception>
+        [Obsolete]
         public static IOrigination Bind(this IOrigination origination, Action<Exception> abortion)
         {
             if (origination == null)
@@ -154,6 +156,7 @@ namespace YggdrAshill.Ragnarok
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
         /// </exception>
+        [Obsolete]
         public static IOrigination Bind(this IOrigination origination, Action abortion)
         {
             if (origination == null)
@@ -219,6 +222,7 @@ namespace YggdrAshill.Ragnarok
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="condition"/> is null.
         /// </exception>
+        [Obsolete]
         public static ITermination When(this ITermination termination, Func<bool> condition)
         {
             if (termination == null)
@@ -248,6 +252,7 @@ namespace YggdrAshill.Ragnarok
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
         /// </exception>
+        [Obsolete]
         public static ITermination Bind(this ITermination termination, Action<Exception> abortion)
         {
             if (termination == null)
@@ -277,6 +282,7 @@ namespace YggdrAshill.Ragnarok
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="abortion"/> is null.
         /// </exception>
+        [Obsolete]
         public static ITermination Bind(this ITermination termination, Action abortion)
         {
             if (termination == null)
@@ -332,6 +338,7 @@ namespace YggdrAshill.Ragnarok
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="termination"/> is null.
         /// </exception>
+        [Obsolete]
         public static IDisposable ToDisposable(this ITermination termination)
         {
             if (termination == null)

@@ -19,6 +19,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="process"/> is null.
         /// </exception>
+        [Obsolete]
         public static IExecution Execution(this IProcess process)
         {
             if (process == null)
