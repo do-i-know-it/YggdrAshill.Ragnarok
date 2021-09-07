@@ -19,6 +19,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="period"/> is null.
         /// </exception>
+        [Obsolete]
         public static IOrigination Origination(this IPeriod period)
         {
             if (period == null)
@@ -41,6 +42,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="period"/> is null.
         /// </exception>
+        [Obsolete]
         public static ITermination Termination(this IPeriod period)
         {
             if (period == null)
