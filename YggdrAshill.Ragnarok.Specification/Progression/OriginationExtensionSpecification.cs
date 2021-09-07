@@ -7,17 +7,6 @@ namespace YggdrAshill.Ragnarok.Specification
     [TestFixture(TestOf = typeof(OriginationExtension))]
     internal class OriginationExtensionSpecification
     {
-        [TestCase(true)]
-        [TestCase(false)]
-        public void ShouldBeBoundToCondition(bool expected)
-        {
-            var origination = new FakeOrigination();
-
-            origination.When(new FakeCondition(expected)).Originate();
-
-            Assert.AreEqual(expected, origination.Originated);
-        }
-
         private static object[] TestSuiteForAbortion => new[]
         {
             new Exception(),

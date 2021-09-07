@@ -16,22 +16,6 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldConvertPeriodIntoOrigination()
-        {
-            period.Origination().Originate();
-
-            Assert.IsTrue(period.Originated);
-        }
-
-        [Test]
-        public void ShouldConvertPeriodIntoTermination()
-        {
-            period.Termination().Terminate();
-
-            Assert.IsTrue(period.Terminated);
-        }
-
-        [Test]
         public void ShouldInitializeThenFinalize()
         {
             using (period.Initialize())
@@ -48,20 +32,6 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var disposable = default(IPeriod).Initialize();
-            });
-        }
-
-        [Test]
-        public void CannotConvertWithNull()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var origination = default(IPeriod).Origination();
-            });
-
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var termination = default(IPeriod).Termination();
             });
         }
     }

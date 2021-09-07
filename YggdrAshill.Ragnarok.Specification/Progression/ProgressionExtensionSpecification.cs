@@ -37,67 +37,11 @@ namespace YggdrAshill.Ragnarok.Specification
 
         [TestCase(true)]
         [TestCase(false)]
-        public void OriginationShouldBeBoundToCondition(bool expected)
-        {
-            origination.When(() => expected).Originate();
-
-            Assert.AreEqual(expected, origination.Originated);
-        }
-
-        [TestCase(true)]
-        [TestCase(false)]
         public void ExecutionShouldBeBoundToCondition(bool expected)
         {
             execution.When(() => expected).Execute();
 
             Assert.AreEqual(expected, execution.Executed);
-        }
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TerminationShouldBeBoundToCondition(bool expected)
-        {
-            termination.When(() => expected).Terminate();
-
-            Assert.AreEqual(expected, termination.Terminated);
-        }
-
-        [TestCaseSource("TestSuiteForAbortion")]
-        public void OriginationShouldBeBoundToAbortion(Exception expected)
-        {
-            var aborted = default(Exception);
-            new ErroredOrigination(expected)
-                .Bind(exception =>
-                {
-                    if (exception == null)
-                    {
-                        throw new ArgumentNullException(nameof(exception));
-                    }
-
-                    aborted = exception;
-                })
-                .Originate();
-
-            Assert.AreEqual(expected, aborted);
-        }
-
-        [TestCaseSource("TestSuiteForAbortion")]
-        public void TerminationShouldBeBoundToAbortion(Exception expected)
-        {
-            var aborted = default(Exception);
-            new ErroredTermination(expected)
-                .Bind(exception =>
-                {
-                    if (exception == null)
-                    {
-                        throw new ArgumentNullException(nameof(exception));
-                    }
-
-                    aborted = exception;
-                })
-                .Terminate();
-
-            Assert.AreEqual(expected, aborted);
         }
 
         [TestCaseSource("TestSuiteForAbortion")]
@@ -170,25 +114,8 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void TerminationShouldBeConvertedIntoDisposable()
-        {
-            termination.ToDisposable().Dispose();
-
-            Assert.IsTrue(termination.Terminated);
-        }
-
-        [Test]
         public void CannotBeBoundToConditionWithNull()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var origination = default(IOrigination).When(() => false);
-            });
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var origination = Origination.None.When(default);
-            });
-
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var execution = default(IExecution).When(() => false);
@@ -197,15 +124,6 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 var execution = Execution.None.When(default);
             });
-
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var termination = default(ITermination).When(() => false);
-            });
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var termination = Termination.None.When(default);
-            });
         }
 
         [Test]
@@ -213,29 +131,11 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var origination = default(IOrigination).Bind(_ => { });
-            });
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var origination = Origination.None.Bind(default(Action<Exception>));
-            });
-
-            Assert.Throws<ArgumentNullException>(() =>
-            {
                 var execution = default(IExecution).Bind(_ => { });
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var execution = Execution.None.Bind(default(Action<Exception>));
-            });
-
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var termination = default(ITermination).Bind(_ => { });
-            });
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var termination = Termination.None.Bind(default(Action<Exception>));
             });
         }
 
@@ -276,15 +176,6 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.Throws<ArgumentNullException>(() =>
             {
                 Abortion.None.Bind(default);
-            });
-        }
-
-        [Test]
-        public void CannotBeConvertedIntoDisposableWithNull()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var disposable = default(ITermination).ToDisposable();
             });
         }
     }

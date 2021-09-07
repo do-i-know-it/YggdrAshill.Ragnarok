@@ -10,12 +10,12 @@ namespace YggdrAshill.Ragnarok.Specification
         public void ShouldExecuteActionWhenHasTerminated()
         {
             var expected = false;
-            var origination = Termination.Of(() =>
+            var termination = Termination.Of(() =>
             {
                 expected = true;
             });
 
-            origination.Terminate();
+            termination.Terminate();
 
             Assert.IsTrue(expected);
         }
@@ -25,7 +25,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var origination = Termination.Of(null);
+                var termination = Termination.Of(null);
             });
         }
     }
