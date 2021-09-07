@@ -37,9 +37,9 @@ namespace YggdrAshill.Ragnarok.Specification
 
         [TestCase(true)]
         [TestCase(false)]
-        public void ExecutionShouldBeBoundToCondition(bool expected)
+        public void ExecutionShouldBindCondition(bool expected)
         {
-            execution.When(() => expected).Execute();
+            execution.If(() => expected).Execute();
 
             Assert.AreEqual(expected, execution.Executed);
         }
@@ -110,15 +110,15 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotBeBoundToConditionWithNull()
+        public void ExecutionCannotBindConditionWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = default(IExecution).When(() => false);
+                var bound = default(IExecution).If(() => false);
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = Execution.None.When(default);
+                var bound = Execution.None.If(default);
             });
         }
 

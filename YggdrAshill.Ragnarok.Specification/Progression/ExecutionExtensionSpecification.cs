@@ -11,19 +11,25 @@ namespace YggdrAshill.Ragnarok.Specification
 
         private FakePeriod period;
 
+        private FakeAbortion abortion;
+
         [SetUp]
         public void SetUp()
         {
             execution = new FakeExecution();
 
             period = new FakePeriod();
+
+            abortion = new FakeAbortion();
         }
 
         [TestCase(true)]
         [TestCase(false)]
-        public void ShouldBeBoundToCondition(bool expected)
+        public void ShouldBindToCondition(bool expected)
         {
-            execution.When(new FakeCondition(expected)).Execute();
+            var bound = execution.If(new FakeCondition(expected));
+
+            bound.Execute();
 
             Assert.AreEqual(expected, execution.Executed);
         }
@@ -39,7 +45,6 @@ namespace YggdrAshill.Ragnarok.Specification
         public void ShouldBeBoundToAbortion(Exception expected)
         {
             var errored = new ErroredExecution(expected);
-            var abortion = new FakeAbortion();
 
             var bound = errored.Bind(abortion);
 
@@ -61,26 +66,30 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotBeBoundWithNull()
+        public void CannotBindConditionWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = default(IExecution).When(new FakeCondition(false));
+                var bound = default(IExecution).If(new FakeCondition(false));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = new FakeExecution().When(default);
+                var bound = execution.If(default(ICondition));
+            });
+        }
+
+        [Test]
+        public void CannotBindWithNull()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var bound = default(IExecution).Bind(abortion);
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var execution = default(IExecution).Bind(new FakeAbortion());
-            });
-
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var execution = new FakeExecution().Bind(default(IAbortion));
+                var bound = execution.Bind(default(IAbortion));
             });
         }
 

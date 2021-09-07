@@ -25,6 +25,7 @@ namespace YggdrAshill.Ragnarok.Progression
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="condition"/> is null.
         /// </exception>
+        [Obsolete("Please use YggdrAshill.Ragnarok.Progression.ExecutionExtension.If instead.")]
         public static IExecution When(this IExecution execution, ICondition condition)
         {
             if (execution == null)
@@ -36,16 +37,47 @@ namespace YggdrAshill.Ragnarok.Progression
                 throw new ArgumentNullException(nameof(condition));
             }
 
-            return new ExecuteWhenConditionIsSatisfied(condition, execution);
+            return execution.If(condition);
         }
-        private sealed class ExecuteWhenConditionIsSatisfied :
+        /// <summary>
+        /// Binds <see cref="ICondition"/>.
+        /// </summary>
+        /// <param name="execution">
+        /// <see cref="IExecution"/> executed when <paramref name="condition"/> is satisfied.
+        /// </param>
+        /// <param name="condition">
+        /// <see cref="ICondition"/> to bind.
+        /// </param>
+        /// <returns>
+        /// <see cref="IExecution"/> bound.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="execution"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="condition"/> is null.
+        /// </exception>
+        public static IExecution If(this IExecution execution, ICondition condition)
+        {
+            if (execution == null)
+            {
+                throw new ArgumentNullException(nameof(execution));
+            }
+            if (condition == null)
+            {
+                throw new ArgumentNullException(nameof(condition));
+            }
+
+            return new IfConditionIsSatisfied(condition, execution);
+        }
+        private sealed class IfConditionIsSatisfied :
             IExecution
         {
             private readonly ICondition condition;
 
             private readonly IExecution execution;
 
-            internal ExecuteWhenConditionIsSatisfied(ICondition condition, IExecution execution)
+            internal IfConditionIsSatisfied(ICondition condition, IExecution execution)
             {
                 this.condition = condition;
 
@@ -61,6 +93,79 @@ namespace YggdrAshill.Ragnarok.Progression
                 }
 
                 execution.Execute();
+            }
+        }
+
+        /// <summary>
+        /// Binds <see cref="ICondition"/>.
+        /// </summary>
+        /// <param name="execution">
+        /// <see cref="IExecution"/> executed when <paramref name="condition"/> is satisfied.
+        /// </param>
+        /// <param name="condition">
+        /// <see cref="ICondition"/> to bind.
+        /// </param>
+        /// <param name="otherwise">
+        /// <see cref="IExecution"/> executed when <paramref name="condition"/> is not satisfied.
+        /// </param>
+        /// <returns>
+        /// <see cref="IExecution"/> bound.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="execution"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="condition"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="otherwise"/> is null.
+        /// </exception>
+        public static IExecution If(this IExecution execution, ICondition condition, IExecution otherwise)
+        {
+            if (execution == null)
+            {
+                throw new ArgumentNullException(nameof(execution));
+            }
+            if (condition == null)
+            {
+                throw new ArgumentNullException(nameof(condition));
+            }
+            if (otherwise == null)
+            {
+                throw new ArgumentNullException(nameof(otherwise));
+            }
+
+            return new Branch(execution, condition, otherwise);
+        }
+        private sealed class Branch :
+            IExecution
+        {
+            private readonly IExecution execution;
+
+            private readonly ICondition condition;
+
+            private readonly IExecution otherwise;
+
+            public Branch(IExecution execution, ICondition condition, IExecution otherwise)
+            {
+                this.execution = execution;
+
+                this.condition = condition;
+
+                this.otherwise = otherwise;
+            }
+
+            /// <inheritdoc/>
+            public void Execute()
+            {
+                if (condition.IsSatisfied)
+                {
+                    execution.Execute();
+                }
+                else
+                {
+                    otherwise.Execute();
+                }
             }
         }
 

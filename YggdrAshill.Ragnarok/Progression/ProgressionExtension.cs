@@ -348,6 +348,7 @@ namespace YggdrAshill.Ragnarok
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="condition"/> is null.
         /// </exception>
+        [Obsolete("Please use YggdrAshill.Ragnarok.ProgressionExtension.If instead.")]
         public static IExecution When(this IExecution execution, Func<bool> condition)
         {
             if (execution == null)
@@ -359,7 +360,38 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(condition));
             }
 
-            return execution.When(Condition.Of(condition));
+            return execution.If(condition);
+        }
+        /// <summary>
+        /// Binds <see cref="Func{TResult}"/>.
+        /// </summary>
+        /// <param name="execution">
+        /// <see cref="IExecution"/> executed when <paramref name="condition"/> is satisfied.
+        /// </param>
+        /// <param name="condition">
+        /// <see cref="ICondition"/> to bind.
+        /// </param>
+        /// <returns>
+        /// <see cref="IExecution"/> bound.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="execution"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="condition"/> is null.
+        /// </exception>
+        public static IExecution If(this IExecution execution, Func<bool> condition)
+        {
+            if (execution == null)
+            {
+                throw new ArgumentNullException(nameof(execution));
+            }
+            if (condition == null)
+            {
+                throw new ArgumentNullException(nameof(condition));
+            }
+
+            return execution.If(Condition.Of(condition));
         }
 
         /// <summary>
