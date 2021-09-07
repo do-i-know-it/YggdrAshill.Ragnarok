@@ -12,7 +12,9 @@ namespace YggdrAshill.Ragnarok.Specification
         public void ShouldBeInverted(bool expected)
         {
             var condition = new FakeCondition(expected);
-            Assert.AreEqual(!condition.IsSatisfied, condition.Not().IsSatisfied);
+            var inverted = condition.Not();
+
+            Assert.AreEqual(!condition.IsSatisfied, inverted.IsSatisfied);
         }
 
         [TestCase(true, true, true)]
@@ -21,7 +23,9 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCase(false, false, false)]
         public void ShouldBeAdded(bool one, bool another, bool expected)
         {
-            Assert.AreEqual(expected, new FakeCondition(one).Or(new FakeCondition(another)).IsSatisfied);
+            var added = new FakeCondition(one).Or(new FakeCondition(another));
+
+            Assert.AreEqual(expected, added.IsSatisfied);
         }
 
         [TestCase(true, true, true)]
@@ -30,7 +34,9 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCase(false, false, false)]
         public void ShouldBeMultiplied(bool one, bool another, bool expected)
         {
-            Assert.AreEqual(expected, new FakeCondition(one).And(new FakeCondition(another)).IsSatisfied);
+            var multiplied = new FakeCondition(one).And(new FakeCondition(another));
+
+            Assert.AreEqual(expected, multiplied.IsSatisfied);
         }
 
         [Test]
@@ -38,7 +44,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var condition = default(ICondition).Not();
+                var inverted = default(ICondition).Not();
             });
         }
 
@@ -47,12 +53,12 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var condition = default(ICondition).Or(new FakeCondition(false));
+                var added = default(ICondition).Or(new FakeCondition(false));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var condition = new FakeCondition(false).Or(default);
+                var added = new FakeCondition(false).Or(default);
             });
         }
 
@@ -61,12 +67,12 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var condition = default(ICondition).And(new FakeCondition(false));
+                var multiplied = default(ICondition).And(new FakeCondition(false));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var condition = new FakeCondition(false).And(default);
+                var multiplied = new FakeCondition(false).And(default);
             });
         }
     }

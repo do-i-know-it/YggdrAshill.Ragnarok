@@ -6,8 +6,15 @@ namespace YggdrAshill.Ragnarok.Specification
     [TestFixture(TestOf = typeof(Abortion))]
     internal class AbortionSpecification
     {
-        [Test]
-        public void ShouldExecuteActionWhenHasAborted()
+        private static object[] TestSuiteForAbortion => new[]
+        {
+            new Exception(),
+            new NotImplementedException(),
+            new NotSupportedException(),
+            new InvalidOperationException(),
+        };
+        [TestCaseSource("TestSuiteForAbortion")]
+        public void ShouldExecuteActionWhenHasAborted(Exception exception)
         {
             var expected = false;
             var abortion = Abortion.Of(() =>
@@ -15,7 +22,7 @@ namespace YggdrAshill.Ragnarok.Specification
                 expected = true;
             });
 
-            abortion.Abort(new Exception());
+            abortion.Abort(exception);
 
             Assert.IsTrue(expected);
         }
@@ -41,7 +48,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                abortion.Abort(null);
+                abortion.Abort(default);
             });
         }
     }
