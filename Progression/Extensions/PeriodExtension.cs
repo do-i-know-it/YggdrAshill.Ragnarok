@@ -74,21 +74,7 @@ namespace YggdrAshill.Ragnarok.Progression
 
             period.Originate();
 
-            return new DisposeToFinalize(period);
-        }
-        private sealed class DisposeToFinalize : IDisposable
-        {
-            private readonly IPeriod period;
-
-            internal DisposeToFinalize(IPeriod period)
-            {
-                this.period = period;
-            }
-
-            public void Dispose()
-            {
-                period.Terminate();
-            }
+            return period.ToDisposable();
         }
     }
 }

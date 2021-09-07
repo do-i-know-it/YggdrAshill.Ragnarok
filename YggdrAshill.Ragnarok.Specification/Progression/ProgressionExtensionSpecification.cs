@@ -89,18 +89,6 @@ namespace YggdrAshill.Ragnarok.Specification
             termination.Terminate();
         }
 
-        [Test]
-        public void TerminationShouldBeBoundToComposite()
-        {
-            var composite = new CompositeTermination();
-
-            termination.Bind(composite);
-
-            composite.Terminate();
-
-            Assert.IsTrue(termination.Terminated);
-        }
-        
         [TestCaseSource("TestSuiteForAbortion")]
         public void AbortionShouldBeBoundToComposite(Exception expected)
         {
@@ -111,6 +99,14 @@ namespace YggdrAshill.Ragnarok.Specification
             composite.Abort(expected);
 
             Assert.AreEqual(expected, abortion.Aborted);
+        }
+
+        [Test]
+        public void TerminationShouldBeConvertedIntoDisposable()
+        {
+            termination.ToDisposable().Dispose();
+
+            Assert.IsTrue(termination.Terminated);
         }
 
         [Test]

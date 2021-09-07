@@ -8,6 +8,52 @@ namespace YggdrAshill.Ragnarok.Progression
     public static class TerminationExtension
     {
         /// <summary>
+        /// Converts <see cref="ITermination"/> into <see cref="IDisposable"/>.
+        /// </summary>
+        /// <param name="termination">
+        /// <see cref="ITermination"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="IDisposable"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="termination"/> is null.
+        /// </exception>
+        public static IDisposable ToDisposable(this ITermination termination)
+        {
+            if (termination == null)
+            {
+                throw new ArgumentNullException(nameof(termination));
+            }
+
+            return new DisposeToTerminate(termination);
+        }
+        private sealed class DisposeToTerminate :
+            IDisposable
+        {
+            private readonly ITermination termination;
+
+            private bool disposed;
+
+            internal DisposeToTerminate(ITermination termination)
+            {
+                this.termination = termination;
+            }
+
+            public void Dispose()
+            {
+                if (disposed)
+                {
+                    throw new ObjectDisposedException(nameof(ITermination));
+                }
+
+                termination.Terminate();
+
+                disposed = true;
+            }
+        }
+
+        /// <summary>
         /// Binds <see cref="ITermination"/> to <see cref="ICondition"/>.
         /// </summary>
         /// <param name="termination">

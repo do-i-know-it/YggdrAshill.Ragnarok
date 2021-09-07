@@ -326,53 +326,6 @@ namespace YggdrAshill.Ragnarok
             composite.Bind(termination);
         }
 
-        /// <summary>
-        /// Converts <see cref="ITermination"/> into <see cref="IDisposable"/>.
-        /// </summary>
-        /// <param name="termination">
-        /// <see cref="ITermination"/>.
-        /// </param>
-        /// <returns>
-        /// <see cref="IDisposable"/>.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="termination"/> is null.
-        /// </exception>
-        [Obsolete]
-        public static IDisposable ToDisposable(this ITermination termination)
-        {
-            if (termination == null)
-            {
-                throw new ArgumentNullException(nameof(termination));
-            }
-
-            return new Disposable(termination);
-        }
-        private sealed class Disposable :
-            IDisposable
-        {
-            private readonly ITermination termination;
-
-            private bool disposed;
-
-            internal Disposable(ITermination termination)
-            {
-                this.termination = termination;
-            }
-
-            public void Dispose()
-            {
-                if (disposed)
-                {
-                    throw new ObjectDisposedException(nameof(ITermination));
-                }
-
-                termination.Terminate();
-
-                disposed = true;
-            }
-        }
-
         #endregion
 
         #region Execute
