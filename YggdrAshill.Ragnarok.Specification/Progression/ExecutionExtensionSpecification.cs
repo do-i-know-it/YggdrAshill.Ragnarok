@@ -7,12 +7,22 @@ namespace YggdrAshill.Ragnarok.Specification
     [TestFixture(TestOf = typeof(ExecutionExtension))]
     internal class ExecutionExtensionSpecification
     {
+        private FakeExecution execution;
+
+        private FakePeriod period;
+
+        [SetUp]
+        public void SetUp()
+        {
+            execution = new FakeExecution();
+
+            period = new FakePeriod();
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void ShouldBeBoundToCondition(bool expected)
         {
-            var execution = new FakeExecution();
-
             execution.When(new FakeCondition(expected)).Execute();
 
             Assert.AreEqual(expected, execution.Executed);
@@ -28,12 +38,26 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource("TestSuiteForAbortion")]
         public void ShouldBeBoundToAbortion(Exception expected)
         {
-            var execution = new ErroredExecution(expected);
+            var errored = new ErroredExecution(expected);
             var abortion = new FakeAbortion();
 
-            execution.Bind(abortion).Execute();
+            var bound = errored.Bind(abortion);
 
-            Assert.AreEqual(execution.Expected, abortion.Aborted);
+            bound.Execute();
+
+            Assert.AreEqual(errored.Expected, abortion.Aborted);
+        }
+
+        [Test]
+        public void ShouldTransactInPeriod()
+        {
+            var transaction = execution.In(period);
+
+            transaction.Execute();
+
+            Assert.IsTrue(period.Originated);
+            Assert.IsTrue(execution.Executed);
+            Assert.IsTrue(period.Terminated);
         }
 
         [Test]
@@ -57,6 +81,20 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var execution = new FakeExecution().Bind(default(IAbortion));
+            });
+        }
+
+        [Test]
+        public void CannotTransactWithNull()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var transaction = default(IExecution).In(period);
+            });
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var transaction = execution.In(default);
             });
         }
     }

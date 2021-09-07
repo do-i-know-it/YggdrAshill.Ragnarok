@@ -122,5 +122,37 @@ namespace YggdrAshill.Ragnarok.Progression
                 }
             }
         }
+
+        /// <summary>
+        /// Transacts <see cref="IExecution"/> in <see cref="IPeriod"/>.
+        /// </summary>
+        /// <param name="execution">
+        /// <see cref="IExecution"/> executed in <paramref name="period"/>.
+        /// </param>
+        /// <param name="period">
+        /// <see cref="IPeriod"/> for transaction scope.
+        /// </param>
+        /// <returns>
+        /// <see cref="IExecution"/> for transaction.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="execution"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="period"/> is null.
+        /// </exception>
+        public static IExecution In(this IExecution execution, IPeriod period)
+        {
+            if (execution == null)
+            {
+                throw new ArgumentNullException(nameof(execution));
+            }
+            if (period == null)
+            {
+                throw new ArgumentNullException(nameof(period));
+            }
+
+            return period.Transact(execution);
+        }
     }
 }
