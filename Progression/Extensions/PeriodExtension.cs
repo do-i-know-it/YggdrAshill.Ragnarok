@@ -50,5 +50,43 @@ namespace YggdrAshill.Ragnarok.Progression
 
             return period;
         }
+
+        /// <summary>
+        /// Initializes <see cref="IPeriod"/>.
+        /// </summary>
+        /// <param name="period">
+        /// <see cref="IPeriod"/> to initialize.
+        /// </param>
+        /// <returns>
+        /// <see cref="IDisposable"/> to finalize period.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="period"/> is null.
+        /// </exception>
+        public static IDisposable Initialize(this IPeriod period)
+        {
+            if (period == null)
+            {
+                throw new ArgumentNullException(nameof(period));
+            }
+
+            period.Originate();
+
+            return new DisposeToFinalize(period);
+        }
+        private sealed class DisposeToFinalize : IDisposable
+        {
+            private readonly IPeriod period;
+
+            internal DisposeToFinalize(IPeriod period)
+            {
+                this.period = period;
+            }
+
+            public void Dispose()
+            {
+                period.Terminate();
+            }
+        }
     }
 }
