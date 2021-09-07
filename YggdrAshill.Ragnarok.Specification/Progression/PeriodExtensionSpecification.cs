@@ -32,26 +32,6 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldInitializeThenFinalize()
-        {
-            using (period.Initialize())
-            {
-                Assert.IsTrue(period.Originated);
-            }
-
-            Assert.IsTrue(period.Terminated);
-        }
-
-        [Test]
-        public void CannotInitializeWithNull()
-        {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var disposable = default(IPeriod).Initialize();
-            });
-        }
-
-        [Test]
         public void CannotConvertWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
