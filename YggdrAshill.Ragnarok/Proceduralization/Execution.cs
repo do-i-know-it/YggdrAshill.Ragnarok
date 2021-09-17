@@ -1,6 +1,7 @@
+using YggdrAshill.Ragnarok.Proceduralization;
 using System;
 
-namespace YggdrAshill.Ragnarok.Proceduralization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Implementation of <see cref="IExecution"/>.

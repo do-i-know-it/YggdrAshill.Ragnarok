@@ -1,5 +1,6 @@
 using NUnit.Framework;
-using YggdrAshill.Ragnarok.Progression;
+using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Proceduralization;
 using System;
 
 namespace YggdrAshill.Ragnarok.Specification
@@ -9,101 +10,79 @@ namespace YggdrAshill.Ragnarok.Specification
     {
         private FakeExecution execution;
 
-        private FakePeriod period;
+        private FakeOrigination origination;
 
-        private FakeAbortion abortion;
+        private FakeTermination termination;
 
         [SetUp]
         public void SetUp()
         {
             execution = new FakeExecution();
 
-            period = new FakePeriod();
+            origination = new FakeOrigination();
 
-            abortion = new FakeAbortion();
-        }
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void ShouldBindToCondition(bool expected)
-        {
-            var bound = execution.If(new FakeCondition(expected));
-
-            bound.Execute();
-
-            Assert.AreEqual(expected, execution.Executed);
-        }
-
-        private static object[] TestSuiteForAbortion => new[]
-        {
-            new Exception(),
-            new NotImplementedException(),
-            new NotSupportedException(),
-            new InvalidOperationException(),
-        };
-        [TestCaseSource("TestSuiteForAbortion")]
-        public void ShouldBeBoundToAbortion(Exception expected)
-        {
-            var errored = new ErroredExecution(expected);
-
-            var bound = errored.Bind(abortion);
-
-            bound.Execute();
-
-            Assert.AreEqual(errored.Expected, abortion.Aborted);
+            termination = new FakeTermination();
         }
 
         [Test]
-        public void ShouldTransactInPeriod()
+        public void ShouldBeConvertedToPlanWithSpan()
         {
-            var transaction = execution.In(period);
+            var span = origination.To(termination);
 
-            transaction.Execute();
+            var plan = execution.In(span);
 
-            Assert.IsTrue(period.Originated);
-            Assert.IsTrue(execution.Executed);
-            Assert.IsTrue(period.Terminated);
+            using (plan.Scope())
+            {
+                Assert.IsTrue(origination.Originated);
+
+                plan.Execute();
+
+                Assert.IsTrue(execution.Executed);
+            }
+
+            Assert.IsTrue(termination.Terminated);
         }
 
         [Test]
-        public void CannotBindConditionWithNull()
+        public void ShouldBeConvertedToPlanWithOriginationAndTermination()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var bound = default(IExecution).If(new FakeCondition(false));
-            });
+            var plan = execution.In(origination, termination);
 
-            Assert.Throws<ArgumentNullException>(() =>
+            using (plan.Scope())
             {
-                var bound = execution.If(default(ICondition));
-            });
+                Assert.IsTrue(origination.Originated);
+
+                plan.Execute();
+
+                Assert.IsTrue(execution.Executed);
+            }
+
+            Assert.IsTrue(termination.Terminated);
         }
 
         [Test]
-        public void CannotBindWithNull()
+        public void CannotBeConvertedWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var bound = default(IExecution).Bind(abortion);
+                var plan = default(IExecution).In(origination.To(termination));
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var plan = execution.In(default(ISpan));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var bound = execution.Bind(default(IAbortion));
+                var plan = default(IExecution).In(origination, termination);
             });
-        }
-
-        [Test]
-        public void CannotTransactWithNull()
-        {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var transaction = default(IExecution).In(period);
+                var plan = execution.In(default(IOrigination), termination);
             });
-
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var transaction = execution.In(default);
+                var plan = execution.In(origination, default(ITermination));
             });
         }
     }

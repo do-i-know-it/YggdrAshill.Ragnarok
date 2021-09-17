@@ -1,4 +1,5 @@
-using YggdrAshill.Ragnarok.Progression;
+using YggdrAshill.Ragnarok.Periodization;
+using System;
 
 namespace YggdrAshill.Ragnarok.Samples
 {
@@ -6,17 +7,38 @@ namespace YggdrAshill.Ragnarok.Samples
     {
         private static void Main(string[] arguments)
         {
-            var application = new ConsoleApplicationForSample();
+            var application
+                = Execution.Of(() =>
+                {
+                    // define a loop for this application.
+                    while (true)
+                    {
+                        Console.WriteLine($"\nPlease enter some text.");
+                        Console.WriteLine($"When quitting this application, enter \"Exit\".");
 
-            var origination = application.Origination().Bind(new AbortOnConsoleApplicationForSample());
-            var execution = application.Execution().Bind(new AbortOnConsoleApplicationForSample());
-            var termination = application.Termination().Bind(new AbortOnConsoleApplicationForSample());
+                        var input = Console.ReadLine();
 
-            using (termination.ToDisposable())
+                        if (input.ToLower() == "exit")
+                        {
+                            return;
+                        }
+
+                        Console.WriteLine($"Executed: {input}");
+                    }
+                })
+                .In(() =>
+                {
+                    // define how to initialize this application.
+                    Console.WriteLine("Originated.");
+                }, () =>
+                {
+                    // define how to finalize this application.
+                    Console.WriteLine("Terminated.");
+                });
+
+            using (application.Scope())
             {
-                origination.Originate();
-
-                execution.Execute();
+                application.Execute();
             }
         }
     }

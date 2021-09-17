@@ -1,6 +1,7 @@
+using YggdrAshill.Ragnarok.Periodization;
 using System;
 
-namespace YggdrAshill.Ragnarok.Periodization
+namespace YggdrAshill.Ragnarok
 {
     public static class PeriodizationExtension
     {

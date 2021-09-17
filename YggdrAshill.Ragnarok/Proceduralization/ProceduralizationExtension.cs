@@ -1,7 +1,7 @@
-using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Proceduralization;
 using System;
 
-namespace YggdrAshill.Ragnarok.Proceduralization
+namespace YggdrAshill.Ragnarok
 {
     public static class ProceduralizationExtension
     {
@@ -20,21 +20,7 @@ namespace YggdrAshill.Ragnarok.Proceduralization
                 throw new ArgumentNullException(nameof(termination));
             }
 
-            return execution.In(Periodization.Origination.Of(origination), Periodization.Termination.Of(termination));
-        }
-
-        public static IPlan Of(this ISpan span, Action execution)
-        {
-            if (span is null)
-            {
-                throw new ArgumentNullException(nameof(span));
-            }
-            if (execution is null)
-            {
-                throw new ArgumentNullException(nameof(execution));
-            }
-
-            return new Execution(execution).In(span);
+            return execution.In(Origination.Of(origination), Termination.Of(termination));
         }
     }
 }
