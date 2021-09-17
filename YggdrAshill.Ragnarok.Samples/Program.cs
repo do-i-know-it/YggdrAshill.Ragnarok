@@ -3,11 +3,20 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Samples
 {
+    /// <summary>
+    /// Defines entry point for the sample application.
+    /// </summary>
     internal sealed class Program
     {
+        /// <summary>
+        /// Entry point for the application.
+        /// </summary>
+        /// <param name="arguments">
+        /// <see cref="string[]"/> received from command line.
+        /// </param>
         private static void Main(string[] arguments)
         {
-            var application
+            var plan
                 = Execution.Of(() =>
                 {
                     // define a loop for this application.
@@ -36,9 +45,9 @@ namespace YggdrAshill.Ragnarok.Samples
                     Console.WriteLine("Terminated.");
                 });
 
-            using (application.Scope())
+            using (plan.Scope())
             {
-                application.Execute();
+                plan.Execute();
             }
         }
     }
