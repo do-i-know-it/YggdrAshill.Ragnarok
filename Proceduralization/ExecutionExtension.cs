@@ -19,7 +19,7 @@ namespace YggdrAshill.Ragnarok.Proceduralization
             return new DelegatedPlan(span, execution);
         }
 
-        public static IPlan In(this IExecution execution, IOrigination origination, ITermination termination)
+        public static IPlan Between(this IExecution execution, IOrigination origination, ITermination termination)
         {
             if (execution is null)
             {

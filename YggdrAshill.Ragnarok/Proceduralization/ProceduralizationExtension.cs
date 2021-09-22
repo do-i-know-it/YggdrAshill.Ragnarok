@@ -5,7 +5,7 @@ namespace YggdrAshill.Ragnarok
 {
     public static class ProceduralizationExtension
     {
-        public static IPlan In(this IExecution execution, Action origination, Action termination)
+        public static IPlan Between(this IExecution execution, Action origination, Action termination)
         {
             if (execution is null)
             {
@@ -20,7 +20,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentNullException(nameof(termination));
             }
 
-            return execution.In(Origination.Of(origination), Termination.Of(termination));
+            return execution.Between(Origination.Of(origination), Termination.Of(termination));
         }
     }
 }

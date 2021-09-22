@@ -46,7 +46,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [Test]
         public void ShouldBeConvertedToPlanWithOriginationAndTermination()
         {
-            var plan = execution.In(origination, termination);
+            var plan = execution.Between(origination, termination);
 
             using (plan.Scope())
             {
@@ -74,15 +74,15 @@ namespace YggdrAshill.Ragnarok.Specification
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = default(IExecution).In(origination, termination);
+                var plan = default(IExecution).Between(origination, termination);
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = execution.In(default(IOrigination), termination);
+                var plan = execution.Between(default(IOrigination), termination);
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = execution.In(origination, default(ITermination));
+                var plan = execution.Between(origination, default(ITermination));
             });
         }
     }

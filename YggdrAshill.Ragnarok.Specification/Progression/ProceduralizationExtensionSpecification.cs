@@ -21,7 +21,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var originated = false;
             var terminated = false;
-            var plan = execution.In(() =>
+            var plan = execution.Between(() =>
             {
                 originated = true;
             }, () =>
@@ -46,15 +46,15 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = default(IExecution).In(() => { }, () => { });
+                var plan = default(IExecution).Between(() => { }, () => { });
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = execution.In(default(Action), () => { });
+                var plan = execution.Between(default(Action), () => { });
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = execution.In(() => { }, default(Action));
+                var plan = execution.Between(() => { }, default(Action));
             });
         }
     }

@@ -35,7 +35,7 @@ namespace YggdrAshill.Ragnarok.Samples
                         Console.WriteLine($"Executed: {input}");
                     }
                 })
-                .In(() =>
+                .Between(() =>
                 {
                     // define how to initialize this application.
                     Console.WriteLine("Originated.");
