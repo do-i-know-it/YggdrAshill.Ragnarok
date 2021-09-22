@@ -1,4 +1,4 @@
-using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Proceduralization;
 using System;
 
 namespace YggdrAshill.Ragnarok.Samples
@@ -16,39 +16,32 @@ namespace YggdrAshill.Ragnarok.Samples
         /// </param>
         private static void Main(string[] arguments)
         {
-            var plan
-                = Execution.Of(() =>
-                {
-                    // define a loop for this application.
-                    while (true)
-                    {
-                        Console.WriteLine($"\nPlease enter some text.");
-                        Console.WriteLine($"When quitting this application, enter \"Exit\".");
-
-                        var input = Console.ReadLine();
-
-                        if (input.ToLower() == "exit")
-                        {
-                            return;
-                        }
-
-                        Console.WriteLine($"Executed: {input}");
-                    }
-                })
-                .Between(() =>
-                {
-                    // define how to initialize this application.
-                    Console.WriteLine("Originated.");
-                }, () =>
-                {
-                    // define how to finalize this application.
-                    Console.WriteLine("Terminated.");
-                });
-
-            using (plan.Scope())
+            Execution.Of(() =>
             {
-                plan.Execute();
-            }
+                // define a loop for this application.
+                while (true)
+                {
+                    Console.WriteLine($"\nPlease enter some text.");
+                    Console.WriteLine($"When quitting this application, enter \"Exit\".");
+
+                    var input = Console.ReadLine();
+
+                    if (input.ToLower() == "exit")
+                    {
+                        return;
+                    }
+
+                    Console.WriteLine($"Executed: {input}");
+                }
+            }).Between(() =>
+            {
+                // define how to initialize this application.
+                Console.WriteLine("Originated.");
+            }, () =>
+            {
+                // define how to finalize this application.
+                Console.WriteLine("Terminated.");
+            }).Run();
         }
     }
 }
