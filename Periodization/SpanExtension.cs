@@ -4,7 +4,7 @@ namespace YggdrAshill.Ragnarok.Periodization
 {
     public static class SpanExtension
     {
-        public static IDisposable Scope(this ISpan span)
+        public static IDisposable Open(this ISpan span)
         {
             if (span is null)
             {

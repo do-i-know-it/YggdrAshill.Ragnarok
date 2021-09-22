@@ -13,7 +13,7 @@ namespace YggdrAshill.Ragnarok.Specification
             var origination = new FakeOrigination();
             var termination = new FakeTermination();
 
-            using (origination.To(termination).Scope())
+            using (origination.To(termination).Open())
             {
                 Assert.IsTrue(origination.Originated);
             }
@@ -26,7 +26,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                using (default(ISpan).Scope())
+                using (default(ISpan).Open())
                 {
 
                 }

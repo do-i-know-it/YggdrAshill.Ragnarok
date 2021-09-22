@@ -29,7 +29,7 @@ namespace YggdrAshill.Ragnarok.Specification
                 terminated = true;
             });
 
-            using (plan.Scope())
+            using (plan.Open())
             {
                 Assert.IsTrue(originated);
 

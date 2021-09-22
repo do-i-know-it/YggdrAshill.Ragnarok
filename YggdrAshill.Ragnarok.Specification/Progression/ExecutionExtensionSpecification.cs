@@ -31,7 +31,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             var plan = execution.In(span);
 
-            using (plan.Scope())
+            using (plan.Open())
             {
                 Assert.IsTrue(origination.Originated);
 
@@ -48,7 +48,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var plan = execution.Between(origination, termination);
 
-            using (plan.Scope())
+            using (plan.Open())
             {
                 Assert.IsTrue(origination.Originated);
 

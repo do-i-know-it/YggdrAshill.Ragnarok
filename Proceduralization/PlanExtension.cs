@@ -12,7 +12,7 @@ namespace YggdrAshill.Ragnarok.Proceduralization
                 throw new ArgumentNullException(nameof(plan));
             }
 
-            using (plan.Scope())
+            using (plan.Open())
             {
                 plan.Execute();
             }
