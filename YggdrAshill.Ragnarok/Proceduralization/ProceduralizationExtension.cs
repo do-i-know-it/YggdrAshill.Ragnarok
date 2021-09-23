@@ -5,7 +5,7 @@ namespace YggdrAshill.Ragnarok
 {
     public static class ProceduralizationExtension
     {
-        public static IPlan Between(this IExecution execution, Action origination, Action termination)
+        public static ICycle Between(this IExecution execution, Action origination, Action termination)
         {
             if (execution is null)
             {

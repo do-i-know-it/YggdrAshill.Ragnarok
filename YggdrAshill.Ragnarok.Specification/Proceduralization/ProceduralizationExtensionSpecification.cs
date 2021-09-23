@@ -1,5 +1,4 @@
-﻿using NUnit.Framework;
-using YggdrAshill.Ragnarok.Periodization;
+using NUnit.Framework;
 using YggdrAshill.Ragnarok.Proceduralization;
 using System;
 
@@ -17,11 +16,11 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldBeConvertedToPlanWithAction()
+        public void ShouldBeConvertedToCycleWithAction()
         {
             var originated = false;
             var terminated = false;
-            var plan = execution.Between(() =>
+            var cycle = execution.Between(() =>
             {
                 originated = true;
             }, () =>
@@ -29,32 +28,33 @@ namespace YggdrAshill.Ragnarok.Specification
                 terminated = true;
             });
 
-            using (plan.Open())
-            {
-                Assert.IsTrue(originated);
+            cycle.Originate();
 
-                plan.Execute();
+            Assert.IsTrue(originated);
 
-                Assert.IsTrue(execution.Executed);
-            }
+            cycle.Execute();
+
+            Assert.IsTrue(execution.Executed);
+
+            cycle.Terminate();
 
             Assert.IsTrue(terminated);
         }
 
         [Test]
-        public void CannotBeConvertedWithNull()
+        public void CannotBeConvertedToCycleWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = default(IExecution).Between(() => { }, () => { });
+                var cycle = default(IExecution).Between(() => { }, () => { });
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = execution.Between(default(Action), () => { });
+                var cycle = execution.Between(default(Action), () => { });
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = execution.Between(() => { }, default(Action));
+                var cycle = execution.Between(() => { }, default(Action));
             });
         }
     }

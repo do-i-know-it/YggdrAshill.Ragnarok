@@ -2,16 +2,20 @@ using YggdrAshill.Ragnarok.Periodization;
 
 namespace YggdrAshill.Ragnarok.Proceduralization
 {
-    internal sealed class DelegatedPlan :
-        IPlan
+    internal sealed class Cycle :
+        ICycle
     {
-        private readonly ISpan span;
+        private readonly IOrigination origination;
+
+        private readonly ITermination termination;
 
         private readonly IExecution execution;
 
-        public DelegatedPlan(ISpan span, IExecution execution)
+        public Cycle(IOrigination origination, ITermination termination, IExecution execution)
         {
-            this.span = span;
+            this.origination = origination;
+
+            this.termination = termination;
 
             this.execution = execution;
         }
@@ -19,13 +23,13 @@ namespace YggdrAshill.Ragnarok.Proceduralization
         /// <inheritdoc/>
         public void Originate()
         {
-            span.Originate();
+            origination.Originate();
         }
 
         /// <inheritdoc/>
         public void Terminate()
         {
-            span.Terminate();
+            termination.Terminate();
         }
 
         /// <inheritdoc/>

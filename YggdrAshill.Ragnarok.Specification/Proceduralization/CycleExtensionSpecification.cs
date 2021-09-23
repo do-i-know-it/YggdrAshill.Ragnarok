@@ -4,8 +4,8 @@ using YggdrAshill.Ragnarok.Proceduralization;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
-    [TestFixture(TestOf = typeof(PlanExtension))]
-    internal class PlanExtensionSpecification
+    [TestFixture(TestOf = typeof(CycleExtension))]
+    internal class CycleExtensionSpecification
     {
         private FakeExecution execution;
 
@@ -26,9 +26,9 @@ namespace YggdrAshill.Ragnarok.Specification
         [Test]
         public void ShouldRun()
         {
-            var plan = execution.Between(origination, termination);
+            var cycle = execution.Between(origination, termination);
 
-            plan.Run();
+            cycle.Run();
 
             Assert.IsTrue(origination.Originated);
 
@@ -42,7 +42,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                default(IPlan).Run();
+                default(ICycle).Run();
             });
         }
     }

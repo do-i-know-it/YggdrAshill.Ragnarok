@@ -25,64 +25,66 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldBeConvertedToPlanWithSpan()
+        public void ShouldBeConvertedToCycleWithSpan()
         {
             var span = origination.To(termination);
 
-            var plan = execution.In(span);
+            var cycle = execution.In(span);
 
-            using (plan.Open())
-            {
-                Assert.IsTrue(origination.Originated);
+            cycle.Originate();
 
-                plan.Execute();
+            Assert.IsTrue(origination.Originated);
 
-                Assert.IsTrue(execution.Executed);
-            }
+            cycle.Execute();
 
-            Assert.IsTrue(termination.Terminated);
-        }
+            Assert.IsTrue(execution.Executed);
 
-        [Test]
-        public void ShouldBeConvertedToPlanWithOriginationAndTermination()
-        {
-            var plan = execution.Between(origination, termination);
-
-            using (plan.Open())
-            {
-                Assert.IsTrue(origination.Originated);
-
-                plan.Execute();
-
-                Assert.IsTrue(execution.Executed);
-            }
+            cycle.Terminate();
 
             Assert.IsTrue(termination.Terminated);
         }
 
         [Test]
-        public void CannotBeConvertedWithNull()
+        public void ShouldBeConvertedToCycleWithOriginationAndTermination()
+        {
+            var cycle = execution.Between(origination, termination);
+
+            cycle.Originate();
+
+            Assert.IsTrue(origination.Originated);
+
+            cycle.Execute();
+
+            Assert.IsTrue(execution.Executed);
+
+            cycle.Terminate();
+
+            Assert.IsTrue(termination.Terminated);
+        }
+
+        [Test]
+        public void CannotBeConvertedToCycleWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = default(IExecution).In(origination.To(termination));
+                var cycle = default(IExecution).In(origination.To(termination));
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = execution.In(default(ISpan));
+                var cycle = execution.In(default(ISpan));
             });
 
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = default(IExecution).Between(origination, termination);
+                var cycle = default(IExecution).Between(origination, termination);
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = execution.Between(default(IOrigination), termination);
+                var cycle = execution.Between(default(IOrigination), termination);
             });
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var plan = execution.Between(origination, default(ITermination));
+                var cycle = execution.Between(origination, default(ITermination));
             });
         }
     }
