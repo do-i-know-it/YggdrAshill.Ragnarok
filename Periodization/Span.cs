@@ -1,13 +1,13 @@
 namespace YggdrAshill.Ragnarok.Periodization
 {
-    internal sealed class DelegatedSpan :
+    internal sealed class Span :
         ISpan
     {
         private readonly IOrigination origination;
 
         private readonly ITermination termination;
 
-        internal DelegatedSpan(IOrigination origination, ITermination termination)
+        internal Span(IOrigination origination, ITermination termination)
         {
             this.origination = origination;
 

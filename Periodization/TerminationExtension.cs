@@ -15,7 +15,7 @@ namespace YggdrAshill.Ragnarok.Periodization
                 throw new ArgumentNullException(nameof(origination));
             }
 
-            return new DelegatedSpan(origination, termination);
+            return new Span(origination, termination);
         }
     }
 }
