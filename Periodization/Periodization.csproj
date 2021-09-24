@@ -2,10 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>YggdrAshill.Ragnarok.Periodization</AssemblyName>
+    <RootNamespace>YggdrAshill.Ragnarok.Periodization</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Periodization\Periodization.csproj" />
-  </ItemGroup>
 
 </Project>

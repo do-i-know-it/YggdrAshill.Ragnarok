@@ -7,14 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YggdrAshill.Ragnarok", "Ygg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YggdrAshill.Ragnarok.Specification", "YggdrAshill.Ragnarok.Specification\YggdrAshill.Ragnarok.Specification.csproj", "{68C259FE-DA1D-4445-9CF4-7C58D07A9AFB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Progression", "Progression\Progression.csproj", "{3B10218B-3A4B-418E-B68A-E678187E50ED}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9E682B21-AA54-4CB7-AB23-5EB93BAFC78C}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YggdrAshill.Ragnarok.Samples", "YggdrAshill.Ragnarok.Samples\YggdrAshill.Ragnarok.Samples.csproj", "{BF4F0620-69F6-417D-9A20-7D1E164890AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YggdrAshill.Ragnarok.Samples", "YggdrAshill.Ragnarok.Samples\YggdrAshill.Ragnarok.Samples.csproj", "{BF4F0620-69F6-417D-9A20-7D1E164890AB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Periodization", "Periodization\Periodization.csproj", "{E1F4D2E5-E3DE-44B8-A689-712C6BD96D1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,14 +30,14 @@ Global
 		{68C259FE-DA1D-4445-9CF4-7C58D07A9AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68C259FE-DA1D-4445-9CF4-7C58D07A9AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68C259FE-DA1D-4445-9CF4-7C58D07A9AFB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B10218B-3A4B-418E-B68A-E678187E50ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B10218B-3A4B-418E-B68A-E678187E50ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B10218B-3A4B-418E-B68A-E678187E50ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B10218B-3A4B-418E-B68A-E678187E50ED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BF4F0620-69F6-417D-9A20-7D1E164890AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BF4F0620-69F6-417D-9A20-7D1E164890AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF4F0620-69F6-417D-9A20-7D1E164890AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF4F0620-69F6-417D-9A20-7D1E164890AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1F4D2E5-E3DE-44B8-A689-712C6BD96D1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1F4D2E5-E3DE-44B8-A689-712C6BD96D1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1F4D2E5-E3DE-44B8-A689-712C6BD96D1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1F4D2E5-E3DE-44B8-A689-712C6BD96D1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

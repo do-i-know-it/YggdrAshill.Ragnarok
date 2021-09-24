@@ -1,4 +1,4 @@
-﻿using YggdrAshill.Ragnarok.Progression;
+using YggdrAshill.Ragnarok.Periodization;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
