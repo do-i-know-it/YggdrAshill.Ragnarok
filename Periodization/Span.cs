@@ -14,13 +14,11 @@ namespace YggdrAshill.Ragnarok.Periodization
             this.termination = termination;
         }
 
-        /// <inheritdoc/>
         public void Originate()
         {
             origination.Originate();
         }
 
-        /// <inheritdoc/>
         public void Terminate()
         {
             termination.Terminate();

@@ -2,8 +2,23 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Periodization
 {
+    /// <summary>
+    /// Defines extensions for <see cref="ISpan"/>.
+    /// </summary>
     public static class SpanExtension
     {
+        /// <summary>
+        /// Opens <see cref="ISpan"/>.
+        /// </summary>
+        /// <param name="span">
+        /// <see cref="ISpan"/> to open.
+        /// </param>
+        /// <returns>
+        /// <see cref="IDisposable"/> to close <see cref="ISpan"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="span"/> is null.
+        /// </exception>
         public static IDisposable Open(this ISpan span)
         {
             if (span is null)
@@ -25,7 +40,6 @@ namespace YggdrAshill.Ragnarok.Periodization
                 this.termination = termination;
             }
 
-            /// <inheritdoc/>
             public void Dispose()
             {
                 termination.Terminate();

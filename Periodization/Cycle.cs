@@ -9,7 +9,7 @@ namespace YggdrAshill.Ragnarok.Periodization
 
         private readonly IExecution execution;
 
-        public Cycle(IOrigination origination, ITermination termination, IExecution execution)
+        internal Cycle(IOrigination origination, ITermination termination, IExecution execution)
         {
             this.origination = origination;
 
@@ -18,19 +18,16 @@ namespace YggdrAshill.Ragnarok.Periodization
             this.execution = execution;
         }
 
-        /// <inheritdoc/>
         public void Originate()
         {
             origination.Originate();
         }
 
-        /// <inheritdoc/>
         public void Terminate()
         {
             termination.Terminate();
         }
 
-        /// <inheritdoc/>
         public void Execute()
         {
             execution.Execute();
