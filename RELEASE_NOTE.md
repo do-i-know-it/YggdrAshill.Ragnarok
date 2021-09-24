@@ -1,6 +1,11 @@
-# Release notes for version 1.0.0
+# Release notes for version 1.1.0
 
-- Added definitions for Progression.
-- Added implementations for Progression.
-- Added specifications for Progression.
-- Modified documents for framework.
+- Renamed definitions for Progression.
+  - Progression -> Periodization
+  - Period -> Span
+  - Process -> Cycle
+- Remove unnecessary definitions for Progression.
+  - Condition
+  - Abortion
+- Remove unnecessary extensions for Progression.
+- Modified documents for this framework.
