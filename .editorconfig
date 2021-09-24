@@ -1,31 +1,31 @@
-# enable only this configuration
+# Enable only this configuration
 root = true
 
-### All files
+## For all files
 [*]
 indent_style = space
 charset = utf-8
 end_of_line = crlf
 
-### CSharp files
+## For CSharp files
 [*.cs]
 indent_size = 4
 
-## new line syle
+### new line syle
 insert_final_newline = true
 trim_trailing_whitespace = true
 
 ## Naming rule
-# namespace: PascalCase
+### namespace: PascalCase
 dotnet_naming_rule.namespace_rule.symbols = namespace_rule
 dotnet_naming_rule.namespace_rule.severity = error
 dotnet_naming_rule.namespace_rule.style = namespace_style
 dotnet_naming_style.namespace_style.capitalization = pascal_case
-dotnet_naming_style.class_style.required_prefix =
-dotnet_naming_style.class_style.required_suffix =
-dotnet_naming_style.class_style.word_separator =.
+dotnet_naming_style.namespace_style.required_prefix =
+dotnet_naming_style.namespace_style.required_suffix =
+dotnet_naming_style.namespace_style.word_separator =.
 dotnet_naming_symbols.namespace_rule.applicable_kinds = namespace
-# class: PascalCase
+### class: PascalCase
 dotnet_naming_rule.class_rule.symbols = class_rule
 dotnet_naming_rule.class_rule.severity = error
 dotnet_naming_rule.class_rule.style = class_style
@@ -36,7 +36,7 @@ dotnet_naming_style.class_style.word_separator =
 dotnet_naming_symbols.class_rule.applicable_kinds = class
 dotnet_naming_symbols.class_rule.applicable_accessibilities = *
 dotnet_naming_symbols.class_rule.required_modifiers =
-# structure: PascalCase
+### structure: PascalCase
 dotnet_naming_rule.structure_rule.symbols = structure_rule
 dotnet_naming_rule.structure_rule.severity = error
 dotnet_naming_rule.structure_rule.style = structure_style
@@ -47,7 +47,7 @@ dotnet_naming_style.structure_style.word_separator =
 dotnet_naming_symbols.structure_rule.applicable_kinds = struct
 dotnet_naming_symbols.structure_rule.applicable_accessibilities = *
 dotnet_naming_symbols.structure_rule.required_modifiers =
-# enumeration: PascalCase
+### enumeration: PascalCase
 dotnet_naming_rule.enumeration_rule.symbols = enumeration_rule
 dotnet_naming_rule.enumeration_rule.severity = error
 dotnet_naming_rule.enumeration_rule.style = enumeration_style
@@ -58,7 +58,7 @@ dotnet_naming_style.enumeration_style.word_separator =
 dotnet_naming_symbols.enumeration_rule.applicable_kinds = enum
 dotnet_naming_symbols.enumeration_rule.applicable_accessibilities = *
 dotnet_naming_symbols.enumeration_rule.required_modifiers =
-# delegate: PascalCase
+### delegate: PascalCase
 dotnet_naming_rule.delegate_rule.symbols = delegate_rule
 dotnet_naming_rule.delegate_rule.severity = error
 dotnet_naming_rule.delegate_rule.style = delegate_style
@@ -69,7 +69,7 @@ dotnet_naming_style.delegate_style.word_separator =
 dotnet_naming_symbols.delegate_rule.applicable_kinds = delegate
 dotnet_naming_symbols.delegate_rule.applicable_accessibilities = *
 dotnet_naming_symbols.delegate_rule.required_modifiers =
-# type_parameter: PascalCase
+### type parameter: PascalCase
 dotnet_naming_rule.type_parameter_rule.symbols = type_parameter_rule
 dotnet_naming_rule.type_parameter_rule.severity = error
 dotnet_naming_rule.type_parameter_rule.style = type_parameter_style
@@ -80,7 +80,7 @@ dotnet_naming_style.type_parameter_style.word_separator =
 dotnet_naming_symbols.type_parameter_rule.applicable_kinds = type_parameter
 dotnet_naming_symbols.type_parameter_rule.applicable_accessibilities = *
 dotnet_naming_symbols.type_parameter_rule.required_modifiers =
-# interface: PascalCase
+### interface: PascalCase
 dotnet_naming_rule.interface_rule.symbols = interface_rule
 dotnet_naming_rule.interface_rule.severity = error
 dotnet_naming_rule.interface_rule.style = interface_style
@@ -91,7 +91,7 @@ dotnet_naming_style.interface_style.word_separator =
 dotnet_naming_symbols.interface_rule.applicable_kinds = interface
 dotnet_naming_symbols.interface_rule.applicable_accessibilities = *
 dotnet_naming_symbols.interface_rule.required_modifiers =
-# field: camelCase
+### field: camelCase
 dotnet_naming_rule.field_rule.symbols = field_rule
 dotnet_naming_rule.field_rule.severity = error
 dotnet_naming_rule.field_rule.style = field_style
@@ -102,7 +102,7 @@ dotnet_naming_style.field_style.word_separator =
 dotnet_naming_symbols.field_rule.applicable_kinds = field
 dotnet_naming_symbols.field_rule.applicable_accessibilities = *
 dotnet_naming_symbols.field_rule.required_modifiers =
-# parameter: camelCase
+### parameter: camelCase
 dotnet_naming_rule.parameter_rule.symbols = parameter_rule
 dotnet_naming_rule.parameter_rule.severity = error
 dotnet_naming_rule.parameter_rule.style = parameter_style
@@ -113,7 +113,7 @@ dotnet_naming_style.parameter_style.word_separator =
 dotnet_naming_symbols.parameter_rule.applicable_kinds = parameter
 dotnet_naming_symbols.parameter_rule.applicable_accessibilities = *
 dotnet_naming_symbols.parameter_rule.required_modifiers =
-# local: camelCase
+### local: camelCase
 dotnet_naming_rule.local_rule.symbols = local_rule
 dotnet_naming_rule.local_rule.severity = error
 dotnet_naming_rule.local_rule.style = local_style
@@ -124,7 +124,7 @@ dotnet_naming_style.local_style.word_separator =
 dotnet_naming_symbols.local_rule.applicable_kinds = local
 dotnet_naming_symbols.local_rule.applicable_accessibilities = *
 dotnet_naming_symbols.local_rule.required_modifiers =
-# constant: PascalCase
+### constant: PascalCase
 dotnet_naming_rule.constant_rule.symbols = constant_rule
 dotnet_naming_rule.constant_rule.severity = error
 dotnet_naming_rule.constant_rule.style = constant_style
@@ -135,7 +135,7 @@ dotnet_naming_style.constant_style.word_separator =
 dotnet_naming_symbols.constant_rule.applicable_kinds = field, local
 dotnet_naming_symbols.constant_rule.applicable_accessibilities = *
 dotnet_naming_symbols.constant_rule.required_modifiers = const
-# property: PascalCase
+### property: PascalCase
 dotnet_naming_rule.property_rule.symbols = property_rule
 dotnet_naming_rule.property_rule.severity = error
 dotnet_naming_rule.property_rule.style = property_style
@@ -146,7 +146,7 @@ dotnet_naming_style.property_style.word_separator =
 dotnet_naming_symbols.property_rule.applicable_kinds = property
 dotnet_naming_symbols.property_rule.applicable_accessibilities = *
 dotnet_naming_symbols.property_rule.required_modifiers =
-# method: PascalCase
+### method: PascalCase
 dotnet_naming_rule.method_rule.symbols = method_rule
 dotnet_naming_rule.method_rule.severity = error
 dotnet_naming_rule.method_rule.style = method_style
@@ -154,43 +154,10 @@ dotnet_naming_style.method_style.capitalization = pascal_case
 dotnet_naming_style.method_style.required_prefix =
 dotnet_naming_style.method_style.required_suffix =
 dotnet_naming_style.method_style.word_separator =
-dotnet_naming_symbols.method_rule.applicable_kinds = method
+dotnet_naming_symbols.method_rule.applicable_kinds = method, local_function
 dotnet_naming_symbols.method_rule.applicable_accessibilities = *
 dotnet_naming_symbols.method_rule.required_modifiers =
-# async method: PascalCase + Async
-dotnet_naming_rule.async_method_rule.symbols = async_method_rule
-dotnet_naming_rule.async_method_rule.severity = error
-dotnet_naming_rule.async_method_rule.style = async_method_style
-dotnet_naming_style.async_method_style.capitalization = pascal_case
-dotnet_naming_style.async_method_style.required_prefix =
-dotnet_naming_style.async_method_style.required_suffix = Async
-dotnet_naming_style.async_method_style.word_separator =
-dotnet_naming_symbols.async_method_rule.applicable_kinds = method
-dotnet_naming_symbols.async_method_rule.applicable_accessibilities = *
-dotnet_naming_symbols.async_method_rule.required_modifiers = async
-# local function: PascalCase
-dotnet_naming_rule.local_function_rule.symbols = local_function_rule
-dotnet_naming_rule.local_function_rule.severity = error
-dotnet_naming_rule.local_function_rule.style = local_function_style
-dotnet_naming_style.local_function_style.capitalization = pascal_case
-dotnet_naming_style.local_function_style.required_prefix =
-dotnet_naming_style.local_function_style.required_suffix =
-dotnet_naming_style.local_function_style.word_separator =
-dotnet_naming_symbols.local_function_rule.applicable_kinds = local_function
-dotnet_naming_symbols.local_function_rule.applicable_accessibilities = *
-dotnet_naming_symbols.local_function_rule.required_modifiers =
-# async local function: PascalCase + Async
-dotnet_naming_rule.async_local_function_rule.symbols = async_local_function_rule
-dotnet_naming_rule.async_local_function_rule.severity = error
-dotnet_naming_rule.async_local_function_rule.style = async_local_function_style
-dotnet_naming_style.async_local_function_style.capitalization = pascal_case
-dotnet_naming_style.async_local_function_style.required_prefix =
-dotnet_naming_style.async_local_function_style.required_suffix = Async
-dotnet_naming_style.async_local_function_style.word_separator =
-dotnet_naming_symbols.async_local_function_rule.applicable_kinds = local_function
-dotnet_naming_symbols.async_local_function_rule.applicable_accessibilities = *
-dotnet_naming_symbols.async_local_function_rule.required_modifiers = async
-# event: PascalCase
+### event: PascalCase
 dotnet_naming_rule.event_rule.symbols = event_rule
 dotnet_naming_rule.event_rule.severity = error
 dotnet_naming_rule.event_rule.style = event_style
@@ -201,13 +168,76 @@ dotnet_naming_style.event_style.word_separator =
 dotnet_naming_symbols.event_rule.applicable_kinds = event
 dotnet_naming_symbols.event_rule.applicable_accessibilities = *
 dotnet_naming_symbols.event_rule.required_modifiers =
-# accessibility modifiers
-dotnet_style_require_accessibility_modifiers = always:error
-csharp_preferred_modifier_order = public, internal, protected, private, static, readonly, volatile, abstract, virtual, override, sealed, async: error
-dotnet_style_readonly_field = true:error
 
-## Others
-# remove unnecessary using statements
+## Coding rule
+### accessibility modifiers
+dotnet_style_require_accessibility_modifiers = always: error
+csharp_preferred_modifier_order = public, internal, protected, private, static, extern, abstract, virtual, override, sealed, new, readonly, volatile, unsafe, async: error
+dotnet_style_readonly_field = true: error
+### using directive
+csharp_using_directive_placement = outside_namespace
+dotnet_separate_import_directive_groups = false
+#### remove unnecessary using statements
 dotnet_diagnostic.IDE0005.severity = error
-# remove unreachable code
+### null
+dotnet_style_null_propagation = true
+csharp_style_conditional_delegate_call = true
+csharp_style_throw_expression = false
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true
+dotnet_style_coalesce_expression = true
+### expression bodied statement
+csharp_style_expression_bodied_accessors = when_on_single_line
+csharp_style_expression_bodied_properties = when_on_single_line
+csharp_style_expression_bodied_indexers = when_on_single_line
+csharp_style_expression_bodied_lambdas = when_on_single_line
+csharp_style_expression_bodied_constructors = false
+csharp_style_expression_bodied_methods = false
+csharp_style_expression_bodied_operators = false
+### new line
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_else = true
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_members_in_object_initializers = true
+### indent
+csharp_indent_braces = false
+csharp_indent_block_contents = true
+csharp_indent_switch_labels = true
+csharp_indent_case_contents = true
+csharp_indent_case_contents_when_block = false
+### space
+csharp_space_before_comma = false
+csharp_space_after_comma = true
+csharp_space_before_semicolon_in_for_statement = false
+csharp_space_after_semicolon_in_for_statement = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_around_declaration_statements = false
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+#### class
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_before_dot = false
+csharp_space_after_dot = false
+#### method
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+#### square bracket
+csharp_space_before_open_square_brackets = false
+csharp_space_between_empty_square_brackets = false
+csharp_space_between_square_brackets = false
+### others
+csharp_prefer_simple_default_expression = true
+csharp_prefer_braces = true: error
+csharp_style_inlined_variable_declaration = true: error
+dotnet_style_prefer_conditional_expression_over_assignment = true
+dotnet_style_prefer_conditional_expression_over_return = true
+dotnet_style_object_initializer = true
+dotnet_style_collection_initializer = true
+dotnet_code_quality_unused_parameters = all
+#### remove unreachable code
 dotnet_diagnostic.IDE0035.severity = error
