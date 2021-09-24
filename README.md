@@ -1,18 +1,19 @@
-# YggdrAshill.Ragnarok: an application lifecycle framework
+# YggdrAshill.Ragnarok: the lifecycle framework
 
 Ragnarok defines how to
 
 - initialize
-- perform
+- run
 - finalize
-- abort
 
 applications for mainly XR (VR/AR/MR).  
-This framework is able to isolate definitions from implementations for specific platforms.
+This framework isolates definitions from implementations for lifecycle.
 
 - ex) [Unity](https://unity.com/ja)
 - ex) [Xamarin](https://docs.microsoft.com/ja-jp/xamarin/get-started/what-is-xamarin)
-- ex) [Windows Presentation Foundation (WPF)](https://docs.microsoft.com/ja-jp/visualstudio/designers/getting-started-with-wpf?view=vs-2019)
+- ex) [ASP.NET Core](https://docs.microsoft.com/ja-jp/aspnet/core/fundamentals/host/generic-host)
+- ex) [Generic Host](https://docs.microsoft.com/ja-jp/dotnet/core/extensions/generic-host)
+- ex) [Windows Presentation Foundation (WPF)](https://docs.microsoft.com/ja-jp/visualstudio/designers/getting-started-with-wpf)
 
 ## Dependencies
 
@@ -29,7 +30,7 @@ to use this framework.
 
 ## Usage
 
-Please see [Sample application](./Samples/Program.cs).
+Please see [Sample applications](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/tree/main/YggdrAshill.Ragnarok.Samples).
 
 ## Architecture
 
@@ -39,21 +40,20 @@ This framework consists of core modules below.
 
 ## Implementation
 
-This framework includes [Implementation](./Documentation/Implementation.md) to provide implementations and extensions for above.
+This framework includes [Implementation](./Documentation/Implementation.md) to provide
+
+- implementations
+- extensions
+
+for above.
 
 ## Known issues
 
-Please see [issues](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/issues).
+Please see [GitHub Issues](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/issues).
 
 ## Future works
 
-Please see [GitHub Project for road map](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/projects/1).
-
-- Adds definitions for life cycle events.
-  - ex) onInitialized
-  - ex) onPaused
-  - ex) onResumed
-  - ex) onFinalized
+Please see [GitHub Projects](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/projects/1).
 
 ## License
 
