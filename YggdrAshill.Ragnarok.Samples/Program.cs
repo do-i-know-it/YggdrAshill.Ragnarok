@@ -1,4 +1,5 @@
 using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Experimental;
 using System;
 
 namespace YggdrAshill.Ragnarok.Samples
@@ -16,32 +17,38 @@ namespace YggdrAshill.Ragnarok.Samples
         /// </param>
         private static void Main(string[] arguments)
         {
-            Execution.Of(() =>
-            {
-                // define a loop for this application.
-                while (true)
+            PeriodizedService
+                .Default
+                .OnOriginated(() =>
                 {
-                    Console.WriteLine($"\nPlease enter some text.");
-                    Console.WriteLine($"When quitting this application, enter \"Exit\".");
+                    // define how to initialize this application.
+                    Console.WriteLine("Originated.");
+                })
+                .OnExecuted(() =>
+                {
+                    Console.WriteLine();
+                    Console.WriteLine($"Please enter some text.");
+                    Console.WriteLine($"If you want to quit this application, enter \"Exit\".");
 
-                    var input = Console.ReadLine();
-
-                    if (input.ToLower() == "exit")
+                    // define a loop for this application.
+                    while (true)
                     {
-                        return;
-                    }
+                        var input = Console.ReadLine();
 
-                    Console.WriteLine($"Executed: {input}");
-                }
-            }).Between(() =>
-            {
-                // define how to initialize this application.
-                Console.WriteLine("Originated.");
-            }, () =>
-            {
-                // define how to finalize this application.
-                Console.WriteLine("Terminated.");
-            }).Run();
+                        if (input.ToLower() == "exit")
+                        {
+                            return;
+                        }
+
+                        Console.WriteLine($"Executed: {input}");
+                    }
+                })
+                .OnTerminated(() =>
+                {
+                    // define how to finalize this application.
+                    Console.WriteLine("Terminated.");
+                })
+                .Run();
         }
     }
 }
