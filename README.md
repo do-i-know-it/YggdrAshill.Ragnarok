@@ -35,7 +35,7 @@ Please see [Sample application](./Samples/Program.cs).
 
 This framework consists of core modules below.
 
-- [Progression](./Documentation/Progression.md)
+- [Periodization](./Documentation/Periodization.md)
 
 ## Implementation
 
