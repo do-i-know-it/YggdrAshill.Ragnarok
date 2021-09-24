@@ -1,6 +1,4 @@
-using YggdrAshill.Ragnarok.Periodization;
-
-namespace YggdrAshill.Ragnarok.Proceduralization
+namespace YggdrAshill.Ragnarok.Periodization
 {
     /// <summary>
     /// Lifecycle for <see cref="IExecution"/> between <see cref="IOrigination"/> and <see cref="ITermination"/>.

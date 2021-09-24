@@ -11,16 +11,20 @@ namespace YggdrAshill.Ragnarok.Specification
 
         private FakeTermination termination;
 
+        private FakeExecution execution;
+
         [SetUp]
         public void SetUp()
         {
             origination = new FakeOrigination();
 
             termination = new FakeTermination();
+
+            execution = new FakeExecution();
         }
 
         [Test]
-        public void ShouldBeConvertedToSpanWithTermination()
+        public void ShouldBeConvertedToSpanWithTerminationAsAction()
         {
             var expected = false;
             var span = origination.To(() =>
@@ -38,7 +42,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldBeConvertedToSpanWithOrigination()
+        public void ShouldBeConvertedToSpanWithOriginationAsAction()
         {
             var expected = false;
             var span = termination.From(() =>
@@ -56,7 +60,33 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotBeConvertedWithNull()
+        public void ShouldBeConvertedToCycleWithActions()
+        {
+            var originated = false;
+            var terminated = false;
+            var cycle = execution.Between(() =>
+            {
+                originated = true;
+            }, () =>
+            {
+                terminated = true;
+            });
+
+            cycle.Originate();
+
+            Assert.IsTrue(originated);
+
+            cycle.Execute();
+
+            Assert.IsTrue(execution.Executed);
+
+            cycle.Terminate();
+
+            Assert.IsTrue(terminated);
+        }
+
+        [Test]
+        public void CannotBeConvertedToSpanWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -76,6 +106,23 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.Throws<ArgumentNullException>(() =>
             {
                 var span = termination.From(default(Action));
+            });
+        }
+
+        [Test]
+        public void CannotBeConvertedToCycleWithNull()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var cycle = default(IExecution).Between(() => { }, () => { });
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var cycle = execution.Between(default(Action), () => { });
+            });
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var cycle = execution.Between(() => { }, default(Action));
             });
         }
     }

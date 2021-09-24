@@ -1,7 +1,6 @@
-using YggdrAshill.Ragnarok.Periodization;
 using System;
 
-namespace YggdrAshill.Ragnarok.Proceduralization
+namespace YggdrAshill.Ragnarok.Periodization
 {
     public static class ExecutionExtension
     {

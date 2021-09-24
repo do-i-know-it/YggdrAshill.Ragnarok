@@ -35,7 +35,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotBeConvertedWithNull()
+        public void CannotBeConvertedToSpanWithNull()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {

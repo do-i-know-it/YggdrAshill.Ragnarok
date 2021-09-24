@@ -1,4 +1,4 @@
-namespace YggdrAshill.Ragnarok.Proceduralization
+namespace YggdrAshill.Ragnarok.Periodization
 {
     /// <summary>
     /// Token to run something.

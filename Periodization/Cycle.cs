@@ -1,6 +1,4 @@
-using YggdrAshill.Ragnarok.Periodization;
-
-namespace YggdrAshill.Ragnarok.Proceduralization
+namespace YggdrAshill.Ragnarok.Periodization
 {
     internal sealed class Cycle :
         ICycle

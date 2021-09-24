@@ -1,4 +1,4 @@
-using YggdrAshill.Ragnarok.Proceduralization;
+using YggdrAshill.Ragnarok.Periodization;
 
 namespace YggdrAshill.Ragnarok.Specification
 {

@@ -1,6 +1,5 @@
 using NUnit.Framework;
 using YggdrAshill.Ragnarok.Periodization;
-using YggdrAshill.Ragnarok.Proceduralization;
 using System;
 
 namespace YggdrAshill.Ragnarok.Specification
