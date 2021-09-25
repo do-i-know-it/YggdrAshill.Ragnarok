@@ -17,7 +17,7 @@ namespace YggdrAshill.Ragnarok.Samples
         /// </param>
         private static void Main(string[] arguments)
         {
-            PeriodizedService
+            Service
                 .Default
                 .OnOriginated(() =>
                 {

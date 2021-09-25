@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok.Experimental
 {
-    public sealed class PeriodizedService :
+    public sealed class Service :
         IService
     {
-        public static PeriodizedService Default { get; }
-            = new PeriodizedService(new IOrigination[0], new ITermination[0], new IExecution[0], new ISpan[0]);
+        public static Service Default { get; }
+            = new Service(new IOrigination[0], new ITermination[0], new IExecution[0], new ISpan[0]);
 
         private readonly IEnumerable<IOrigination> originations;
 
@@ -19,7 +19,7 @@ namespace YggdrAshill.Ragnarok.Experimental
 
         private readonly IEnumerable<ISpan> spans;
 
-        private PeriodizedService(
+        private Service(
             IEnumerable<IOrigination> originations,
             IEnumerable<ITermination> terminations,
             IEnumerable<IExecution> executions,
@@ -34,7 +34,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             this.spans = spans;
         }
 
-        public PeriodizedService Configure(IOrigination origination)
+        public IService Configure(IOrigination origination)
         {
             if (origination is null)
             {
@@ -43,10 +43,10 @@ namespace YggdrAshill.Ragnarok.Experimental
 
             var added = originations.Append(origination);
 
-            return new PeriodizedService(added, terminations, executions, spans);
+            return new Service(added, terminations, executions, spans);
         }
 
-        public PeriodizedService Configure(ITermination termination)
+        public IService Configure(ITermination termination)
         {
             if (termination is null)
             {
@@ -55,10 +55,10 @@ namespace YggdrAshill.Ragnarok.Experimental
 
             var added = terminations.Append(termination);
 
-            return new PeriodizedService(originations, added, executions, spans);
+            return new Service(originations, added, executions, spans);
         }
 
-        public PeriodizedService Configure(IExecution execution)
+        public IService Configure(IExecution execution)
         {
             if (execution is null)
             {
@@ -67,10 +67,10 @@ namespace YggdrAshill.Ragnarok.Experimental
 
             var added = executions.Append(execution);
 
-            return new PeriodizedService(originations, terminations, added, spans);
+            return new Service(originations, terminations, added, spans);
         }
 
-        public PeriodizedService Configure(ISpan span)
+        public IService Configure(ISpan span)
         {
             if (span is null)
             {
@@ -79,7 +79,7 @@ namespace YggdrAshill.Ragnarok.Experimental
 
             var added = spans.Append(span);
 
-            return new PeriodizedService(originations, terminations, executions, added);
+            return new Service(originations, terminations, executions, added);
         }
 
         public ICycle Build()

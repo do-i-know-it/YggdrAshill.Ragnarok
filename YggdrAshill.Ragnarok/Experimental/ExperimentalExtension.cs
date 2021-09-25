@@ -4,7 +4,7 @@ namespace YggdrAshill.Ragnarok.Experimental
 {
     public static class ExperimentalExtension
     {
-        public static PeriodizedService OnOriginated(this PeriodizedService service, Action origination)
+        public static IService OnOriginated(this IService service, Action origination)
         {
             if (service is null)
             {
@@ -18,7 +18,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             return service.Configure(Origination.Of(origination));
         }
 
-        public static PeriodizedService OnTerminated(this PeriodizedService service, Action termination)
+        public static IService OnTerminated(this IService service, Action termination)
         {
             if (service is null)
             {
@@ -32,7 +32,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             return service.Configure(Termination.Of(termination));
         }
 
-        public static PeriodizedService OnExecuted(this PeriodizedService service, Action execution)
+        public static IService OnExecuted(this IService service, Action execution)
         {
             if (service is null)
             {
@@ -46,7 +46,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             return service.Configure(Execution.Of(execution));
         }
 
-        public static PeriodizedService InSpan(this PeriodizedService service, Action origination, Action termination)
+        public static IService InSpan(this IService service, Action origination, Action termination)
         {
             if (service is null)
             {
