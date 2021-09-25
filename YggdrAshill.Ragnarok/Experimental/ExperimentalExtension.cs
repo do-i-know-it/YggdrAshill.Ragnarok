@@ -46,7 +46,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             return service.Configure(Execution.Of(execution));
         }
 
-        public static PeriodizedService In(this PeriodizedService service, Action origination, Action termination)
+        public static PeriodizedService InSpan(this PeriodizedService service, Action origination, Action termination)
         {
             if (service is null)
             {
@@ -61,7 +61,7 @@ namespace YggdrAshill.Ragnarok.Experimental
                 throw new ArgumentNullException(nameof(termination));
             }
 
-            return service.In(Origination.Of(origination), Termination.Of(termination));
+            return service.Configure(Origination.Of(origination).To(termination));
         }
     }
 }
