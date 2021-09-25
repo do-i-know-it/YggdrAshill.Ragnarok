@@ -26,27 +26,22 @@ namespace YggdrAshill.Ragnarok.Samples
                 })
                 .OnExecuted(() =>
                 {
-                    Console.WriteLine();
-                    Console.WriteLine($"Please enter some text.");
-                    Console.WriteLine($"If you want to quit this application, enter \"Exit\".");
-
-                    // define a loop for this application.
-                    while (true)
-                    {
-                        var input = Console.ReadLine();
-
-                        if (input.ToLower() == "exit")
-                        {
-                            return;
-                        }
-
-                        Console.WriteLine($"Executed: {input}");
-                    }
+                    // define how to execute this application.
+                    Console.WriteLine($"Executed.");
                 })
                 .OnTerminated(() =>
                 {
                     // define how to finalize this application.
                     Console.WriteLine("Terminated.");
+                })
+                .InSpan(() =>
+                {
+                    // define how to initialize this application.
+                    Console.WriteLine("Span opened.");
+                }, () =>
+                {
+                    // define how to finalize this application.
+                    Console.WriteLine("Span closed.");
                 })
                 .Run();
         }
