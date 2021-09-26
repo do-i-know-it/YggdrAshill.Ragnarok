@@ -43,6 +43,7 @@ namespace YggdrAshill.Ragnarok.Samples
                     // define how to finalize this application.
                     Console.WriteLine("Span closed.");
                 })
+                .Build()
                 .Run();
         }
     }
