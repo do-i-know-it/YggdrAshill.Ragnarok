@@ -1,4 +1,5 @@
 using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Construction;
 using System;
 
 namespace YggdrAshill.Ragnarok.Experimental

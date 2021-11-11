@@ -1,6 +1,6 @@
 using YggdrAshill.Ragnarok.Periodization;
 
-namespace YggdrAshill.Ragnarok.Experimental
+namespace YggdrAshill.Ragnarok.Construction
 {
     /// <summary>
     /// Defines how to build <see cref="ICycle"/> from <see cref="IOrigination"/>, <see cref="ITermination"/>, <see cref="IExecution"/> and <see cref="ISpan"/>.
