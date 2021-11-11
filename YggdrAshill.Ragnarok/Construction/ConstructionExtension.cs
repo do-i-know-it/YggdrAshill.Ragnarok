@@ -1,9 +1,12 @@
 using YggdrAshill.Ragnarok.Construction;
 using System;
 
-namespace YggdrAshill.Ragnarok.Experimental
+namespace YggdrAshill.Ragnarok
 {
-    public static class ExperimentalExtension
+    /// <summary>
+    /// Defines extensions for Construction.
+    /// </summary>
+    public static class ConstructionExtension
     {
         public static IService OnOriginated(this IService service, Action origination)
         {

@@ -64,10 +64,10 @@ namespace YggdrAshill.Ragnarok.Construction
         IService Configure(ISpan span);
 
         /// <summary>
-        /// Creates <see cref="ICycle"/> from configuration.
+        /// Generates <see cref="ICycle"/> from configuration.
         /// </summary>
         /// <returns>
-        /// <see cref="ICycle"/> created.
+        /// <see cref="ICycle"/> generated.
         /// </returns>
         ICycle Build();
     }

@@ -2,7 +2,7 @@ using YggdrAshill.Ragnarok.Periodization;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Experimental
+namespace YggdrAshill.Ragnarok
 {
     internal static class ExecutionBuilder
     {
@@ -26,7 +26,6 @@ namespace YggdrAshill.Ragnarok.Experimental
 
             }
         }
-
         private sealed class One :
             IExecutionBuilder
         {
@@ -52,7 +51,6 @@ namespace YggdrAshill.Ragnarok.Experimental
                 return new Listed(new[] { first, execution });
             }
         }
-
         private sealed class Listed :
             IExecutionBuilder
         {

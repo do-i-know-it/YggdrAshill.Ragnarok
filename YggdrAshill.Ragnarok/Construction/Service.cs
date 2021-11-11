@@ -2,11 +2,17 @@ using YggdrAshill.Ragnarok.Periodization;
 using YggdrAshill.Ragnarok.Construction;
 using System;
 
-namespace YggdrAshill.Ragnarok.Experimental
+namespace YggdrAshill.Ragnarok
 {
+    /// <summary>
+    /// Implementation of <see cref="IService"/>.
+    /// </summary>
     public sealed class Service :
         IService
     {
+        /// <summary>
+        /// <see cref="Service"/> to initialize, run and finalize nothing.
+        /// </summary>
         public static Service Default { get; }
             = new Service(OriginationBuilder.Default, TerminationBuilder.Default, ExecutionBuilder.Default, SpanBuilder.Default);
 
@@ -33,6 +39,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             this.spanBuilder = spanBuilder;
         }
 
+        /// <inheritdoc/>
         public IService Configure(IOrigination origination)
         {
             if (origination is null)
@@ -43,6 +50,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             return new Service(originationBuilder.Configure(origination), terminationBuilder, executionBuilder, spanBuilder);
         }
 
+        /// <inheritdoc/>
         public IService Configure(ITermination termination)
         {
             if (termination is null)
@@ -53,6 +61,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             return new Service(originationBuilder, terminationBuilder.Configure(termination), executionBuilder, spanBuilder);
         }
 
+        /// <inheritdoc/>
         public IService Configure(IExecution execution)
         {
             if (execution is null)
@@ -63,6 +72,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             return new Service(originationBuilder, terminationBuilder, executionBuilder.Configure(execution), spanBuilder);
         }
 
+        /// <inheritdoc/>
         public IService Configure(ISpan span)
         {
             if (span is null)
@@ -73,6 +83,7 @@ namespace YggdrAshill.Ragnarok.Experimental
             return new Service(originationBuilder, terminationBuilder, executionBuilder, spanBuilder.Configure(span));
         }
 
+        /// <inheritdoc/>
         public ICycle Build()
         {
             var origination = originationBuilder.Build();

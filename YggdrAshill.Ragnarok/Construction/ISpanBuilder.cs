@@ -1,6 +1,6 @@
 using YggdrAshill.Ragnarok.Periodization;
 
-namespace YggdrAshill.Ragnarok.Experimental
+namespace YggdrAshill.Ragnarok
 {
     internal interface ISpanBuilder
     {
