@@ -8,18 +8,24 @@ namespace YggdrAshill.Ragnarok.Experimental
     {
         internal static ISpanBuilder Default { get; } = new None();
         private sealed class None :
-            ISpanBuilder,
-            ISpan
+            IOrigination,
+            ITermination,
+            ISpan,
+            ISpanBuilder
         {
+            public ISpanBuilder Configure(ISpan span)
+            {
+                return new One(span);
+            }
+
             public ISpan Build()
             {
                 return this;
             }
 
-            public ISpanBuilder Configure(ISpan span)
-            {
-                return new One(span);
-            }
+            public IOrigination Origination => this;
+
+            public ITermination Termination => this;
 
             public void Originate()
             {
@@ -84,28 +90,45 @@ namespace YggdrAshill.Ragnarok.Experimental
             }
         }
         private sealed class Span :
+            IOrigination,
+            ITermination,
             ISpan
         {
-            private readonly ISpan[] spans;
+            private readonly IOrigination[] originations;
 
-            internal Span(ISpan[] spans)
+            private readonly ITermination[] terminations;
+
+            internal Span(IEnumerable<ISpan> spans)
             {
-                this.spans = spans;
+                originations
+                    = spans
+                    .Select(span => span.Origination)
+                    .ToArray();
+
+                terminations
+                    = spans
+                    .Reverse()
+                    .Select(span => span.Termination)
+                    .ToArray();
             }
+
+            public IOrigination Origination => this;
+
+            public ITermination Termination => this;
 
             public void Originate()
             {
-                foreach (var span in spans)
+                foreach (var origination in originations)
                 {
-                    span.Originate();
+                    origination.Originate();
                 }
             }
 
             public void Terminate()
             {
-                foreach (var span in spans.Reverse())
+                foreach (var termination in terminations)
                 {
-                    span.Terminate();
+                    termination.Terminate();
                 }
             }
         }

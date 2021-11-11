@@ -84,40 +84,7 @@ namespace YggdrAshill.Ragnarok.Experimental
 
             var cycle = execution.Between(origination, termination);
 
-            return new Cycle(cycle, span);
-        }
-        private sealed class Cycle :
-            ICycle
-        {
-            private readonly ICycle cycle;
-
-            private readonly ISpan span;
-
-            internal Cycle(ICycle cycle, ISpan span)
-            {
-                this.cycle = cycle;
-
-                this.span = span;
-            }
-
-            public void Originate()
-            {
-                cycle.Originate();
-
-                span.Originate();
-            }
-
-            public void Terminate()
-            {
-                span.Terminate();
-
-                cycle.Terminate();
-            }
-
-            public void Execute()
-            {
-                cycle.Execute();
-            }
+            return cycle.In(span);
         }
     }
 }

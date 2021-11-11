@@ -8,6 +8,52 @@ namespace YggdrAshill.Ragnarok.Periodization
     public static class ExecutionExtension
     {
         /// <summary>
+        /// Creates <see cref="ICycle"/> from <see cref="IExecution"/> and <see cref="ISpan"/>.
+        /// </summary>
+        /// <param name="execution">
+        /// <see cref="IExecution"/> to execute in <see cref="ICycle"/>.
+        /// </param>
+        /// <param name="span">
+        /// <see cref="ISpan"/> to originate and terminate in <see cref="ICycle"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="ICycle"/> created.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="execution"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="span"/> is null.
+        /// </exception>
+        public static ICycle In(this IExecution execution, ISpan span)
+        {
+            if (execution is null)
+            {
+                throw new ArgumentNullException(nameof(execution));
+            }
+            if (span is null)
+            {
+                throw new ArgumentNullException(nameof(span));
+            }
+
+            return new Cycle(span, execution);
+        }
+        private sealed class Cycle :
+            ICycle
+        {
+            public ISpan Span { get; }
+
+            public IExecution Execution { get; }
+
+            internal Cycle(ISpan span, IExecution execution)
+            {
+                Span = span;
+
+                Execution = execution;
+            }
+        }
+
+        /// <summary>
         /// Creates <see cref="ICycle"/> from <see cref="IExecution"/>, <see cref="IOrigination"/> and <see cref="ITermination"/>.
         /// </summary>
         /// <param name="execution">
@@ -46,39 +92,7 @@ namespace YggdrAshill.Ragnarok.Periodization
                 throw new ArgumentNullException(nameof(termination));
             }
 
-            return new Cycle(origination, termination, execution);
-        }
-
-        /// <summary>
-        /// Creates <see cref="ICycle"/> from <see cref="IExecution"/> and <see cref="ISpan"/>.
-        /// </summary>
-        /// <param name="execution">
-        /// <see cref="IExecution"/> to execute in <see cref="ICycle"/>.
-        /// </param>
-        /// <param name="span">
-        /// <see cref="ISpan"/> to originate and terminate in <see cref="ICycle"/>.
-        /// </param>
-        /// <returns>
-        /// <see cref="ICycle"/> created.
-        /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="execution"/> is null.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if <paramref name="span"/> is null.
-        /// </exception>
-        public static ICycle In(this IExecution execution, ISpan span)
-        {
-            if (execution is null)
-            {
-                throw new ArgumentNullException(nameof(execution));
-            }
-            if (span is null)
-            {
-                throw new ArgumentNullException(nameof(span));
-            }
-
-            return execution.Between(span, span);
+            return execution.In(origination.To(termination));
         }
     }
 }

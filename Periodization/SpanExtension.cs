@@ -26,9 +26,9 @@ namespace YggdrAshill.Ragnarok.Periodization
                 throw new ArgumentNullException(nameof(span));
             }
 
-            span.Originate();
+            span.Origination.Originate();
 
-            return new DisposeToTerminate(span);
+            return new DisposeToTerminate(span.Termination);
         }
         private sealed class DisposeToTerminate :
             IDisposable
