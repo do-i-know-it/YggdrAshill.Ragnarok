@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>YggdrAshill.Ragnarok.Construction</AssemblyName>
+    <RootNamespace>YggdrAshill.Ragnarok.Construction</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Construction\Construction.csproj" />
     <ProjectReference Include="..\Periodization\Periodization.csproj" />
   </ItemGroup>
 
