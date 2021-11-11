@@ -8,13 +8,13 @@ namespace YggdrAshill.Ragnarok.Periodization
     public static class CycleExtension
     {
         /// <summary>
-        /// Creates <see cref="ICycle"/> from <see cref="IExecution"/> and <see cref="ISpan"/>.
+        /// Binds <see cref="ICycle"/> to <see cref="ISpan"/>.
         /// </summary>
         /// <param name="cycle">
-        /// <see cref="ICycle"/> to bind <paramref name="span"/>.
+        /// <see cref="ICycle"/> to be bound to <paramref name="span"/>.
         /// </param>
         /// <param name="span">
-        /// <see cref="ISpan"/> to originate and terminate in <see cref="ICycle"/>.
+        /// <see cref="ISpan"/> to bind <paramref name="cycle"/>.
         /// </param>
         /// <returns>
         /// <see cref="ICycle"/> bound.
@@ -82,6 +82,48 @@ namespace YggdrAshill.Ragnarok.Periodization
             {
                 cycle.Execution.Execute();
             }
+        }
+
+        /// <summary>
+        /// Binds <see cref="ICycle"/> to <see cref="IOrigination"/> and <see cref="ITermination"/>.
+        /// </summary>
+        /// <param name="cycle">
+        /// <see cref="ICycle"/> to be bound to <paramref name="origination"/> and <paramref name="termination"/>.
+        /// </param>
+        /// <param name="origination">
+        /// <see cref="IOrigination"/> to bind to <see cref="ICycle"/>.
+        /// </param>
+        /// <param name="termination">
+        /// <see cref="ITermination"/> to bind to <see cref="ICycle"/>.
+        /// </param>
+        /// <returns>
+        /// <see cref="ICycle"/> bound.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="cycle"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="origination"/> is null.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="termination"/> is null.
+        /// </exception>
+        public static ICycle Between(this ICycle cycle, IOrigination origination, ITermination termination)
+        {
+            if (cycle is null)
+            {
+                throw new ArgumentNullException(nameof(cycle));
+            }
+            if (origination is null)
+            {
+                throw new ArgumentNullException(nameof(origination));
+            }
+            if (termination is null)
+            {
+                throw new ArgumentNullException(nameof(termination));
+            }
+
+            return cycle.In(origination.To(termination));
         }
 
         /// <summary>

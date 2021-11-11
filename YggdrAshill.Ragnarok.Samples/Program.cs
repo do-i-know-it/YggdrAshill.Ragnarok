@@ -1,4 +1,5 @@
 using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Construction;
 using System;
 
 namespace YggdrAshill.Ragnarok.Samples
@@ -42,7 +43,6 @@ namespace YggdrAshill.Ragnarok.Samples
                     // define how to finalize this application.
                     Console.WriteLine("Span closed.");
                 })
-                .Build()
                 .Run();
         }
     }

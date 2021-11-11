@@ -1,40 +1,95 @@
 using NUnit.Framework;
-using System;
 using YggdrAshill.Ragnarok.Periodization;
+using System;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
     [TestFixture(TestOf = typeof(CycleExtension))]
     internal class CycleExtensionSpecification
     {
-        private FakeExecution execution;
-
         private FakeOrigination origination;
 
         private FakeTermination termination;
 
+        private FakeSpan span;
+
+        private FakeCycle cycle;
+
         [SetUp]
         public void SetUp()
         {
-            execution = new FakeExecution();
-
             origination = new FakeOrigination();
 
             termination = new FakeTermination();
+
+            span = new FakeSpan();
+
+            cycle = new FakeCycle();
+        }
+
+        [Test]
+        public void ShouldBindToSpan()
+        {
+            var bound = cycle.In(span);
+
+            bound.Run();
+
+            Assert.IsTrue(span.Originated);
+            Assert.IsTrue(span.Terminated);
+        }
+
+        [Test]
+        public void ShouldBindToOriginationAndTermination()
+        {
+            var bound = cycle.Between(origination, termination);
+
+            bound.Run();
+
+            Assert.IsTrue(origination.Originated);
+            Assert.IsTrue(termination.Terminated);
         }
 
         [Test]
         public void ShouldRun()
         {
-            var cycle = execution.Between(origination, termination);
-
             cycle.Run();
 
-            Assert.IsTrue(origination.Originated);
+            Assert.IsTrue(cycle.Originated);
+            Assert.IsTrue(cycle.Executed);
+            Assert.IsTrue(cycle.Terminated);
+        }
 
-            Assert.IsTrue(execution.Executed);
+        [Test]
+        public void CannotBindToSpanWithNull()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var bound = default(ICycle).In(span);
+            });
 
-            Assert.IsTrue(termination.Terminated);
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var bound = cycle.In(default);
+            });
+        }
+
+        [Test]
+        public void CannotBindToOriginationAndTerminationWithNull()
+        {
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var bound = default(ICycle).Between(origination, termination);
+            });
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var bound = cycle.Between(default, termination);
+            });
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                var bound = cycle.Between(origination, default);
+            });
         }
 
         [Test]
