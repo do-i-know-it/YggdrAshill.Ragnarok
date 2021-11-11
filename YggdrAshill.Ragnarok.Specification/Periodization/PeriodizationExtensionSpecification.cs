@@ -32,11 +32,11 @@ namespace YggdrAshill.Ragnarok.Specification
                 expected = true;
             });
 
-            span.Originate();
+            span.Origination.Originate();
 
             Assert.IsTrue(origination.Originated);
 
-            span.Terminate();
+            span.Termination.Terminate();
 
             Assert.IsTrue(expected);
         }
@@ -50,11 +50,11 @@ namespace YggdrAshill.Ragnarok.Specification
                 expected = true;
             });
 
-            span.Originate();
+            span.Origination.Originate();
 
             Assert.IsTrue(expected);
 
-            span.Terminate();
+            span.Termination.Terminate();
 
             Assert.IsTrue(termination.Terminated);
         }
@@ -72,15 +72,15 @@ namespace YggdrAshill.Ragnarok.Specification
                 terminated = true;
             });
 
-            cycle.Originate();
+            cycle.Span.Origination.Originate();
 
             Assert.IsTrue(originated);
 
-            cycle.Execute();
+            cycle.Execution.Execute();
 
             Assert.IsTrue(execution.Executed);
 
-            cycle.Terminate();
+            cycle.Span.Termination.Terminate();
 
             Assert.IsTrue(terminated);
         }

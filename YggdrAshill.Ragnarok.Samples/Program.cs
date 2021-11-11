@@ -1,4 +1,5 @@
 using YggdrAshill.Ragnarok.Periodization;
+using YggdrAshill.Ragnarok.Construction;
 using System;
 
 namespace YggdrAshill.Ragnarok.Samples
@@ -16,32 +17,33 @@ namespace YggdrAshill.Ragnarok.Samples
         /// </param>
         private static void Main(string[] arguments)
         {
-            Execution.Of(() =>
-            {
-                // define a loop for this application.
-                while (true)
+            Service
+                .Default
+                .OnOriginated(() =>
                 {
-                    Console.WriteLine($"\nPlease enter some text.");
-                    Console.WriteLine($"When quitting this application, enter \"Exit\".");
-
-                    var input = Console.ReadLine();
-
-                    if (input.ToLower() == "exit")
-                    {
-                        return;
-                    }
-
-                    Console.WriteLine($"Executed: {input}");
-                }
-            }).Between(() =>
-            {
-                // define how to initialize this application.
-                Console.WriteLine("Originated.");
-            }, () =>
-            {
-                // define how to finalize this application.
-                Console.WriteLine("Terminated.");
-            }).Run();
+                    // define how to initialize this application.
+                    Console.WriteLine("Originated.");
+                })
+                .OnExecuted(() =>
+                {
+                    // define how to execute this application.
+                    Console.WriteLine($"Executed.");
+                })
+                .OnTerminated(() =>
+                {
+                    // define how to finalize this application.
+                    Console.WriteLine("Terminated.");
+                })
+                .InSpan(() =>
+                {
+                    // define how to initialize this application.
+                    Console.WriteLine("Span opened.");
+                }, () =>
+                {
+                    // define how to finalize this application.
+                    Console.WriteLine("Span closed.");
+                })
+                .Run();
         }
     }
 }

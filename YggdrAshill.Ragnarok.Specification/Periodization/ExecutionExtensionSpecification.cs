@@ -30,15 +30,15 @@ namespace YggdrAshill.Ragnarok.Specification
 
             var cycle = execution.In(span);
 
-            cycle.Originate();
+            cycle.Span.Origination.Originate();
 
             Assert.IsTrue(origination.Originated);
 
-            cycle.Execute();
+            cycle.Execution.Execute();
 
             Assert.IsTrue(execution.Executed);
 
-            cycle.Terminate();
+            cycle.Span.Termination.Terminate();
 
             Assert.IsTrue(termination.Terminated);
         }
@@ -48,15 +48,15 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var cycle = execution.Between(origination, termination);
 
-            cycle.Originate();
+            cycle.Span.Origination.Originate();
 
             Assert.IsTrue(origination.Originated);
 
-            cycle.Execute();
+            cycle.Execution.Execute();
 
             Assert.IsTrue(execution.Executed);
 
-            cycle.Terminate();
+            cycle.Span.Termination.Terminate();
 
             Assert.IsTrue(termination.Terminated);
         }

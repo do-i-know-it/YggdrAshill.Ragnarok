@@ -1,10 +1,10 @@
 # Periodization
 
-This module defines
+This module defines how to
 
-- initialization
-- running
-- finalization
+- initialize
+- run
+- finalize
 
 for your
 
@@ -19,36 +19,22 @@ Nothing.
 
 ## Architecture
 
-![Image not found.](./Resources/Periodization.jpg "Architecture of Periodization.")
-
 | Word | Abstraction |
-|:-----------|:------------|
+|:-|:-|
 | Origination | Token to initialize. |
 | Termination | Token to finalize. |
 | Execution | Token to run. |
 | Span | Lifetime from `Origination` to `Termination`. |
-| Cycle | Lifecycle for `Execution` between `Origination` and `Termination`. |
+| Cycle | Lifecycle for `Execution` between `Origination` and `Termination` of `Span`. |
 
 `Origination` initializes applications, infrastructures, and so on.
 `Termination` finalizes applications, infrastructures, and so on.
 `Execution` runs task for applications.
-`Span` is `Origination` and `Termination`.
-`Origination` and `Termination` can be converted to `Span`.
-`Cycle` is `Execution` between `Origination` and `Termination`.
-`Execution` and `Span` can be converted to `Cycle`.
-`Execution`, `Origination` and `Termination` can be converted to `Cycle`.
+`Span` has `Origination` and `Termination`, and can can be converted from them.
+`Cycle` has `Execution` and `Span`, and can be converted from them.
+
+![Image not found.](./Resources/Periodization.jpg "Architecture of Periodization.")
 
 ## Implementation
 
-Nothing because this module only defines defines
-
-- initialization
-- running
-- finalization
-
-for your
-
-- applications
-- infrastructures
-
-and so on.
+Nothing except internal implementations for [Periodization](./Periodization.md).

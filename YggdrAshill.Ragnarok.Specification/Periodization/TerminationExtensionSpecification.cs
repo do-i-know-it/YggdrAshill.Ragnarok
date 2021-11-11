@@ -25,11 +25,11 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var span = termination.From(origination);
 
-            span.Originate();
+            span.Origination.Originate();
 
             Assert.IsTrue(origination.Originated);
 
-            span.Terminate();
+            span.Termination.Terminate();
 
             Assert.IsTrue(termination.Terminated);
         }
