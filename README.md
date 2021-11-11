@@ -1,4 +1,10 @@
-# YggdrAshill.Ragnarok: the lifecycle framework
+# YggdrAshill.Ragnarok: a lifecycle framework
+
+![GitHub](https://img.shields.io/github/license/do-i-know-it/YggdrAshill.Ragnarok)
+![GitHub Release Date](https://img.shields.io/github/release-date/do-i-know-it/YggdrAshill.Ragnarok)
+![GitHub last commit](https://img.shields.io/github/last-commit/do-i-know-it/YggdrAshill.Ragnarok)
+![GitHub repo size](https://img.shields.io/github/repo-size/do-i-know-it/YggdrAshill.Ragnarok)
+![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/do-i-know-it/YggdrAshill.Ragnarok)
 
 Ragnarok defines how to
 
@@ -37,15 +43,16 @@ Please see [Sample applications](https://github.com/do-i-know-it/YggdrAshill.Rag
 This framework consists of core modules below.
 
 - [Periodization](./Documentation/Periodization.md)
+- [Construction](./Documentation/Construction.md)
 
-## Implementation
-
-This framework includes [Implementation](./Documentation/Implementation.md) to provide
+[Implementation](./Documentation/Implementation.md) module is an entry point of this framework, providing
 
 - implementations
 - extensions
 
-for above.
+for core modules.
+
+![Image not found.](./Documentation/Resources/FrameworkArchitecture.jpg "Architecture of this framework.")
 
 ## Known issues
 
@@ -57,7 +64,7 @@ Please see [GitHub Projects](https://github.com/do-i-know-it/YggdrAshill.Ragnaro
 
 ## License
 
-This framework is under the [MIT License](https://opensource.org/licenses/mit-license.php), see [LICENSE](./LICENSE.txt).
+This framework is under the [MIT License](https://opensource.org/licenses/mit-license.php), see [LICENSE](./LICENSE.md).
 
 ## Remarks
 

@@ -1,30 +1,28 @@
 # Implementation of YggdrAshill.Ragnarok
 
-This module provides
-
-- implementations
-- extensions
-
-for [Progression](./Progression.md).
+This module is an entry point of this framework, helping developers to use it in ease.
 
 ## Dependencies
 
-This module depends [Progression](./Progression.md).
+This module depends on all of other modules:
+
+- [Progression](./Progression.md)
+- [Construction](./Construction.md)
 
 ## Architecture
 
-This module implements
+This module provides
 
-- interfaces
-- extensions
+- simple implementations
+- useful extensions
 
-in order developers to use this framework in ease.
+for other modules.
 
 ## Implementation
 
-This module provides
+This module makes developers use
 
-- implementations
-- extensions
+- `System.Action`
+- `System.Function`
 
-for [Progression](./Progression.md) with `System.Action` or `System.Function`.
+to implement interfaces of the modules.
