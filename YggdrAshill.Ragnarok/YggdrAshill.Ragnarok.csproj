@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Construction\Construction.csproj" />
     <ProjectReference Include="..\Hierarchization\Hierarchization.csproj" />
+    <ProjectReference Include="..\Motorization\Motorization.csproj" />
     <ProjectReference Include="..\Periodization\Periodization.csproj" />
   </ItemGroup>
 
