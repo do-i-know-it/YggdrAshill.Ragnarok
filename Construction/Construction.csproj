@@ -6,8 +6,4 @@
     <RootNamespace>YggdrAshill.Ragnarok.Construction</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Periodization\Periodization.csproj" />
-  </ItemGroup>
-
 </Project>
