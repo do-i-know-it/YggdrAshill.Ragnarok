@@ -2,10 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Construction\Construction.csproj" />
+    <ProjectReference Include="..\Fabrication\Fabrication.csproj" />
+    <ProjectReference Include="..\Hierarchization\Hierarchization.csproj" />
+    <ProjectReference Include="..\Materialization\Materialization.csproj" />
+    <ProjectReference Include="..\Motorization\Motorization.csproj" />
     <ProjectReference Include="..\Periodization\Periodization.csproj" />
   </ItemGroup>
 

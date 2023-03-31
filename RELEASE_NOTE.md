@@ -1,6 +1,4 @@
-# Release notes for version 1.1.1
+# Release notes for version 2.0.0
 
-- Renamed `LICENSE.txt` -> `LICENSE.md`.
-- Modified definitions for Periodization.
-- Added definitions for Construction.
-- Modified documentation for framework.
+- Removed `IOrigination`, `ITermination`, `IExecution`, `ISpan` and `ICycle`.
+- Added definitions for dependency injection.

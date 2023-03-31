@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyName>YggdrAshill.Ragnarok.Motorization</AssemblyName>
+        <RootNamespace>YggdrAshill.Ragnarok.Motorization</RootNamespace>
+        <LangVersion>8</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Construction\Construction.csproj" />
+      <ProjectReference Include="..\Hierarchization\Hierarchization.csproj" />
+    </ItemGroup>
+
+</Project>

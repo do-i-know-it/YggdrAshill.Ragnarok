@@ -1,49 +1,23 @@
-using YggdrAshill.Ragnarok.Periodization;
-using YggdrAshill.Ragnarok.Construction;
-using System;
-
-namespace YggdrAshill.Ragnarok.Samples
+﻿namespace YggdrAshill.Ragnarok.Samples
 {
-    /// <summary>
-    /// Defines entry point for the sample application.
-    /// </summary>
     internal sealed class Program
     {
-        /// <summary>
-        /// Entry point for the application.
-        /// </summary>
-        /// <param name="arguments">
-        /// <see cref="string[]"/> received from command line.
-        /// </param>
         private static void Main(string[] arguments)
         {
-            Service
-                .Default
-                .OnOriginated(() =>
-                {
-                    // define how to initialize this application.
-                    Console.WriteLine("Originated.");
-                })
-                .OnExecuted(() =>
-                {
-                    // define how to execute this application.
-                    Console.WriteLine($"Executed.");
-                })
-                .OnTerminated(() =>
-                {
-                    // define how to finalize this application.
-                    Console.WriteLine("Terminated.");
-                })
-                .InSpan(() =>
-                {
-                    // define how to initialize this application.
-                    Console.WriteLine("Span opened.");
-                }, () =>
-                {
-                    // define how to finalize this application.
-                    Console.WriteLine("Span closed.");
-                })
-                .Run();
+            var context = new DependencyInjectionContext();
+
+            context.RegisterLocal<MessageSender>()
+                .With("message", "Hello world")
+                .As<ISender>();
+            context.RegisterInstance(ConsoleReceiver.Instance).As<IReceiver>();
+            context.RegisterGlobal<Service>();
+
+            using (var scope = context.Build())
+            {
+                var service = scope.Resolver.Resolve<Service>();
+
+                service.Run();
+            }
         }
     }
 }

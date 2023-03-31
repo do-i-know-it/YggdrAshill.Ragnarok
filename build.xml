@@ -3,9 +3,9 @@
         <InputPath></InputPath>
         <OutputPath></OutputPath>
         <Configuration></Configuration>
-        <MajorVersion>1</MajorVersion>
-        <MinorVersion>1</MinorVersion>
-        <Revision>1</Revision>
+        <MajorVersion>2</MajorVersion>
+        <MinorVersion>0</MinorVersion>
+        <Revision>0</Revision>
         <BuildNumber>0</BuildNumber>
     </PropertyGroup>
     
