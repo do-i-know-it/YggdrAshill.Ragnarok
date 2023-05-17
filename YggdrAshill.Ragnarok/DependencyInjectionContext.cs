@@ -21,12 +21,17 @@ namespace YggdrAshill.Ragnarok
             context = new Context(scopedResolverContext);
         }
 
+        public DependencyInjectionContext(ISelector selector) : this(selector, ReflectionSolver.Instance)
+        {
+
+        }
+
         public DependencyInjectionContext(ISolver solver) : this(DefaultSelector.Instance, solver)
         {
 
         }
 
-        public DependencyInjectionContext() : this(ReflectionSolver.Instance)
+        public DependencyInjectionContext() : this(DefaultSelector.Instance, ReflectionSolver.Instance)
         {
 
         }
