@@ -7,7 +7,7 @@
             var context = new DependencyInjectionContext();
 
             context.RegisterLocal<MessageSender>()
-                .With("message", "Hello world")
+                .WithArgument("message", "Hello world")
                 .As<ISender>();
             context.RegisterInstance(ConsoleReceiver.Instance).As<IReceiver>();
             context.RegisterGlobal<Service>();

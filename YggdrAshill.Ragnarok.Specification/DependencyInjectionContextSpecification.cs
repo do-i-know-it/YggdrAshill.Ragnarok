@@ -205,7 +205,7 @@ namespace YggdrAshill.Ragnarok.Specification
             var context = new DependencyInjectionContext();
 
             context.RegisterTemporal<InjectedStruct>()
-                .With("value", value);
+                .WithArgument("value", value);
 
             using (var scope = context.Build())
             {
@@ -222,7 +222,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterLocal<InjectedClass>();
             context.RegisterLocal<InjectedStruct>()
-                .With("value", new Random().Next());
+                .WithArgument("value", new Random().Next());
             context.RegisterTemporal<ConstructorInjectableClass>();
 
             using (var scope = context.Build())
@@ -243,7 +243,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterLocal<InjectedClass>();
             context.RegisterLocal<InjectedStruct>()
-                .With("value", new Random().Next());
+                .WithArgument("value", new Random().Next());
             context.RegisterTemporal<FieldInjectableClass>()
                 .WithFieldInjection();
 
@@ -265,7 +265,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterLocal<InjectedClass>();
             context.RegisterLocal<InjectedStruct>()
-                .With("value", new Random().Next());
+                .WithArgument("value", new Random().Next());
             context.RegisterTemporal<PropertyInjectableClass>()
                 .WithPropertyInjection();
 
@@ -287,7 +287,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterLocal<InjectedClass>();
             context.RegisterLocal<InjectedStruct>()
-                .With("value", new Random().Next());
+                .WithArgument("value", new Random().Next());
             context.RegisterTemporal<MethodInjectableClass>()
                 .WithMethodInjection();
 

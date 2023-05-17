@@ -64,6 +64,12 @@ namespace YggdrAshill.Ragnarok
         public IInjectIntoConstructor With<T>(string name, T instance)
             where T: notnull
         {
+            return WithArgument<T>(name, instance);
+        }
+
+        public IInjectIntoConstructor WithArgument<T>(string name, T instance)
+            where T : notnull
+        {
             var parameter = new Parameter<T>(name, instance);
 
             parameterList.Value.Add(parameter);
