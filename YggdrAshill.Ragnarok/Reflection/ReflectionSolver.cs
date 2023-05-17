@@ -2,6 +2,7 @@ using YggdrAshill.Ragnarok.Hierarchization;
 using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
+using YggdrAshill.Ragnarok.Construction;
 
 namespace YggdrAshill.Ragnarok.Reflection
 {
@@ -40,8 +41,14 @@ namespace YggdrAshill.Ragnarok.Reflection
             return new CollectionGeneration(type);
         }
 
+        public IActivation CreateCollectionActivation(Type elementType)
+        {
+            return new CollectionGeneration(elementType);
+        }
+
         private sealed class CollectionGeneration :
-            ICollectionGeneration
+            ICollectionGeneration,
+            IActivation
         {
             public Type ElementType { get; }
 
@@ -50,6 +57,9 @@ namespace YggdrAshill.Ragnarok.Reflection
                 ElementType = elementType;
             }
 
+            public IReadOnlyList<Argument> ArgumentList { get; } = Array.Empty<Argument>();
+            public IReadOnlyList<Type> DependentTypeList { get; } = Array.Empty<Type>();
+
             public object Create(IScopedResolver resolver, IReadOnlyList<IRegistration> registrationList)
             {
                 var array = Array.CreateInstance(ElementType, registrationList.Count);
@@ -57,6 +67,32 @@ namespace YggdrAshill.Ragnarok.Reflection
                 for (var index = 0; index < registrationList.Count; index++)
                 {
                     array.SetValue(resolver.Resolve(registrationList[index]), index);
+                }
+
+                return array;
+            }
+
+            public object Activate(IResolver resolver, IReadOnlyList<IParameter> parameterList)
+            {
+                throw new NotImplementedException();
+            }
+
+            public object Activate(object[] parameterList)
+            {
+                var array = Array.CreateInstance(ElementType, parameterList.Length);
+
+                for (var index = 0; index < parameterList.Length; index++)
+                {
+                    var parameter = parameterList[index];
+                    var parameterType = parameter.GetType();
+
+                    // TODO: Type.IsInstanceOfType(object)?
+                    if (!ElementType.IsAssignableFrom(parameterType))
+                    {
+                        throw new Exception();
+                    }
+
+                    array.SetValue(parameter, index);
                 }
 
                 return array;
