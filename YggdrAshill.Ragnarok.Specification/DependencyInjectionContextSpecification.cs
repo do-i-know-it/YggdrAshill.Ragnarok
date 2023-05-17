@@ -1,5 +1,5 @@
-using YggdrAshill.Ragnarok.Construction;
 using NUnit.Framework;
+using YggdrAshill.Ragnarok.Construction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,8 @@ namespace YggdrAshill.Ragnarok.Specification
     [TestFixture(TestOf = typeof(DependencyInjectionContext))]
     internal sealed class DependencyInjectionContextSpecification
     {
+        private const int MaxMultipleInjectionCount = 3;
+
         [Test]
         public void ShouldResolveResolver()
         {
@@ -75,18 +77,18 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterGlobal<InjectedClass>();
+            context.RegisterGlobal<InjectedStruct>().WithArgument("value", new Random().Next());
 
             using (var scope = context.Build())
             {
-                var instance1 = scope.Resolver.Resolve<InjectedClass>();
-                var instance2 = scope.Resolver.Resolve<InjectedClass>();
+                var instance1 = scope.Resolver.Resolve<InjectedStruct>();
+                var instance2 = scope.Resolver.Resolve<InjectedStruct>();
 
                 Assert.That(instance1, Is.EqualTo(instance2));
 
                 using (var child = scope.CreateScope())
                 {
-                    var instance3 = child.Resolver.Resolve<InjectedClass>();
+                    var instance3 = child.Resolver.Resolve<InjectedStruct>();
 
                     Assert.That(instance1, Is.EqualTo(instance3));
                     Assert.That(instance2, Is.EqualTo(instance3));
@@ -194,24 +196,6 @@ namespace YggdrAshill.Ragnarok.Specification
                 Assert.That(instance1 is InjectedClass, Is.True);
                 Assert.That(instance2 is InjectedClass, Is.True);
                 Assert.That(instance3 is InjectedClass, Is.True);
-            }
-        }
-
-        [Test]
-        public void ShouldInjectConstantValueIntoConstructor()
-        {
-            var value = new Random().Next();
-
-            var context = new DependencyInjectionContext();
-
-            context.RegisterTemporal<InjectedStruct>()
-                .WithArgument("value", value);
-
-            using (var scope = context.Build())
-            {
-                var instance = scope.Resolver.Resolve<InjectedStruct>();
-
-                Assert.That(instance.Value, Is.EqualTo(value));
             }
         }
 
@@ -337,13 +321,13 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldResolveArrayInSameScope()
+        public void ShouldResolveArray()
         {
-            var amount = new Random().Next(1, 10);
+            var parentInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
 
             var context = new DependencyInjectionContext();
 
-            for (var count = 0; count < amount; count++)
+            for (var count = 0; count < parentInjectionAmount; count++)
             {
                 context.RegisterTemporal<InjectedClass>();
             }
@@ -352,18 +336,34 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 var injectedClassList = scope.Resolver.Resolve<InjectedClass[]>();
 
-                Assert.That(injectedClassList.Count, Is.EqualTo(amount));
+                Assert.That(injectedClassList.Length, Is.EqualTo(parentInjectionAmount));
+
+                var childInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
+
+                var childContext = scope.CreateContext();
+
+                for (var count = 0; count < childInjectionAmount; count++)
+                {
+                    childContext.RegisterTemporal<InjectedClass>();
+                }
+
+                using (var childScope = childContext.Build())
+                {
+                    injectedClassList = childScope.Resolver.Resolve<InjectedClass[]>();
+
+                    Assert.That(injectedClassList.Length, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
+                }
             }
         }
 
         [Test]
-        public void ShouldResolveReadOnlyListInSameScope()
+        public void ShouldResolveReadOnlyList()
         {
-            var amount = new Random().Next(1, 10);
+            var parentInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
 
             var context = new DependencyInjectionContext();
 
-            for (var count = 0; count < amount; count++)
+            for (var count = 0; count < parentInjectionAmount; count++)
             {
                 context.RegisterTemporal<InjectedClass>();
             }
@@ -372,18 +372,34 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 var injectedClassList = scope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
 
-                Assert.That(injectedClassList.Count, Is.EqualTo(amount));
+                Assert.That(injectedClassList.Count, Is.EqualTo(parentInjectionAmount));
+
+                var childInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
+
+                var childContext = scope.CreateContext();
+
+                for (var count = 0; count < childInjectionAmount; count++)
+                {
+                    childContext.RegisterTemporal<InjectedClass>();
+                }
+
+                using (var childScope = childContext.Build())
+                {
+                    injectedClassList = childScope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
+
+                    Assert.That(injectedClassList.Count, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
+                }
             }
         }
 
         [Test]
-        public void ShouldResolveReadOnlyCollectionInSameScope()
+        public void ShouldResolveReadOnlyCollection()
         {
-            var amount = new Random().Next(1, 10);
+            var parentInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
 
             var context = new DependencyInjectionContext();
 
-            for (var count = 0; count < amount; count++)
+            for (var count = 0; count < parentInjectionAmount; count++)
             {
                 context.RegisterTemporal<InjectedClass>();
             }
@@ -392,18 +408,34 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 var injectedClassList = scope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
 
-                Assert.That(injectedClassList.Count, Is.EqualTo(amount));
+                Assert.That(injectedClassList.Count, Is.EqualTo(parentInjectionAmount));
+
+                var childInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
+
+                var childContext = scope.CreateContext();
+
+                for (var count = 0; count < childInjectionAmount; count++)
+                {
+                    childContext.RegisterTemporal<InjectedClass>();
+                }
+
+                using (var childScope = childContext.Build())
+                {
+                    injectedClassList = childScope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
+
+                    Assert.That(injectedClassList.Count, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
+                }
             }
         }
 
         [Test]
-        public void ShouldResolveEnumerableInSameScope()
+        public void ShouldResolveEnumerable()
         {
-            var amount = new Random().Next(1, 10);
+            var parentInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
 
             var context = new DependencyInjectionContext();
 
-            for (var count = 0; count < amount; count++)
+            for (var count = 0; count < parentInjectionAmount; count++)
             {
                 context.RegisterTemporal<InjectedClass>();
             }
@@ -412,94 +444,22 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 var injectedClassList = scope.Resolver.Resolve<IEnumerable<InjectedClass>>();
 
-                Assert.That(injectedClassList.Count(), Is.EqualTo(amount));
-            }
-        }
+                Assert.That(injectedClassList.Count(), Is.EqualTo(parentInjectionAmount));
 
-        [Test]
-        public void ShouldResolveArrayInAllScope()
-        {
-            var context = new DependencyInjectionContext();
+                var childInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
 
-            context.RegisterTemporal<InjectedClass>();
-
-            using (var scope = context.Build())
-            {
                 var childContext = scope.CreateContext();
 
-                childContext.RegisterTemporal<InjectedClass>();
-
-                using (var childScope = childContext.Build())
+                for (var count = 0; count < childInjectionAmount; count++)
                 {
-                    var injectedClassList = childScope.Resolver.Resolve<InjectedClass[]>();
-
-                    Assert.That(injectedClassList.Count(), Is.EqualTo(2));
+                    childContext.RegisterTemporal<InjectedClass>();
                 }
-            }
-        }
-
-        [Test]
-        public void ShouldResolveReadOnlyListInAllScope()
-        {
-            var context = new DependencyInjectionContext();
-
-            context.RegisterTemporal<InjectedClass>();
-
-            using (var scope = context.Build())
-            {
-                var childContext = scope.CreateContext();
-
-                childContext.RegisterTemporal<InjectedClass>();
 
                 using (var childScope = childContext.Build())
                 {
-                    var injectedClassList = childScope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
+                    injectedClassList = childScope.Resolver.Resolve<IEnumerable<InjectedClass>>();
 
-                    Assert.That(injectedClassList.Count(), Is.EqualTo(2));
-                }
-            }
-        }
-
-        [Test]
-        public void ShouldResolveReadOnlyCollectionInAllScope()
-        {
-            var context = new DependencyInjectionContext();
-
-            context.RegisterTemporal<InjectedClass>();
-
-            using (var scope = context.Build())
-            {
-                var childContext = scope.CreateContext();
-
-                childContext.RegisterTemporal<InjectedClass>();
-
-                using (var childScope = childContext.Build())
-                {
-                    var injectedClassList = childScope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
-
-                    Assert.That(injectedClassList.Count(), Is.EqualTo(2));
-                }
-            }
-        }
-
-        [Test]
-        public void ShouldResolveEnumerableInAllScope()
-        {
-            var context = new DependencyInjectionContext();
-
-            context.RegisterTemporal<InjectedClass>();
-
-            using (var scope = context.Build())
-            {
-                var childContext = scope.CreateContext();
-
-                childContext.RegisterTemporal<InjectedClass>();
-
-                using (var childScope = childContext.Build())
-                {
-                    var injectedClassList = childScope.Resolver.Resolve<IEnumerable<InjectedClass>>();
-
-                    Assert.That(injectedClassList.Count(), Is.EqualTo(2));
+                    Assert.That(injectedClassList.Count(), Is.EqualTo(parentInjectionAmount + childInjectionAmount));
                 }
             }
         }
