@@ -1,6 +1,6 @@
-using System;
-using NUnit.Framework;
 using YggdrAshill.Ragnarok.Construction;
+using NUnit.Framework;
+using System;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
@@ -8,7 +8,7 @@ namespace YggdrAshill.Ragnarok.Specification
     internal sealed class DependencyInjectionContextSpecification
     {
         [Test]
-        public void ShouldBeAbleToResolveResolver()
+        public void ShouldResolveResolver()
         {
             var context = new DependencyInjectionContext();
 
