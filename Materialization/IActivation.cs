@@ -29,7 +29,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         /// <returns>
         /// <see cref="object"/> created.
         /// </returns>
-        [Obsolete]
+        [Obsolete("Use Activate(object[]) instead.")]
         object Activate(IResolver resolver, IReadOnlyList<IParameter> parameterList);
 
         object Activate(object[] parameterList);
