@@ -9,6 +9,11 @@ namespace YggdrAshill.Ragnarok.Materialization
     internal sealed class CollectionRegistration :
         IRegistration
     {
+        public static Type GetImplementedType(Type elementType)
+        {
+            return elementType.MakeArrayType();
+        }
+
         public static bool TryGetElementType(Type type, out Type elementType)
         {
             elementType = default!;
@@ -44,7 +49,7 @@ namespace YggdrAshill.Ragnarok.Materialization
             return false;
         }
 
-        private readonly ICollectionGeneration generation;
+        private readonly IActivation activation;
         private readonly IRegistration[] registrationList;
 
         public Type ImplementedType { get; }
@@ -52,12 +57,10 @@ namespace YggdrAshill.Ragnarok.Materialization
         public Ownership Ownership => Ownership.External;
         public IReadOnlyList<Type> AssignedTypeList { get; }
 
-        public CollectionRegistration(ICollectionGeneration generation, IRegistration[] registrationList)
+        public CollectionRegistration(Type elementType, IActivation activation, IRegistration[] registrationList)
         {
-            this.generation = generation;
+            this.activation = activation;
             this.registrationList = registrationList;
-
-            var elementType = generation.ElementType;
 
             ImplementedType = elementType.MakeArrayType();
 
@@ -77,7 +80,12 @@ namespace YggdrAshill.Ragnarok.Materialization
                 .Where(candidate => candidate is CollectionRegistration)
                 .SelectMany(registration => (registration as CollectionRegistration)!.registrationList);
 
-            return generation.Create(resolver, totalRegistrationList.ToArray());
+            // TODO: object pooling.
+            var parameterList = totalRegistrationList
+                .Select(resolver.Resolve)
+                .ToArray();
+
+            return activation.Activate(parameterList);
         }
     }
 }

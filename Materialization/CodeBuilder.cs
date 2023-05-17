@@ -18,7 +18,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         {
             if (type.IsArray)
             {
-                throw new NotImplementedException();
+                return solver.CreateCollectionActivation(type.GetElementType()!);
             }
 
             var injection = selector.CreateConstructorInjection(type);

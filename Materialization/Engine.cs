@@ -9,12 +9,12 @@ namespace YggdrAshill.Ragnarok.Materialization
     internal sealed class Engine :
         IEngine
     {
-        private readonly ISolver solver;
+        private readonly ICodeBuilder codeBuilder;
         private readonly Dictionary<Type, IRegistration?> dictionary;
 
-        public Engine(ISolver solver, IDictionary<Type, IRegistration?> table)
+        public Engine(ICodeBuilder codeBuilder, IDictionary<Type, IRegistration?> table)
         {
-            this.solver = solver;
+            this.codeBuilder = codeBuilder;
             dictionary = new Dictionary<Type, IRegistration?>(table);
         }
 
@@ -73,9 +73,11 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             registration = registrationCache.GetOrAdd(elementType, _ =>
             {
-                var generation = solver.CreateCollectionGeneration(elementType);
+                var implementedType = CollectionRegistration.GetImplementedType(elementType);
 
-                return new CollectionRegistration(generation, new[] { elementRegistration });
+                var activation = codeBuilder.CreateActivation(implementedType);
+
+                return new CollectionRegistration(elementType, activation, new[] { elementRegistration });
             });
 
             return true;

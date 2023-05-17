@@ -9,12 +9,12 @@ namespace YggdrAshill.Ragnarok.Materialization
     internal readonly struct ConvertDescriptionListToEngine :
         IDisposable
     {
-        private readonly ISolver solver;
+        private readonly ICodeBuilder codeBuilder;
         private readonly IEnumerable<IDescription> descriptionList;
 
-        public ConvertDescriptionListToEngine(ISolver solver, IEnumerable<IDescription> descriptionList)
+        public ConvertDescriptionListToEngine(ICodeBuilder codeBuilder, IEnumerable<IDescription> descriptionList)
         {
-            this.solver = solver;
+            this.codeBuilder = codeBuilder;
             this.descriptionList = descriptionList;
 
             // TODO: object pooling.
@@ -60,7 +60,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             registrationList = registrationBuffer.ToArray();
 
-            return new Engine(solver, typeToRegistration);
+            return new Engine(codeBuilder, typeToRegistration);
         }
         private void AddRegistration(Type assignedType, IRegistration registration)
         {
@@ -106,9 +106,11 @@ namespace YggdrAshill.Ragnarok.Materialization
                 var elementType = pair.Key;
                 var registrationList = pair.Value;
 
-                var generation = solver.CreateCollectionGeneration(elementType);
+                var implementedType = CollectionRegistration.GetImplementedType(elementType);
 
-                var collection = new CollectionRegistration(generation, registrationList.ToArray());
+                var activation = codeBuilder.CreateActivation(implementedType);
+
+                var collection = new CollectionRegistration(elementType, activation, registrationList.ToArray());
 
                 foreach (var assignedType in collection.AssignedTypeList)
                 {
