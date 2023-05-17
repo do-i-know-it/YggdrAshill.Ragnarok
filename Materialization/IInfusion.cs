@@ -9,9 +9,12 @@ namespace YggdrAshill.Ragnarok.Materialization
     /// </summary>
     public interface IInfusion
     {
+        IReadOnlyList<Argument> ArgumentList { get; }
+
         /// <summary>
         /// <see cref="Type"/>s to resolve.
         /// </summary>
+        [Obsolete("Use ArgumentList instead.")]
         IReadOnlyList<Type> DependentTypeList { get; }
 
         /// <summary>
@@ -26,6 +29,9 @@ namespace YggdrAshill.Ragnarok.Materialization
         /// <param name="parameterList">
         /// <see cref="IParameter"/>s to infuse.
         /// </param>
+        [Obsolete("Use Infuse(object, object[]) instead.")]
         void Infuse(object instance, IResolver resolver, IReadOnlyList<IParameter> parameterList);
+
+        void Infuse(object instance, object[] parameterList);
     }
 }

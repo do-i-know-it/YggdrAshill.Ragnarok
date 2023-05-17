@@ -17,7 +17,19 @@ namespace YggdrAshill.Ragnarok.Materialization
 
         public void Inject(IResolver resolver, object instance)
         {
-            infusion.Infuse(instance, resolver, parameterList);
+            var argumentList = infusion.ArgumentList;
+
+            // TODO: object pooling.
+            var instanceList = new object[argumentList.Count];
+
+            for (var index = 0; index < argumentList.Count; index++)
+            {
+                var argument = argumentList[index];
+
+                instanceList[index] = resolver.Resolve(parameterList, argument.Type, argument.Name);
+            }
+
+            infusion.Infuse(instance, instanceList);
         }
     }
 }

@@ -9,9 +9,12 @@ namespace YggdrAshill.Ragnarok.Materialization
     /// </summary>
     public interface IActivation
     {
+        IReadOnlyList<Argument> ArgumentList { get; }
+
         /// <summary>
         /// <see cref="Type"/>s to resolve.
         /// </summary>
+        [Obsolete("Use ArgumentList instead.")]
         IReadOnlyList<Type> DependentTypeList { get; }
 
         /// <summary>
@@ -26,6 +29,9 @@ namespace YggdrAshill.Ragnarok.Materialization
         /// <returns>
         /// <see cref="object"/> created.
         /// </returns>
+        [Obsolete]
         object Activate(IResolver resolver, IReadOnlyList<IParameter> parameterList);
+
+        object Activate(object[] parameterList);
     }
 }

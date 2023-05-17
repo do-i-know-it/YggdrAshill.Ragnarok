@@ -12,12 +12,16 @@ namespace YggdrAshill.Ragnarok.Reflection
     {
         private readonly MethodInfo method;
         private readonly ParameterInfo[] parameterInformationList;
+
+        public IReadOnlyList<Argument> ArgumentList { get; }
         public IReadOnlyList<Type> DependentTypeList { get; }
 
         public ReflectionMethodInfusion(MethodInjection injection)
         {
             method = injection.Method;
             parameterInformationList = injection.ParameterList;
+
+            ArgumentList = parameterInformationList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
 
             DependentTypeList
                 = parameterInformationList.Select(parameter => parameter.ParameterType).Distinct().ToArray();
@@ -36,6 +40,16 @@ namespace YggdrAshill.Ragnarok.Reflection
             }
 
             method.Invoke(instance, parameterValueList);
+        }
+
+        public void Infuse(object instance, object[] parameterList)
+        {
+            if (parameterInformationList.Length != parameterList.Length)
+            {
+                throw new ArgumentException();
+            }
+
+            method.Invoke(instance, parameterList);
         }
     }
 }

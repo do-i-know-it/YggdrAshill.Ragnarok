@@ -3,6 +3,7 @@ using YggdrAshill.Ragnarok.Motorization;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace YggdrAshill.Ragnarok.Materialization
 {
@@ -74,7 +75,9 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             if (activationCache.TryGetValue(current, out var constructorInjection))
             {
-                foreach (var type in constructorInjection.DependentTypeList)
+                var dependentTypeList
+                    = constructorInjection.ArgumentList.Select(argument => argument.Type).Distinct();
+                foreach (var type in dependentTypeList)
                 {
                     if (engine.Find(type, out var registration))
                     {
@@ -87,7 +90,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             if (methodInjectionCache.TryGetValue(current, out var methodInjection))
             {
-                foreach (var type in methodInjection.DependentTypeList)
+                foreach (var type in methodInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
                     if (engine.Find(type, out var registration))
                     {
@@ -98,7 +101,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             if (fieldInjectionCache.TryGetValue(current, out var fieldInjection))
             {
-                foreach (var type in fieldInjection.DependentTypeList)
+                foreach (var type in fieldInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
                     if (engine.Find(type, out var registration))
                     {
@@ -109,7 +112,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             if (propertyInjectionCache.TryGetValue(current, out var propertyInjection))
             {
-                foreach (var type in propertyInjection.DependentTypeList)
+                foreach (var type in propertyInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
                     if (engine.Find(type, out var registration))
                     {
