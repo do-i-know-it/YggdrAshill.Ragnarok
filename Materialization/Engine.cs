@@ -26,7 +26,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         private readonly ConcurrentDictionary<Type, IRegistration> registrationCache
             = new ConcurrentDictionary<Type, IRegistration>();
 
-        private readonly HashSet<IDisposable> disposableList = new HashSet<IDisposable>();
+        private readonly CompositeDisposable compositeDisposable = new CompositeDisposable();
 
         public bool Have(IRegistration registration)
         {
@@ -93,10 +93,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
         public void Bind(IDisposable disposable)
         {
-            lock (disposableList)
-            {
-                disposableList.Add(disposable);
-            }
+            compositeDisposable.Add(disposable);
         }
 
         public void Dispose()
@@ -115,15 +112,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             registrationCache.Clear();
 
-            lock (disposableList)
-            {
-                foreach (var disposable in disposableList)
-                {
-                    disposable.Dispose();
-                }
-
-                disposableList.Clear();
-            }
+            compositeDisposable.Dispose();
 
             isDisposed = true;
         }
