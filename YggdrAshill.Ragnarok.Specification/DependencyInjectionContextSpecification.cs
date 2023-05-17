@@ -237,7 +237,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldEnableFieldInjectionIfYouWantToInjectDependencies()
+        public void ShouldInjectDependenciesIntoFieldsAfterEnabled()
         {
             var context = new DependencyInjectionContext();
 
@@ -245,7 +245,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterLocal<InjectedStruct>()
                 .WithArgument("value", new Random().Next());
-            context.RegisterTemporal<FieldInjectableClass>()
+            context.RegisterGlobal<FieldInjectableClass>()
                 .WithFieldInjection()
                 .With("injectedClass", injectedClass);
 
@@ -260,7 +260,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldEnablePropertyInjectionIfYouWantToInjectDependencies()
+        public void ShouldInjectDependenciesIntoPropertiesAfterEnabled()
         {
             var context = new DependencyInjectionContext();
 
@@ -268,7 +268,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterLocal<InjectedStruct>()
                 .WithArgument("value", new Random().Next());
-            context.RegisterTemporal<PropertyInjectableClass>()
+            context.RegisterGlobal<PropertyInjectableClass>()
                 .WithPropertyInjection()
                 .With($"{nameof(PropertyInjectableClass.InjectedClass)}", injectedClass);
 
@@ -283,7 +283,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldEnableMethodInjectionIfYouWantToInjectDependencies()
+        public void ShouldInjectDependenciesIntoMethodsAfterEnabled()
         {
             var context = new DependencyInjectionContext();
 
@@ -291,7 +291,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterLocal<InjectedStruct>()
                 .WithArgument("value", new Random().Next());
-            context.RegisterTemporal<MethodInjectableClass>()
+            context.RegisterGlobal<MethodInjectableClass>()
                 .WithMethodInjection()
                 .With("injectedClass", injectedClass);
 
@@ -302,6 +302,37 @@ namespace YggdrAshill.Ragnarok.Specification
 
                 Assert.That(instance.InjectedClass, Is.EqualTo(injectedClass));
                 Assert.That(instance.InjectedStruct, Is.EqualTo(injectedStruct));
+            }
+        }
+
+        [Test]
+        public void ShouldInjectDependenciesIntoAllAfterEnabled()
+        {
+            var context = new DependencyInjectionContext();
+
+            var fieldInjected = new InjectedStruct(new Random().Next());
+            var propertyInjected = new InjectedStruct(new Random().Next());
+            var methodInjected = new InjectedStruct(new Random().Next());
+
+            context.RegisterLocal<InjectedStruct>()
+                .WithArgument("value", new Random().Next());
+            context.RegisterGlobal<AllInjectableClass>()
+                .WithFieldInjection()
+                .With("fieldInjected", fieldInjected)
+                .WithPropertyInjection()
+                .With(nameof(AllInjectableClass.PropertyInjected), propertyInjected)
+                .WithMethodInjection()
+                .With("methodInjected", methodInjected);
+
+            using (var scope = context.Build())
+            {
+                var injectedStruct = scope.Resolver.Resolve<InjectedStruct>();
+                var instance = scope.Resolver.Resolve<AllInjectableClass>();
+
+                Assert.That(instance.ConstructorInjected, Is.EqualTo(injectedStruct));
+                Assert.That(instance.FieldInjected, Is.EqualTo(fieldInjected));
+                Assert.That(instance.PropertyInjected, Is.EqualTo(propertyInjected));
+                Assert.That(instance.MethodInjected, Is.EqualTo(methodInjected));
             }
         }
 
@@ -474,7 +505,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotEnableFieldInjectionIfHaveNoDependencies()
+        public void CannotInjectIntoFieldsWithoutDependencies()
         {
             var context = new DependencyInjectionContext();
 
@@ -488,7 +519,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotEnablePropertyInjectionIfHaveNoDependencies()
+        public void CannotInjectIntoPropertiesWithoutDependencies()
         {
             var context = new DependencyInjectionContext();
 
@@ -502,7 +533,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotEnableMethodInjectionIfHaveNoDependencies()
+        public void CannotInjectIntoMethodsWithoutDependencies()
         {
             var context = new DependencyInjectionContext();
 
