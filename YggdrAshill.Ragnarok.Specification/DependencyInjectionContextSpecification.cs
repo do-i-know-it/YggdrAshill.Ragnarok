@@ -241,15 +241,16 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterLocal<InjectedClass>();
+            var injectedClass = new InjectedClass();
+
             context.RegisterLocal<InjectedStruct>()
                 .WithArgument("value", new Random().Next());
             context.RegisterTemporal<FieldInjectableClass>()
-                .WithFieldInjection();
+                .WithFieldInjection()
+                .With("injectedClass", injectedClass);
 
             using (var scope = context.Build())
             {
-                var injectedClass = scope.Resolver.Resolve<InjectedClass>();
                 var injectedStruct = scope.Resolver.Resolve<InjectedStruct>();
                 var instance = scope.Resolver.Resolve<FieldInjectableClass>();
 
@@ -263,15 +264,16 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterLocal<InjectedClass>();
+            var injectedClass = new InjectedClass();
+
             context.RegisterLocal<InjectedStruct>()
                 .WithArgument("value", new Random().Next());
             context.RegisterTemporal<PropertyInjectableClass>()
-                .WithPropertyInjection();
+                .WithPropertyInjection()
+                .With($"{nameof(PropertyInjectableClass.InjectedClass)}", injectedClass);
 
             using (var scope = context.Build())
             {
-                var injectedClass = scope.Resolver.Resolve<InjectedClass>();
                 var injectedStruct = scope.Resolver.Resolve<InjectedStruct>();
                 var instance = scope.Resolver.Resolve<PropertyInjectableClass>();
 
@@ -285,15 +287,16 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterLocal<InjectedClass>();
+            var injectedClass = new InjectedClass();
+
             context.RegisterLocal<InjectedStruct>()
                 .WithArgument("value", new Random().Next());
             context.RegisterTemporal<MethodInjectableClass>()
-                .WithMethodInjection();
+                .WithMethodInjection()
+                .With("injectedClass", injectedClass);
 
             using (var scope = context.Build())
             {
-                var injectedClass = scope.Resolver.Resolve<InjectedClass>();
                 var injectedStruct = scope.Resolver.Resolve<InjectedStruct>();
                 var instance = scope.Resolver.Resolve<MethodInjectableClass>();
 
@@ -536,27 +539,27 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 Assert.That(() =>
                 {
-                    scope.Resolver.Resolve<InjectedClass>();
+                    _ = scope.Resolver.Resolve<InjectedClass>();
                 }, Throws.TypeOf<Exception>());
 
                 Assert.That(() =>
                 {
-                    scope.Resolver.Resolve<InjectedClass[]>();
+                    _ = scope.Resolver.Resolve<InjectedClass[]>();
                 }, Throws.TypeOf<Exception>());
 
                 Assert.That(() =>
                 {
-                    scope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
+                    _ = scope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
                 }, Throws.TypeOf<Exception>());
 
                 Assert.That(() =>
                 {
-                    scope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
+                    _ = scope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
                 }, Throws.TypeOf<Exception>());
 
                 Assert.That(() =>
                 {
-                    scope.Resolver.Resolve<IEnumerable<InjectedClass>>();
+                    _ = scope.Resolver.Resolve<IEnumerable<InjectedClass>>();
                 }, Throws.TypeOf<Exception>());
             }
         }
