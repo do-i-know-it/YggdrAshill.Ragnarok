@@ -9,9 +9,43 @@ namespace YggdrAshill.Ragnarok.Materialization
     internal sealed class CollectionRegistration :
         IRegistration
     {
+        public static bool TryGetElementType(Type type, out Type elementType)
+        {
+            elementType = default!;
+
+            if (type.IsArray)
+            {
+                elementType = type.GetElementType()!;
+
+                return true;
+            }
+
+            if (!type.IsConstructedGenericType)
+            {
+                return false;
+            }
+
+            // TODO: cache type data.
+            var openGenericType = type.GetGenericTypeDefinition();
+
+            var isCollectionType
+                = openGenericType == typeof(IEnumerable<>) ||
+                  openGenericType == typeof(IReadOnlyList<>) ||
+                  openGenericType == typeof(IReadOnlyCollection<>);
+
+            if (isCollectionType)
+            {
+                // TODO: cache type data.
+                elementType = type.GetGenericArguments()[0];
+
+                return true;
+            }
+
+            return false;
+        }
+
         private readonly ICollectionGeneration generation;
         private readonly IRegistration[] registrationList;
-        private readonly Type finderType;
 
         public Type ImplementedType { get; }
         public Lifetime Lifetime => Lifetime.Temporal;
@@ -27,8 +61,6 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             ImplementedType = elementType.MakeArrayType();
 
-            finderType = ImplementedType;
-
             // TODO: cache generated type information.
             AssignedTypeList = new List<Type>
             {
@@ -41,11 +73,11 @@ namespace YggdrAshill.Ragnarok.Materialization
 
         public object Instantiate(IScopedResolver resolver)
         {
-            var additionalList = resolver.ResolveAll(finderType);
+            var totalRegistrationList = resolver.ResolveAll(ImplementedType)
+                .Where(candidate => candidate is CollectionRegistration)
+                .SelectMany(registration => (registration as CollectionRegistration)!.registrationList);
 
-            var totalList = registrationList.Concat(additionalList).ToArray();
-
-            return generation.Create(resolver, totalList);
+            return generation.Create(resolver, totalRegistrationList.ToArray());
         }
     }
 }

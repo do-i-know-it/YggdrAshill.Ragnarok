@@ -20,12 +20,12 @@ namespace YggdrAshill.Ragnarok.Materialization
             // TODO: object pooling.
             const int BufferSize = 128;
             registrationBuffer = new List<IRegistration>(BufferSize);
-            typeToRegistration = new Dictionary<Type, IRegistration>(BufferSize);
+            typeToRegistration = new Dictionary<Type, IRegistration?>(BufferSize);
             typeToRegistrationList = new Dictionary<Type, List<IRegistration>>(BufferSize);
         }
 
         private readonly List<IRegistration> registrationBuffer;
-        private readonly Dictionary<Type, IRegistration> typeToRegistration;
+        private readonly Dictionary<Type, IRegistration?> typeToRegistration;
         private readonly Dictionary<Type, List<IRegistration>> typeToRegistrationList;
 
         public IEngine Convert(out IEnumerable<IRegistration> registrationList)
@@ -43,6 +43,11 @@ namespace YggdrAshill.Ragnarok.Materialization
                     {
                         AddRegistration(assignedType, registration);
                     }
+
+                    if (!typeToRegistration.ContainsKey(registration.ImplementedType))
+                    {
+                        typeToRegistration.Add(registration.ImplementedType, null);
+                    }
                 }
                 else
                 {
@@ -55,7 +60,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             registrationList = registrationBuffer.ToArray();
 
-            return new Engine(typeToRegistration);
+            return new Engine(solver, typeToRegistration);
         }
         private void AddRegistration(Type assignedType, IRegistration registration)
         {
@@ -80,7 +85,7 @@ namespace YggdrAshill.Ragnarok.Materialization
                 {
                     collection = new List<IRegistration>()
                     {
-                        found,
+                        found!,
                         registration,
                     };
 

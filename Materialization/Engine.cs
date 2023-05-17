@@ -9,16 +9,22 @@ namespace YggdrAshill.Ragnarok.Materialization
     internal sealed class Engine :
         IEngine
     {
-        private readonly Dictionary<Type, IRegistration> dictionary;
+        private readonly ISolver solver;
+        private readonly Dictionary<Type, IRegistration?> dictionary;
 
-        public Engine(IDictionary<Type, IRegistration> table)
+        public Engine(ISolver solver, IDictionary<Type, IRegistration?> table)
         {
-            dictionary = new Dictionary<Type, IRegistration>(table);
+            this.solver = solver;
+            dictionary = new Dictionary<Type, IRegistration?>(table);
         }
 
         private bool isDisposed;
 
-        private readonly ConcurrentDictionary<IRegistration, object> cache = new ConcurrentDictionary<IRegistration, object>();
+        private readonly ConcurrentDictionary<IRegistration, object> instanceCache
+            = new ConcurrentDictionary<IRegistration, object>();
+
+        private readonly ConcurrentDictionary<Type, IRegistration> registrationCache
+            = new ConcurrentDictionary<Type, IRegistration>();
 
         private readonly HashSet<IDisposable> disposableList = new HashSet<IDisposable>();
 
@@ -39,7 +45,40 @@ namespace YggdrAshill.Ragnarok.Materialization
                 throw new ObjectDisposedException(nameof(IEngine));
             }
 
-            return dictionary.TryGetValue(type, out registration);
+            registration = default!;
+
+            if (dictionary.TryGetValue(type, out var found) && found != null)
+            {
+                registration = found;
+
+                return true;
+            }
+
+            return FindSingleElementCollection(type, out registration);
+        }
+
+        private bool FindSingleElementCollection(Type type, out IRegistration registration)
+        {
+            registration = default!;
+
+            if (!CollectionRegistration.TryGetElementType(type, out var elementType))
+            {
+                return false;
+            }
+
+            if (!Find(elementType, out var elementRegistration))
+            {
+                return false;
+            }
+
+            registration = registrationCache.GetOrAdd(elementType, _ =>
+            {
+                var generation = solver.CreateCollectionGeneration(elementType);
+
+                return new CollectionRegistration(generation, new[] { elementRegistration });
+            });
+
+            return true;
         }
 
         public object GetInstance(IRegistration registration, Func<IRegistration, object> factory)
@@ -49,7 +88,7 @@ namespace YggdrAshill.Ragnarok.Materialization
                 throw new ObjectDisposedException(nameof(IEngine));
             }
 
-            return cache.GetOrAdd(registration, factory);
+            return instanceCache.GetOrAdd(registration, factory);
         }
 
         public void Bind(IDisposable disposable)
@@ -72,7 +111,9 @@ namespace YggdrAshill.Ragnarok.Materialization
                 dictionary.Clear();
             }
 
-            cache.Clear();
+            instanceCache.Clear();
+
+            registrationCache.Clear();
 
             lock (disposableList)
             {
