@@ -6,22 +6,22 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Materialization
 {
     /// <summary>
-    /// Implementation of <see cref="IEngineBuilder"/> with <see cref="ISelector"/> and <see cref="ISolver"/>.
+    /// Implementation of <see cref="IEngineBuilder"/> with <see cref="ICodeBuilder"/> and <see cref="ISolver"/>.
     /// </summary>
     public sealed class EngineBuilder :
         IEngineBuilder
     {
-        private readonly ISelector selector;
+        private readonly ICodeBuilder codeBuilder;
         private readonly ISolver solver;
 
         /// <summary>
         /// Constructor of <see cref="EngineBuilder"/>.
         /// </summary>
-        /// <param name="selector"></param>
+        /// <param name="codeBuilder"></param>
         /// <param name="solver"></param>
-        public EngineBuilder(ISelector selector, ISolver solver)
+        public EngineBuilder(ICodeBuilder codeBuilder, ISolver solver)
         {
-            this.selector = selector;
+            this.codeBuilder = codeBuilder;
             this.solver = solver;
         }
 
@@ -33,9 +33,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         }
         private IActivation CreateActivation(Type type)
         {
-            var injection = selector.CreateConstructorInjection(type);
-
-            return solver.CreateActivation(injection);
+            return codeBuilder.CreateActivation(type);
         }
 
         public IInjection GetFieldInjection(Type type, IReadOnlyList<IParameter> parameterList)
@@ -46,9 +44,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         }
         private IInfusion CreateFieldInfusion(Type type)
         {
-            var injection = selector.CreateFieldInjection(type);
-
-            return solver.CreateFieldInfusion(injection);
+            return codeBuilder.CreateFieldInfusion(type);
         }
 
         public IInjection GetPropertyInjection(Type type, IReadOnlyList<IParameter> parameterList)
@@ -59,9 +55,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         }
         private IInfusion CreatePropertyInfusion(Type type)
         {
-            var injection = selector.CreatePropertyInjection(type);
-
-            return solver.CreatePropertyInfusion(injection);
+            return codeBuilder.CreatePropertyInfusion(type);
         }
 
         public IInjection GetMethodInjection(Type type, IReadOnlyList<IParameter> parameterList)
@@ -72,9 +66,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         }
         private IInfusion CreateMethodInfusion(Type type)
         {
-            var injection = selector.CreateMethodInjection(type);
-
-            return solver.CreateMethodInfusion(injection);
+            return codeBuilder.CreateMethodInfusion(type);
         }
 
         /// <inheritdoc/>
