@@ -95,6 +95,91 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
+        public void ShouldInstantiateRegisteredAsInterface()
+        {
+            var context = new DependencyInjectionContext();
+
+            context.RegisterLocal<InjectedClass>().As<IInjectedInterface1>();
+
+            using (var scope = context.Build())
+            {
+                Assert.That(() =>
+                {
+                    _ = scope.Resolver.Resolve<InjectedClass>();
+                }, Throws.TypeOf<Exception>());
+
+                Assert.That(() =>
+                {
+                    _ = scope.Resolver.Resolve<IInjectedInterface2>();
+                }, Throws.TypeOf<Exception>());
+
+                var instance = scope.Resolver.Resolve<IInjectedInterface1>();
+
+                Assert.That(instance is InjectedClass, Is.True);
+            }
+        }
+
+        [Test]
+        public void ShouldInstantiateRegisteredAsImplementedInterfaces()
+        {
+            var context = new DependencyInjectionContext();
+
+            context.RegisterLocal<InjectedClass>().AsImplementedInterfaces();
+
+            using (var scope = context.Build())
+            {
+                Assert.That(() =>
+                {
+                    _ = scope.Resolver.Resolve<InjectedClass>();
+                }, Throws.TypeOf<Exception>());
+
+                var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
+                var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
+
+                Assert.That(instance1, Is.EqualTo(instance2));
+            }
+        }
+
+        [Test]
+        public void ShouldInstantiateRegisteredAsInterfaceAndSelf()
+        {
+            var context = new DependencyInjectionContext();
+
+            context.RegisterLocal<InjectedClass>().As<IInjectedInterface1>().AsSelf();
+
+            using (var scope = context.Build())
+            {
+                Assert.That(() =>
+                {
+                    _ = scope.Resolver.Resolve<IInjectedInterface2>();
+                }, Throws.TypeOf<Exception>());
+
+                var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
+                var instance2 = scope.Resolver.Resolve<InjectedClass>();
+
+                Assert.That(instance1, Is.EqualTo(instance2));
+            }
+        }
+
+        [Test]
+        public void ShouldInstantiateRegisteredAsImplementedInterfacesAndSelf()
+        {
+            var context = new DependencyInjectionContext();
+
+            context.RegisterLocal<InjectedClass>().AsImplementedInterfaces().AsSelf();
+
+            using (var scope = context.Build())
+            {
+                var instance = scope.Resolver.Resolve<InjectedClass>();
+                var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
+                var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
+
+                Assert.That(instance, Is.EqualTo(instance1));
+                Assert.That(instance1, Is.EqualTo(instance2));
+            }
+        }
+
+        [Test]
         public void ShouldInjectConstantValueIntoConstructor()
         {
             var value = new Random().Next();
