@@ -58,6 +58,7 @@ namespace YggdrAshill.Ragnarok.Reflection
                 var fieldType = field.FieldType;
                 var parameterType = parameter.GetType();
 
+                // TODO: Type.IsInstanceOfType(object)?
                 if (!fieldType.IsAssignableFrom(parameterType))
                 {
                     throw new Exception();
