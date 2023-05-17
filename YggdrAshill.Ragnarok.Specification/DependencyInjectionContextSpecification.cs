@@ -1,6 +1,8 @@
 using YggdrAshill.Ragnarok.Construction;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
@@ -198,6 +200,174 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
+        public void ShouldResolveArrayInSameScope()
+        {
+            var amount = new Random().Next(1, 10);
+
+            var context = new DependencyInjectionContext();
+
+            for (var count = 0; count < amount; count++)
+            {
+                context.RegisterTemporal<InjectedClass>();
+            }
+
+            using (var scope = context.Build())
+            {
+                var injectedClassList = scope.Resolver.Resolve<InjectedClass[]>();
+
+                Assert.That(injectedClassList.Count, Is.EqualTo(amount));
+            }
+        }
+
+        [Test]
+        public void ShouldResolveReadOnlyListInSameScope()
+        {
+            var amount = new Random().Next(1, 10);
+
+            var context = new DependencyInjectionContext();
+
+            for (var count = 0; count < amount; count++)
+            {
+                context.RegisterTemporal<InjectedClass>();
+            }
+
+            using (var scope = context.Build())
+            {
+                var injectedClassList = scope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
+
+                Assert.That(injectedClassList.Count, Is.EqualTo(amount));
+            }
+        }
+
+        [Test]
+        public void ShouldResolveReadOnlyCollectionInSameScope()
+        {
+            var amount = new Random().Next(1, 10);
+
+            var context = new DependencyInjectionContext();
+
+            for (var count = 0; count < amount; count++)
+            {
+                context.RegisterTemporal<InjectedClass>();
+            }
+
+            using (var scope = context.Build())
+            {
+                var injectedClassList = scope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
+
+                Assert.That(injectedClassList.Count, Is.EqualTo(amount));
+            }
+        }
+
+        [Test]
+        public void ShouldResolveEnumerableInSameScope()
+        {
+            var amount = new Random().Next(1, 10);
+
+            var context = new DependencyInjectionContext();
+
+            for (var count = 0; count < amount; count++)
+            {
+                context.RegisterTemporal<InjectedClass>();
+            }
+
+            using (var scope = context.Build())
+            {
+                var injectedClassList = scope.Resolver.Resolve<IEnumerable<InjectedClass>>();
+
+                Assert.That(injectedClassList.Count(), Is.EqualTo(amount));
+            }
+        }
+
+        [Test]
+        public void ShouldResolveArrayInAllScope()
+        {
+            var context = new DependencyInjectionContext();
+
+            context.RegisterTemporal<InjectedClass>();
+
+            using (var scope = context.Build())
+            {
+                var childContext = scope.CreateContext();
+
+                childContext.RegisterTemporal<InjectedClass>();
+
+                using (var childScope = childContext.Build())
+                {
+                    var injectedClassList = childScope.Resolver.Resolve<InjectedClass[]>();
+
+                    Assert.That(injectedClassList.Count(), Is.EqualTo(2));
+                }
+            }
+        }
+
+        [Test]
+        public void ShouldResolveReadOnlyListInAllScope()
+        {
+            var context = new DependencyInjectionContext();
+
+            context.RegisterTemporal<InjectedClass>();
+
+            using (var scope = context.Build())
+            {
+                var childContext = scope.CreateContext();
+
+                childContext.RegisterTemporal<InjectedClass>();
+
+                using (var childScope = childContext.Build())
+                {
+                    var injectedClassList = childScope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
+
+                    Assert.That(injectedClassList.Count(), Is.EqualTo(2));
+                }
+            }
+        }
+
+        [Test]
+        public void ShouldResolveReadOnlyCollectionInAllScope()
+        {
+            var context = new DependencyInjectionContext();
+
+            context.RegisterTemporal<InjectedClass>();
+
+            using (var scope = context.Build())
+            {
+                var childContext = scope.CreateContext();
+
+                childContext.RegisterTemporal<InjectedClass>();
+
+                using (var childScope = childContext.Build())
+                {
+                    var injectedClassList = childScope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
+
+                    Assert.That(injectedClassList.Count(), Is.EqualTo(2));
+                }
+            }
+        }
+
+        [Test]
+        public void ShouldResolveEnumerableInAllScope()
+        {
+            var context = new DependencyInjectionContext();
+
+            context.RegisterTemporal<InjectedClass>();
+
+            using (var scope = context.Build())
+            {
+                var childContext = scope.CreateContext();
+
+                childContext.RegisterTemporal<InjectedClass>();
+
+                using (var childScope = childContext.Build())
+                {
+                    var injectedClassList = childScope.Resolver.Resolve<IEnumerable<InjectedClass>>();
+
+                    Assert.That(injectedClassList.Count(), Is.EqualTo(2));
+                }
+            }
+        }
+
+        [Test]
         public void CannotEnableFieldInjectionIfHaveNoDependencies()
         {
             var context = new DependencyInjectionContext();
@@ -252,6 +422,40 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 _ = context.Build();
             }, Throws.TypeOf<Exception>());
+        }
+
+        [Test]
+        public void CannotResolveIfYouRegisterNothing()
+        {
+            var context = new DependencyInjectionContext();
+
+            using (var scope = context.Build())
+            {
+                Assert.That(() =>
+                {
+                    scope.Resolver.Resolve<InjectedClass>();
+                }, Throws.TypeOf<Exception>());
+
+                Assert.That(() =>
+                {
+                    scope.Resolver.Resolve<InjectedClass[]>();
+                }, Throws.TypeOf<Exception>());
+
+                Assert.That(() =>
+                {
+                    scope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
+                }, Throws.TypeOf<Exception>());
+
+                Assert.That(() =>
+                {
+                    scope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
+                }, Throws.TypeOf<Exception>());
+
+                Assert.That(() =>
+                {
+                    scope.Resolver.Resolve<IEnumerable<InjectedClass>>();
+                }, Throws.TypeOf<Exception>());
+            }
         }
     }
 }
