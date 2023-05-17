@@ -513,12 +513,18 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterTemporal<CircularDependencyClass1>();
             context.RegisterTemporal<CircularDependencyClass2>();
-            context.RegisterTemporal<CircularDependencyClass3>();
 
-            Assert.That(() =>
+            using (var scope = context.Build())
             {
-                _ = context.Build();
-            }, Throws.TypeOf<Exception>());
+                var childContext = scope.CreateContext();
+                childContext.RegisterTemporal<CircularDependencyClass3>();
+
+                Assert.That(() =>
+                {
+                    _ = childContext.Build();
+
+                }, Throws.TypeOf<Exception>());
+            }
         }
 
         [Test]
