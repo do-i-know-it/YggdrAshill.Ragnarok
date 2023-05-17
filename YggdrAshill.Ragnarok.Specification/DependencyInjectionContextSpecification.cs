@@ -99,7 +99,10 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterLocal<InjectedClass>().As<IInjectedInterface1>();
+            context.RegisterTemporal<InjectedClass>()
+                .As<IInjectedInterface1>()
+                .And<IInjectedInterface2>()
+                .And<IInjectedInterface3>();
 
             using (var scope = context.Build())
             {
@@ -108,14 +111,13 @@ namespace YggdrAshill.Ragnarok.Specification
                     _ = scope.Resolver.Resolve<InjectedClass>();
                 }, Throws.TypeOf<Exception>());
 
-                Assert.That(() =>
-                {
-                    _ = scope.Resolver.Resolve<IInjectedInterface2>();
-                }, Throws.TypeOf<Exception>());
+                var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
+                var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
+                var instance3 = scope.Resolver.Resolve<IInjectedInterface3>();
 
-                var instance = scope.Resolver.Resolve<IInjectedInterface1>();
-
-                Assert.That(instance is InjectedClass, Is.True);
+                Assert.That(instance1 is InjectedClass, Is.True);
+                Assert.That(instance2 is InjectedClass, Is.True);
+                Assert.That(instance3 is InjectedClass, Is.True);
             }
         }
 
@@ -124,7 +126,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterLocal<InjectedClass>().AsImplementedInterfaces();
+            context.RegisterTemporal<InjectedClass>().AsImplementedInterfaces();
 
             using (var scope = context.Build())
             {
@@ -135,8 +137,11 @@ namespace YggdrAshill.Ragnarok.Specification
 
                 var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
                 var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
+                var instance3 = scope.Resolver.Resolve<IInjectedInterface3>();
 
-                Assert.That(instance1, Is.EqualTo(instance2));
+                Assert.That(instance1 is InjectedClass, Is.True);
+                Assert.That(instance2 is InjectedClass, Is.True);
+                Assert.That(instance3 is InjectedClass, Is.True);
             }
         }
 
@@ -145,19 +150,26 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterLocal<InjectedClass>().As<IInjectedInterface1>().AsSelf();
+            context.RegisterTemporal<InjectedClass>()
+                .As<IInjectedInterface1>()
+                .And<IInjectedInterface2>()
+                .And<IInjectedInterface3>()
+                .AndSelf();
 
             using (var scope = context.Build())
             {
                 Assert.That(() =>
                 {
-                    _ = scope.Resolver.Resolve<IInjectedInterface2>();
-                }, Throws.TypeOf<Exception>());
+                    _ = scope.Resolver.Resolve<InjectedClass>();
+                }, Throws.Nothing);
 
                 var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
-                var instance2 = scope.Resolver.Resolve<InjectedClass>();
+                var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
+                var instance3 = scope.Resolver.Resolve<IInjectedInterface3>();
 
-                Assert.That(instance1, Is.EqualTo(instance2));
+                Assert.That(instance1 is InjectedClass, Is.True);
+                Assert.That(instance2 is InjectedClass, Is.True);
+                Assert.That(instance3 is InjectedClass, Is.True);
             }
         }
 
@@ -166,16 +178,22 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterLocal<InjectedClass>().AsImplementedInterfaces().AsSelf();
+            context.RegisterTemporal<InjectedClass>().AsImplementedInterfaces().AndSelf();
 
             using (var scope = context.Build())
             {
-                var instance = scope.Resolver.Resolve<InjectedClass>();
+                Assert.That(() =>
+                {
+                    _ = scope.Resolver.Resolve<InjectedClass>();
+                }, Throws.Nothing);
+
                 var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
                 var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
+                var instance3 = scope.Resolver.Resolve<IInjectedInterface3>();
 
-                Assert.That(instance, Is.EqualTo(instance1));
-                Assert.That(instance1, Is.EqualTo(instance2));
+                Assert.That(instance1 is InjectedClass, Is.True);
+                Assert.That(instance2 is InjectedClass, Is.True);
+                Assert.That(instance3 is InjectedClass, Is.True);
             }
         }
 
