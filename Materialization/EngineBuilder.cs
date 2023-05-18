@@ -53,7 +53,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         /// <inheritdoc/>
         public IEngine Build(IEnumerable<IDescription> descriptionList)
         {
-            var registry = registryBuilder.Build(descriptionList, out var registrationList);
+            var registry = registryBuilder.Build(descriptionList);
 
             var engine = new Engine(registry);
 

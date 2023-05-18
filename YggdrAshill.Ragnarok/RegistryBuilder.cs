@@ -1,5 +1,4 @@
 using YggdrAshill.Ragnarok.Construction;
-using YggdrAshill.Ragnarok.Hierarchization;
 using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
@@ -76,11 +75,11 @@ namespace YggdrAshill.Ragnarok
             return solver.CreateMethodInfusion(injection);
         }
 
-        public IRegistry Build(IEnumerable<IDescription> descriptionList, out IEnumerable<IRegistration> registrationList)
+        public IRegistry Build(IEnumerable<IDescription> descriptionList)
         {
             using (var converter = new ConvertDescriptionListToEngine(this, descriptionList))
             {
-                var registry = converter.Convert(out registrationList);
+                var registry = converter.Convert(out var registrationList);
 
                 TypeAnalyzer.Validate(registrationList, registry);
 
