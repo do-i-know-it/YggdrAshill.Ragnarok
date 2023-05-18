@@ -5,13 +5,12 @@ namespace YggdrAshill.Ragnarok
     public sealed class LocalInstanceList<T> :
         ILocalInstanceList<T>
     {
-        private readonly T[] instanceList;
-        public IReadOnlyList<T> InstanceList => instanceList;
+        public IReadOnlyList<T> InstanceList { get; }
 
         [Inject]
-        public LocalInstanceList(T[] instanceList)
+        public LocalInstanceList(IReadOnlyList<T> instanceList)
         {
-            this.instanceList = instanceList;
+            InstanceList = instanceList;
         }
     }
 }
