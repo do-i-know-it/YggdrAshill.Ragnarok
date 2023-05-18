@@ -23,8 +23,6 @@ namespace YggdrAshill.Ragnarok.Hierarchization
 
         private readonly List<Action<IResolver>> callbacks = new List<Action<IResolver>>();
 
-        private readonly List<IDisposable> disposableList = new List<IDisposable>();
-
         public IInstantiation GetInstantiation(Type type, IReadOnlyList<IParameter> parameterList)
         {
             return scopedResolverContext.GetInstantiation(type, parameterList);
@@ -85,7 +83,7 @@ namespace YggdrAshill.Ragnarok.Hierarchization
                 callback.Invoke(resolver);
             }
 
-            return new Scope(resolver, disposableList);
+            return new Scope(resolver);
         }
     }
 }
