@@ -7,47 +7,40 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
-    public sealed class TypeAnalyzer
+    internal sealed class TypeAnalyzer
     {
-        private static readonly TypeAnalyzer instance = new TypeAnalyzer();
-
-        private TypeAnalyzer()
-        {
-
-        }
-
         private readonly ConcurrentDictionary<Type, IActivation> activationCache
             = new ConcurrentDictionary<Type, IActivation>();
-        public static IActivation GetActivation(Type type, Func<Type, IActivation> creation)
+        public IActivation GetActivation(Type type, Func<Type, IActivation> creation)
         {
-            return instance.activationCache.GetOrAdd(type, creation);
+            return activationCache.GetOrAdd(type, creation);
         }
 
         private readonly ConcurrentDictionary<Type, IInfusion> fieldCache
             = new ConcurrentDictionary<Type, IInfusion>();
-        public static IInfusion GetFieldInfusion(Type type, Func<Type, IInfusion> creation)
+        public IInfusion GetFieldInfusion(Type type, Func<Type, IInfusion> creation)
         {
-            return instance.fieldCache.GetOrAdd(type, creation);
+            return fieldCache.GetOrAdd(type, creation);
         }
 
         private readonly ConcurrentDictionary<Type, IInfusion> propertyCache
             = new ConcurrentDictionary<Type, IInfusion>();
-        public static IInfusion GetPropertyInfusion(Type type, Func<Type, IInfusion> creation)
+        public IInfusion GetPropertyInfusion(Type type, Func<Type, IInfusion> creation)
         {
-            return instance.propertyCache.GetOrAdd(type, creation);
+            return propertyCache.GetOrAdd(type, creation);
         }
 
         private readonly ConcurrentDictionary<Type, IInfusion> methodCache
             = new ConcurrentDictionary<Type, IInfusion>();
-        public static IInfusion GetMethodInfusion(Type type, Func<Type, IInfusion> creation)
+        public IInfusion GetMethodInfusion(Type type, Func<Type, IInfusion> creation)
         {
-            return instance.methodCache.GetOrAdd(type, creation);
+            return methodCache.GetOrAdd(type, creation);
         }
 
         [ThreadStatic]
         private static Stack<Type>? circularDependencyChecker;
 
-        public static void Validate(IEnumerable<IRegistration> registrationList, IRegistry registry)
+        public void Validate(IEnumerable<IRegistration> registrationList, IRegistry registry)
         {
             // ThreadStatic
             if (circularDependencyChecker == null)
@@ -58,7 +51,7 @@ namespace YggdrAshill.Ragnarok
             foreach (var registration in registrationList)
             {
                 circularDependencyChecker.Clear();
-                instance.CheckCircularDependencyRecursively(registration.ImplementedType, registry, circularDependencyChecker);
+                CheckCircularDependencyRecursively(registration.ImplementedType, registry, circularDependencyChecker);
             }
         }
         private void CheckCircularDependencyRecursively(Type current, IRegistry registry, Stack<Type> stack)

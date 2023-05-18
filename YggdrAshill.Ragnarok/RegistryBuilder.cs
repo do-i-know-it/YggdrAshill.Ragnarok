@@ -20,10 +20,12 @@ namespace YggdrAshill.Ragnarok
             this.solver = solver;
         }
 
+        private readonly TypeAnalyzer typeAnalyzer = new TypeAnalyzer();
+
         public IActivation GetActivation(Type type)
         {
             // TODO: cache function.
-            return TypeAnalyzer.GetActivation(type, CreateActivation);
+            return typeAnalyzer.GetActivation(type, CreateActivation);
         }
         private IActivation CreateActivation(Type type)
         {
@@ -45,7 +47,7 @@ namespace YggdrAshill.Ragnarok
         public IInfusion GetFieldInfusion(Type type)
         {
             // TODO: cache function.
-            return TypeAnalyzer.GetFieldInfusion(type, CreateFieldInfusion);
+            return typeAnalyzer.GetFieldInfusion(type, CreateFieldInfusion);
         }
         private IInfusion CreateFieldInfusion(Type type)
         {
@@ -57,7 +59,7 @@ namespace YggdrAshill.Ragnarok
         public IInfusion GetPropertyInfusion(Type type)
         {
             // TODO: cache function.
-            return TypeAnalyzer.GetPropertyInfusion(type, CreatePropertyInfusion);
+            return typeAnalyzer.GetPropertyInfusion(type, CreatePropertyInfusion);
         }
         private IInfusion CreatePropertyInfusion(Type type)
         {
@@ -69,7 +71,7 @@ namespace YggdrAshill.Ragnarok
         public IInfusion GetMethodInfusion(Type type)
         {
             // TODO: cache function.
-            return TypeAnalyzer.GetMethodInfusion(type, CreateMethodInfusion);
+            return typeAnalyzer.GetMethodInfusion(type, CreateMethodInfusion);
         }
         private IInfusion CreateMethodInfusion(Type type)
         {
@@ -84,7 +86,7 @@ namespace YggdrAshill.Ragnarok
             {
                 var registry = converter.Convert(out var registrationList);
 
-                TypeAnalyzer.Validate(registrationList, registry);
+                typeAnalyzer.Validate(registrationList, registry);
 
                 return registry;
             }

@@ -566,6 +566,12 @@ namespace YggdrAshill.Ragnarok.Specification
 
                 }, Throws.TypeOf<Exception>());
             }
+
+            Assert.That(() =>
+            {
+                _ = new DependencyInjectionContext().Build();
+
+            }, Throws.Nothing);
         }
 
         [Test]
