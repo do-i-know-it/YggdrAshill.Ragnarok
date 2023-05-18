@@ -1,9 +1,10 @@
 using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Hierarchization;
+using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     internal readonly struct ConvertDescriptionListToEngine :
         IDisposable

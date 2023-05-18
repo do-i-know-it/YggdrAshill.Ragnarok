@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     public sealed class PropertyInjection
     {

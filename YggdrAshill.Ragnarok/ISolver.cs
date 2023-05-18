@@ -1,6 +1,7 @@
+using YggdrAshill.Ragnarok.Materialization;
 using System;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     public interface ISolver
     {
