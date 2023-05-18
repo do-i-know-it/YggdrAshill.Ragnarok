@@ -465,6 +465,47 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
+        public void ShouldResolveLocalInstanceList()
+        {
+            var parentLocalInjectionCount = new Random().Next(1, MaxMultipleInjectionCount);
+
+            var parentValue = 1;
+
+            var context = new DependencyInjectionContext();
+
+            for (var count = 0; count < parentLocalInjectionCount; count++)
+            {
+                context.RegisterLocal<InjectedStruct>().WithArgument("value", parentValue + count);
+            }
+
+            context.RegisterGlobal<InjectedStruct>().WithArgument("value", 0);
+
+            using (var scope = context.Build())
+            {
+                var localInstanceList = scope.Resolver.Resolve<ILocalInstanceList<InjectedStruct>>();
+
+                Assert.That(localInstanceList.InstanceList.Count, Is.EqualTo(parentLocalInjectionCount + 1));
+
+                var childTemporalInjectionCount = new Random().Next(1, MaxMultipleInjectionCount);
+                var childValue = parentLocalInjectionCount + 1;
+
+                var childContext = scope.CreateContext();
+
+                for (var count = 0; count < childTemporalInjectionCount; count++)
+                {
+                    childContext.RegisterTemporal<InjectedStruct>().WithArgument("value", childValue + count);
+                }
+
+                using (var childScope = childContext.Build())
+                {
+                    localInstanceList = childScope.Resolver.Resolve<ILocalInstanceList<InjectedStruct>>();
+
+                    Assert.That(localInstanceList.InstanceList.Count, Is.EqualTo(parentLocalInjectionCount + childTemporalInjectionCount));
+                }
+            }
+        }
+
+        [Test]
         public void CannotInjectIntoFieldsWithoutDependencies()
         {
             var context = new DependencyInjectionContext();
