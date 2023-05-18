@@ -11,6 +11,7 @@ namespace YggdrAshill.Ragnarok
             return (T)resolver.Resolve(typeof(T));
         }
 
+        [Obsolete]
         public static object Resolve(this IResolver resolver, IReadOnlyList<IParameter> parameterList, Type parameterType, string parameterName)
         {
             foreach (var parameter in parameterList)
