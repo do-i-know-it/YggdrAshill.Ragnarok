@@ -82,14 +82,13 @@ namespace YggdrAshill.Ragnarok
 
         public IRegistry Build(IEnumerable<IDescription> descriptionList)
         {
-            using (var converter = new ConvertDescriptionListToEngine(this, descriptionList))
-            {
-                var registry = converter.Convert(out var registrationList);
+            using var factory = new RegistryFactory(this, descriptionList);
 
-                typeAnalyzer.Validate(registrationList, registry);
+            var registry = factory.Create(out var registrationList);
 
-                return registry;
-            }
+            typeAnalyzer.Validate(registrationList, registry);
+
+            return registry;
         }
     }
 }

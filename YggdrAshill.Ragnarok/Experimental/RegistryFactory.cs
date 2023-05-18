@@ -6,13 +6,13 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal readonly struct ConvertDescriptionListToEngine :
+    internal readonly struct RegistryFactory :
         IDisposable
     {
         private readonly ICodeBuilder codeBuilder;
         private readonly IEnumerable<IDescription> descriptionList;
 
-        public ConvertDescriptionListToEngine(ICodeBuilder codeBuilder, IEnumerable<IDescription> descriptionList)
+        public RegistryFactory(ICodeBuilder codeBuilder, IEnumerable<IDescription> descriptionList)
         {
             this.codeBuilder = codeBuilder;
             this.descriptionList = descriptionList;
@@ -28,7 +28,7 @@ namespace YggdrAshill.Ragnarok
         private readonly Dictionary<Type, IRegistration?> typeToRegistration;
         private readonly Dictionary<Type, List<IRegistration>> typeToRegistrationList;
 
-        public IRegistry Convert(out IEnumerable<IRegistration> registrationList)
+        public IRegistry Create(out IEnumerable<IRegistration> registrationList)
         {
             foreach (var description in descriptionList)
             {
