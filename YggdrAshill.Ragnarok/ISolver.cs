@@ -13,5 +13,6 @@ namespace YggdrAshill.Ragnarok
         [Obsolete("Use CreateCollectionActivation(Type) instead.")]
         ICollectionGeneration CreateCollectionGeneration(Type type);
         IActivation CreateCollectionActivation(Type elementType);
+        Type GetLocalInstanceListType(Type elementType);
     }
 }

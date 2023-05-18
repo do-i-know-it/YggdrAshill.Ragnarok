@@ -37,7 +37,8 @@ namespace YggdrAshill.Ragnarok
                 return registration != null;
             }
 
-            return TryGetSingleElementCollection(type, out registration);
+            return TryGetSingleElementCollection(type, out registration) ||
+                   TryGetLocalInstanceList(type, out registration);
         }
 
         private bool TryGetSingleElementCollection(Type type, out IRegistration? registration)
@@ -54,15 +55,40 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            registration = registrationCache.GetOrAdd(elementType, _ =>
+            var implementedType = CollectionRegistration.GetImplementedType(elementType);
+
+            registration = registrationCache.GetOrAdd(implementedType, _ =>
             {
-                var implementedType = CollectionRegistration.GetImplementedType(elementType);
                 var activation = codeBuilder.GetActivation(implementedType);
 
                 return new CollectionRegistration(elementType, activation, new[] { elementRegistration! });
             });
 
             return true;
+        }
+
+        private bool TryGetLocalInstanceList(Type type, out IRegistration? registration)
+        {
+            registration = default;
+
+            if (!LocalInstanceListRegistration.TryGetReadOnlyListType(type, out _, out var readOnlyListType))
+            {
+                return false;
+            }
+
+            if (TryGet(readOnlyListType, out var found) && found is CollectionRegistration collection)
+            {
+                registration = registrationCache.GetOrAdd(type, _ =>
+                {
+                    var activation = codeBuilder.GetActivation(type);
+
+                    return new LocalInstanceListRegistration(type, activation, collection);
+                });
+
+                return true;
+            }
+
+            return false;
         }
 
         public void Dispose()

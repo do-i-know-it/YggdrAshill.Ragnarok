@@ -46,6 +46,11 @@ namespace YggdrAshill.Ragnarok.Reflection
             return new CollectionGeneration(elementType);
         }
 
+        public Type GetLocalInstanceListType(Type elementType)
+        {
+            return typeof(LocalInstanceList<>).MakeGenericType(elementType);
+        }
+
         private sealed class CollectionGeneration :
             ICollectionGeneration,
             IActivation

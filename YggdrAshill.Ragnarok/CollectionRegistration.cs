@@ -7,6 +7,57 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
+    internal sealed class LocalInstanceListRegistration :
+        IRegistration
+    {
+        public static bool TryGetReadOnlyListType(Type type, out Type elementType, out Type readOnlyListType)
+        {
+            readOnlyListType = default!;
+            elementType = default!;
+
+            if (!type.IsConstructedGenericType)
+            {
+                return false;
+            }
+
+            var openGenericType = type.GetGenericTypeDefinition();
+
+            if (openGenericType == typeof(ILocalInstanceList<>))
+            {
+                // TODO: cache type data.
+                elementType = type.GetGenericArguments()[0];
+                readOnlyListType = typeof(IReadOnlyList<>).MakeGenericType(elementType);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private readonly IActivation activation;
+        private readonly CollectionRegistration collection;
+
+        public Type ImplementedType { get; }
+        public Lifetime Lifetime => Lifetime.Local;
+        public Ownership Ownership => Ownership.Internal;
+
+        public LocalInstanceListRegistration(Type implementedType, IActivation activation, CollectionRegistration collection)
+        {
+            ImplementedType = implementedType;
+
+            this.activation = activation;
+            this.collection = collection;
+        }
+
+        public object Instantiate(IScopedResolver resolver)
+        {
+            var registrationList = collection.CollectAllRegistration(resolver, true);
+
+            var instance = collection.Instantiate(resolver, registrationList.ToArray());
+
+            return activation.Activate(new []{ instance });
+        }
+    }
     internal sealed class CollectionRegistration :
         IRegistration
     {
@@ -31,7 +82,6 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            // TODO: cache type data.
             var openGenericType = type.GetGenericTypeDefinition();
 
             var isCollectionType
@@ -75,18 +125,37 @@ namespace YggdrAshill.Ragnarok
             };
         }
 
-        public object Instantiate(IScopedResolver resolver)
+        internal IEnumerable<IRegistration> CollectAllRegistration(IScopedResolver resolver, bool localOnly)
         {
             var totalRegistrationList = resolver.ResolveAll(ImplementedType)
                 .Where(candidate => candidate is CollectionRegistration)
                 .SelectMany(registration => (registration as CollectionRegistration)!.registrationList);
 
+            if (!localOnly)
+            {
+                return totalRegistrationList;
+            }
+
+            return totalRegistrationList.Where(registration => registration.Lifetime != Lifetime.Global)
+                .Union(registrationList);
+        }
+
+        internal object Instantiate(IScopedResolver resolver, IReadOnlyList<IRegistration> totalRegistrationList)
+        {
             // TODO: object pooling.
             var parameterList = totalRegistrationList
                 .Select(resolver.Resolve)
                 .ToArray();
 
             return activation.Activate(parameterList);
+        }
+
+        public object Instantiate(IScopedResolver resolver)
+        {
+
+            var totalRegistrationList = CollectAllRegistration(resolver, false);
+
+            return Instantiate(resolver, totalRegistrationList.ToArray());
         }
     }
 }
