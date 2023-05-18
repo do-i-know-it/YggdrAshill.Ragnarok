@@ -7,14 +7,22 @@ namespace YggdrAshill.Ragnarok
         IParameter
         where T: notnull
     {
-        public Type Type { get; } = typeof(T);
-        public string Name { get; }
-        public object Instance { get; }
+        private readonly Func<object> createInstance;
 
-        public Parameter(string name, T instance)
+        public string Name { get; }
+
+        public Parameter(string name, Func<object> createInstance)
         {
             Name = name;
-            Instance = instance;
+            this.createInstance = createInstance;
+        }
+
+        public Type Type { get; } = typeof(T);
+        public object Instance => createInstance.Invoke();
+
+        public Parameter(string name, T instance) : this(name, () => instance)
+        {
+
         }
     }
 }
