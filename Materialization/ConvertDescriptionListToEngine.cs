@@ -1,6 +1,5 @@
 using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Hierarchization;
-using YggdrAshill.Ragnarok.Motorization;
 using System;
 using System.Collections.Generic;
 
@@ -28,7 +27,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         private readonly Dictionary<Type, IRegistration?> typeToRegistration;
         private readonly Dictionary<Type, List<IRegistration>> typeToRegistrationList;
 
-        public IEngine Convert(out IEnumerable<IRegistration> registrationList)
+        public IRegistry Convert(out IEnumerable<IRegistration> registrationList)
         {
             foreach (var description in descriptionList)
             {
@@ -60,7 +59,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             registrationList = registrationBuffer.ToArray();
 
-            return new Engine(codeBuilder, typeToRegistration);
+            return new Registry(codeBuilder, typeToRegistration);
         }
         private void AddRegistration(Type assignedType, IRegistration registration)
         {

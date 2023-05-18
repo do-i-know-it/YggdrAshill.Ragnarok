@@ -1,14 +1,17 @@
+using YggdrAshill.Ragnarok.Construction;
+using YggdrAshill.Ragnarok.Hierarchization;
 using System;
+using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok.Materialization
 {
-    public sealed class CodeBuilder :
-        ICodeBuilder
+    public sealed class RegistryBuilder :
+        IRegistryBuilder
     {
         private readonly ISelector selector;
         private readonly ISolver solver;
 
-        public CodeBuilder(ISelector selector, ISolver solver)
+        public RegistryBuilder(ISelector selector, ISolver solver)
         {
             this.selector = selector;
             this.solver = solver;
@@ -45,6 +48,14 @@ namespace YggdrAshill.Ragnarok.Materialization
             var injection = selector.CreateMethodInjection(type);
 
             return solver.CreateMethodInfusion(injection);
+        }
+
+        public IRegistry Build(IEnumerable<IDescription> descriptionList, out IEnumerable<IRegistration> registrationList)
+        {
+            using (var converter = new ConvertDescriptionListToEngine(this, descriptionList))
+            {
+                return converter.Convert(out registrationList);
+            }
         }
     }
 }

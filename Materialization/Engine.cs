@@ -2,31 +2,25 @@ using YggdrAshill.Ragnarok.Hierarchization;
 using YggdrAshill.Ragnarok.Motorization;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok.Materialization
 {
     internal sealed class Engine :
         IEngine
     {
-        private readonly ICodeBuilder codeBuilder;
-        private readonly Dictionary<Type, IRegistration?> dictionary;
+        private readonly IRegistry registry;
 
-        public Engine(ICodeBuilder codeBuilder, IDictionary<Type, IRegistration?> table)
+        public Engine(IRegistry registry)
         {
-            this.codeBuilder = codeBuilder;
-            dictionary = new Dictionary<Type, IRegistration?>(table);
+            this.registry = registry;
         }
-
-        private bool isDisposed;
 
         private readonly ConcurrentDictionary<IRegistration, object> instanceCache
             = new ConcurrentDictionary<IRegistration, object>();
 
-        private readonly ConcurrentDictionary<Type, IRegistration> registrationCache
-            = new ConcurrentDictionary<Type, IRegistration>();
-
         private readonly CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+        private bool isDisposed;
 
         public bool Have(IRegistration registration)
         {
@@ -35,7 +29,9 @@ namespace YggdrAshill.Ragnarok.Materialization
                 throw new ObjectDisposedException(nameof(IEngine));
             }
 
-            return dictionary.ContainsValue(registration);
+            return registry.TryGet(registration.ImplementedType, out var found)
+                   && found != null
+                   && registration == found;
         }
 
         public bool Find(Type type, out IRegistration registration)
@@ -47,40 +43,14 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             registration = default!;
 
-            if (dictionary.TryGetValue(type, out var found) && found != null)
+            if (registry.TryGet(type, out var found) && found != null)
             {
                 registration = found;
 
                 return true;
             }
 
-            return FindSingleElementCollection(type, out registration);
-        }
-
-        private bool FindSingleElementCollection(Type type, out IRegistration registration)
-        {
-            registration = default!;
-
-            if (!CollectionRegistration.TryGetElementType(type, out var elementType))
-            {
-                return false;
-            }
-
-            if (!Find(elementType, out var elementRegistration))
-            {
-                return false;
-            }
-
-            registration = registrationCache.GetOrAdd(elementType, _ =>
-            {
-                var implementedType = CollectionRegistration.GetImplementedType(elementType);
-
-                var activation = codeBuilder.CreateActivation(implementedType);
-
-                return new CollectionRegistration(elementType, activation, new[] { elementRegistration });
-            });
-
-            return true;
+            return false;
         }
 
         public object GetInstance(IRegistration registration, Func<IRegistration, object> factory)
@@ -105,14 +75,9 @@ namespace YggdrAshill.Ragnarok.Materialization
                 throw new ObjectDisposedException(nameof(IEngine));
             }
 
-            lock (dictionary)
-            {
-                dictionary.Clear();
-            }
+            registry.Dispose();
 
             instanceCache.Clear();
-
-            registrationCache.Clear();
 
             compositeDisposable.Dispose();
 

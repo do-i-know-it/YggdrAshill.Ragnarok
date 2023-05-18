@@ -1,5 +1,4 @@
 using YggdrAshill.Ragnarok.Hierarchization;
-using YggdrAshill.Ragnarok.Motorization;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -47,7 +46,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         [ThreadStatic]
         private static Stack<Type>? circularDependencyChecker;
 
-        public static void Validate(IEnumerable<IRegistration> registrationList, IEngine engine)
+        public static void Validate(IEnumerable<IRegistration> registrationList, IRegistry registry)
         {
             // ThreadStatic
             if (circularDependencyChecker == null)
@@ -58,10 +57,10 @@ namespace YggdrAshill.Ragnarok.Materialization
             foreach (var registration in registrationList)
             {
                 circularDependencyChecker.Clear();
-                instance.CheckCircularDependencyRecursively(registration.ImplementedType, engine, circularDependencyChecker);
+                instance.CheckCircularDependencyRecursively(registration.ImplementedType, registry, circularDependencyChecker);
             }
         }
-        private void CheckCircularDependencyRecursively(Type current, IEngine engine, Stack<Type> stack)
+        private void CheckCircularDependencyRecursively(Type current, IRegistry registry, Stack<Type> stack)
         {
             foreach (var stacked in stack)
             {
@@ -79,12 +78,12 @@ namespace YggdrAshill.Ragnarok.Materialization
                     = constructorInjection.ArgumentList.Select(argument => argument.Type).Distinct();
                 foreach (var type in dependentTypeList)
                 {
-                    if (engine.Find(type, out var registration))
+                    if (registry.TryGet(type, out var registration) && registration != null)
                     {
-                        CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
+                        CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
                     }
 
-                    CheckCircularDependencyRecursively(type, engine, stack);
+                    CheckCircularDependencyRecursively(type, registry, stack);
                 }
             }
 
@@ -92,9 +91,9 @@ namespace YggdrAshill.Ragnarok.Materialization
             {
                 foreach (var type in methodInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (engine.Find(type, out var registration))
+                    if (registry.TryGet(type, out var registration) && registration != null)
                     {
-                        CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
+                        CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
                     }
                 }
             }
@@ -103,9 +102,9 @@ namespace YggdrAshill.Ragnarok.Materialization
             {
                 foreach (var type in fieldInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (engine.Find(type, out var registration))
+                    if (registry.TryGet(type, out var registration) && registration != null)
                     {
-                        CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
+                        CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
                     }
                 }
             }
@@ -114,9 +113,9 @@ namespace YggdrAshill.Ragnarok.Materialization
             {
                 foreach (var type in propertyInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (engine.Find(type, out var registration))
+                    if (registry.TryGet(type, out var registration) && registration != null)
                     {
-                        CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
+                        CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
                     }
                 }
             }

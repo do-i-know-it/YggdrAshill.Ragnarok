@@ -15,7 +15,7 @@ namespace YggdrAshill.Ragnarok
 
         public DependencyInjectionContext(ISelector selector, ISolver solver)
         {
-            var engineBuilder = new EngineBuilder(new CodeBuilder(selector, solver));
+            var engineBuilder = new EngineBuilder(new RegistryBuilder(selector, solver));
             var scopedResolverContext = new ScopedResolverContext(engineBuilder);
 
             context = new Context(scopedResolverContext);

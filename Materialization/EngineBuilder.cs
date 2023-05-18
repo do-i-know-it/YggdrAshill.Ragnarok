@@ -6,20 +6,20 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Materialization
 {
     /// <summary>
-    /// Implementation of <see cref="IEngineBuilder"/> with <see cref="ICodeBuilder"/>.
+    /// Implementation of <see cref="IEngineBuilder"/> with <see cref="IRegistryBuilder"/>.
     /// </summary>
     public sealed class EngineBuilder :
         IEngineBuilder
     {
-        private readonly ICodeBuilder codeBuilder;
+        private readonly IRegistryBuilder registryBuilder;
 
         /// <summary>
         /// Constructor of <see cref="EngineBuilder"/>.
         /// </summary>
-        /// <param name="codeBuilder"></param>
-        public EngineBuilder(ICodeBuilder codeBuilder)
+        /// <param name="registryBuilder"></param>
+        public EngineBuilder(IRegistryBuilder registryBuilder)
         {
-            this.codeBuilder = codeBuilder;
+            this.registryBuilder = registryBuilder;
         }
 
         public IInstantiation GetInstantiation(Type type, IReadOnlyList<IParameter> parameterList)
@@ -31,7 +31,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         }
         private IActivation CreateActivation(Type type)
         {
-            return codeBuilder.CreateActivation(type);
+            return registryBuilder.CreateActivation(type);
         }
 
         public IInjection GetFieldInjection(Type type, IReadOnlyList<IParameter> parameterList)
@@ -43,7 +43,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         }
         private IInfusion CreateFieldInfusion(Type type)
         {
-            return codeBuilder.CreateFieldInfusion(type);
+            return registryBuilder.CreateFieldInfusion(type);
         }
 
         public IInjection GetPropertyInjection(Type type, IReadOnlyList<IParameter> parameterList)
@@ -55,7 +55,7 @@ namespace YggdrAshill.Ragnarok.Materialization
         }
         private IInfusion CreatePropertyInfusion(Type type)
         {
-            return codeBuilder.CreatePropertyInfusion(type);
+            return registryBuilder.CreatePropertyInfusion(type);
         }
 
         public IInjection GetMethodInjection(Type type, IReadOnlyList<IParameter> parameterList)
@@ -67,17 +67,17 @@ namespace YggdrAshill.Ragnarok.Materialization
         }
         private IInfusion CreateMethodInfusion(Type type)
         {
-            return codeBuilder.CreateMethodInfusion(type);
+            return registryBuilder.CreateMethodInfusion(type);
         }
 
         /// <inheritdoc/>
         public IEngine Build(IEnumerable<IDescription> descriptionList)
         {
-            using var converter = new ConvertDescriptionListToEngine(codeBuilder, descriptionList);
+            var registry = registryBuilder.Build(descriptionList, out var registrationList);
 
-            var engine = converter.Convert(out var registrationList);
+            TypeAnalyzer.Validate(registrationList, registry);
 
-            TypeAnalyzer.Validate(registrationList, engine);
+            var engine = new Engine(registry);
 
             return engine;
         }
