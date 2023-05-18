@@ -56,7 +56,7 @@ namespace YggdrAshill.Ragnarok.Materialization
             registration = registrationCache.GetOrAdd(elementType, _ =>
             {
                 var implementedType = CollectionRegistration.GetImplementedType(elementType);
-                var activation = codeBuilder.CreateActivation(implementedType);
+                var activation = codeBuilder.GetActivation(implementedType);
 
                 return new CollectionRegistration(elementType, activation, new[] { elementRegistration! });
             });

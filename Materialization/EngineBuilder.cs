@@ -24,58 +24,36 @@ namespace YggdrAshill.Ragnarok.Materialization
 
         public IInstantiation GetInstantiation(Type type, IReadOnlyList<IParameter> parameterList)
         {
-            // TODO: cache function.
-            var activation = TypeAnalyzer.GetActivation(type, CreateActivation);
+            var activation = registryBuilder.GetActivation(type);
 
             return new ActivateToInstantiate(activation, parameterList);
-        }
-        private IActivation CreateActivation(Type type)
-        {
-            return registryBuilder.CreateActivation(type);
         }
 
         public IInjection GetFieldInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
-            // TODO: cache function.
-            var infusion = TypeAnalyzer.GetFieldInjection(type, CreateFieldInfusion);
+            var infusion = registryBuilder.GetFieldInfusion(type);
 
             return new InfuseToInject(infusion, parameterList);
-        }
-        private IInfusion CreateFieldInfusion(Type type)
-        {
-            return registryBuilder.CreateFieldInfusion(type);
         }
 
         public IInjection GetPropertyInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
-            // TODO: cache function.
-            var infusion = TypeAnalyzer.GetPropertyInjection(type, CreatePropertyInfusion);
+            var infusion = registryBuilder.GetPropertyInfusion(type);
 
             return new InfuseToInject(infusion, parameterList);
-        }
-        private IInfusion CreatePropertyInfusion(Type type)
-        {
-            return registryBuilder.CreatePropertyInfusion(type);
         }
 
         public IInjection GetMethodInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
-            // TODO: cache function.
-            var infusion = TypeAnalyzer.GetMethodInjection(type, CreateMethodInfusion);
+            var infusion = registryBuilder.GetMethodInfusion(type);
 
             return new InfuseToInject(infusion, parameterList);
-        }
-        private IInfusion CreateMethodInfusion(Type type)
-        {
-            return registryBuilder.CreateMethodInfusion(type);
         }
 
         /// <inheritdoc/>
         public IEngine Build(IEnumerable<IDescription> descriptionList)
         {
             var registry = registryBuilder.Build(descriptionList, out var registrationList);
-
-            TypeAnalyzer.Validate(registrationList, registry);
 
             var engine = new Engine(registry);
 

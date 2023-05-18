@@ -107,7 +107,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
                 var implementedType = CollectionRegistration.GetImplementedType(elementType);
 
-                var activation = codeBuilder.CreateActivation(implementedType);
+                var activation = codeBuilder.GetActivation(implementedType);
 
                 var collection = new CollectionRegistration(elementType, activation, registrationList.ToArray());
 

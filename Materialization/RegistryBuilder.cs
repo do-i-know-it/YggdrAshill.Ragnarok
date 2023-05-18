@@ -17,7 +17,12 @@ namespace YggdrAshill.Ragnarok.Materialization
             this.solver = solver;
         }
 
-        public IActivation CreateActivation(Type type)
+        public IActivation GetActivation(Type type)
+        {
+            // TODO: cache function.
+            return TypeAnalyzer.GetActivation(type, CreateActivation);
+        }
+        private IActivation CreateActivation(Type type)
         {
             if (type.IsArray)
             {
@@ -29,21 +34,36 @@ namespace YggdrAshill.Ragnarok.Materialization
             return solver.CreateActivation(injection);
         }
 
-        public IInfusion CreateFieldInfusion(Type type)
+        public IInfusion GetFieldInfusion(Type type)
+        {
+            // TODO: cache function.
+            return TypeAnalyzer.GetFieldInfusion(type, CreateFieldInfusion);
+        }
+        private IInfusion CreateFieldInfusion(Type type)
         {
             var injection = selector.CreateFieldInjection(type);
 
             return solver.CreateFieldInfusion(injection);
         }
 
-        public IInfusion CreatePropertyInfusion(Type type)
+        public IInfusion GetPropertyInfusion(Type type)
+        {
+            // TODO: cache function.
+            return TypeAnalyzer.GetPropertyInfusion(type, CreatePropertyInfusion);
+        }
+        private IInfusion CreatePropertyInfusion(Type type)
         {
             var injection = selector.CreatePropertyInjection(type);
 
             return solver.CreatePropertyInfusion(injection);
         }
 
-        public IInfusion CreateMethodInfusion(Type type)
+        public IInfusion GetMethodInfusion(Type type)
+        {
+            // TODO: cache function.
+            return TypeAnalyzer.GetMethodInfusion(type, CreateMethodInfusion);
+        }
+        private IInfusion CreateMethodInfusion(Type type)
         {
             var injection = selector.CreateMethodInjection(type);
 
@@ -54,7 +74,11 @@ namespace YggdrAshill.Ragnarok.Materialization
         {
             using (var converter = new ConvertDescriptionListToEngine(this, descriptionList))
             {
-                return converter.Convert(out registrationList);
+                var registry = converter.Convert(out registrationList);
+
+                TypeAnalyzer.Validate(registrationList, registry);
+
+                return registry;
             }
         }
     }

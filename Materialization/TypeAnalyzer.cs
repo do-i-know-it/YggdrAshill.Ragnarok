@@ -22,25 +22,25 @@ namespace YggdrAshill.Ragnarok.Materialization
             return instance.activationCache.GetOrAdd(type, creation);
         }
 
-        private readonly ConcurrentDictionary<Type, IInfusion> fieldInjectionCache
+        private readonly ConcurrentDictionary<Type, IInfusion> fieldCache
             = new ConcurrentDictionary<Type, IInfusion>();
-        public static IInfusion GetFieldInjection(Type type, Func<Type, IInfusion> creation)
+        public static IInfusion GetFieldInfusion(Type type, Func<Type, IInfusion> creation)
         {
-            return instance.fieldInjectionCache.GetOrAdd(type, creation);
+            return instance.fieldCache.GetOrAdd(type, creation);
         }
 
-        private readonly ConcurrentDictionary<Type, IInfusion> propertyInjectionCache
+        private readonly ConcurrentDictionary<Type, IInfusion> propertyCache
             = new ConcurrentDictionary<Type, IInfusion>();
-        public static IInfusion GetPropertyInjection(Type type, Func<Type, IInfusion> creation)
+        public static IInfusion GetPropertyInfusion(Type type, Func<Type, IInfusion> creation)
         {
-            return instance.propertyInjectionCache.GetOrAdd(type, creation);
+            return instance.propertyCache.GetOrAdd(type, creation);
         }
 
-        private readonly ConcurrentDictionary<Type, IInfusion> methodInjectionCache
+        private readonly ConcurrentDictionary<Type, IInfusion> methodCache
             = new ConcurrentDictionary<Type, IInfusion>();
-        public static IInfusion GetMethodInjection(Type type, Func<Type, IInfusion> creation)
+        public static IInfusion GetMethodInfusion(Type type, Func<Type, IInfusion> creation)
         {
-            return instance.methodInjectionCache.GetOrAdd(type, creation);
+            return instance.methodCache.GetOrAdd(type, creation);
         }
 
         [ThreadStatic]
@@ -87,7 +87,7 @@ namespace YggdrAshill.Ragnarok.Materialization
                 }
             }
 
-            if (methodInjectionCache.TryGetValue(current, out var methodInjection))
+            if (methodCache.TryGetValue(current, out var methodInjection))
             {
                 foreach (var type in methodInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
@@ -98,7 +98,7 @@ namespace YggdrAshill.Ragnarok.Materialization
                 }
             }
 
-            if (fieldInjectionCache.TryGetValue(current, out var fieldInjection))
+            if (fieldCache.TryGetValue(current, out var fieldInjection))
             {
                 foreach (var type in fieldInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
@@ -109,7 +109,7 @@ namespace YggdrAshill.Ragnarok.Materialization
                 }
             }
 
-            if (propertyInjectionCache.TryGetValue(current, out var propertyInjection))
+            if (propertyCache.TryGetValue(current, out var propertyInjection))
             {
                 foreach (var type in propertyInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
