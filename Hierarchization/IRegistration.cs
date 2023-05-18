@@ -14,12 +14,12 @@ namespace YggdrAshill.Ragnarok.Hierarchization
         Type ImplementedType { get; }
 
         /// <summary>
-        /// <see cref="Lifetime"/> for <see cref="ImplementedType"/>.
+        /// <see cref="Construction.Lifetime"/> for <see cref="ImplementedType"/>.
         /// </summary>
         Lifetime Lifetime { get; }
 
         /// <summary>
-        /// <see cref="Ownership"/> for <see cref="ImplementedType"/>.
+        /// <see cref="Construction.Ownership"/> for <see cref="ImplementedType"/>.
         /// </summary>
         Ownership Ownership { get; }
 

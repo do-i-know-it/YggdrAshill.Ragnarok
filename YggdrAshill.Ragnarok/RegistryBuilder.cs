@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
+    /// <summary>
+    /// Implementation of <see cref="IRegistryBuilder"/> using <see cref="ISelector"/> and <see cref="ISolver"/>.
+    /// </summary>
     public sealed class RegistryBuilder :
         IRegistryBuilder
     {

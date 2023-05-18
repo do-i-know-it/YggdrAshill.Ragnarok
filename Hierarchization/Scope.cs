@@ -3,9 +3,6 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Hierarchization
 {
-    /// <summary>
-    /// Implementation of <see cref="IScope"/> using <see cref="IScopedResolver"/>.
-    /// </summary>
     internal sealed class Scope :
         IScope
     {

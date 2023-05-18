@@ -1,7 +1,7 @@
 namespace YggdrAshill.Ragnarok.Construction
 {
     /// <summary>
-    /// Defines how to inject objects to resolve.
+    /// Defines how to inject dependencies into instance to resolve.
     /// </summary>
     public interface IInjection
     {

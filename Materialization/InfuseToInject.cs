@@ -26,7 +26,7 @@ namespace YggdrAshill.Ragnarok.Materialization
             {
                 var argument = argumentList[index];
 
-                instanceList[index] = resolver.Resolve(parameterList, argument.Type, argument.Name);
+                instanceList[index] = resolver.Resolve(parameterList, argument);
             }
 
             infusion.Infuse(instance, instanceList);

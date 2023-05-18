@@ -43,7 +43,7 @@ namespace YggdrAshill.Ragnarok.Hierarchization
         object Resolve(IRegistration registration);
 
         /// <summary>
-        /// Resolves all <see cref="IRegistration"/>s for <see cref="Type"/>.
+        /// Resolves all <see cref="IRegistration"/>s for <see cref="Type"/> from all scopes.
         /// </summary>
         /// <param name="type">
         /// <see cref="Type"/> to resolve.

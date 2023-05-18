@@ -9,6 +9,7 @@ namespace YggdrAshill.Ragnarok.Construction
         /// Manage as an instance resolved internally.
         /// </summary>
         Internal,
+
         /// <summary>
         /// Leave as an instance resolved externally.
         /// </summary>

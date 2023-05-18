@@ -9,10 +9,12 @@ namespace YggdrAshill.Ragnarok.Construction
         /// Instantiates per request.
         /// </summary>
         Temporal,
+
         /// <summary>
         /// Instantiates per scope.
         /// </summary>
         Local,
+
         /// <summary>
         /// Instantiates per service.
         /// </summary>

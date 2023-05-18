@@ -14,7 +14,7 @@ namespace YggdrAshill.Ragnarok.Construction
         /// <see cref="Type"/> to resolve.
         /// </param>
         /// <returns>
-        /// An instance resolved.
+        /// <see cref="object"/> resolved.
         /// </returns>
         object Resolve(Type type);
     }
