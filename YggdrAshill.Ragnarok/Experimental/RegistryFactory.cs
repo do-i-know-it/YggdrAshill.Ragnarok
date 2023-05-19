@@ -1,34 +1,34 @@
 using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Hierarchization;
-using YggdrAshill.Ragnarok.Motorization;
+using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
-    internal readonly struct ConvertDescriptionListToEngine :
+    internal readonly struct RegistryFactory :
         IDisposable
     {
-        private readonly ISolver solver;
+        private readonly ICodeBuilder codeBuilder;
         private readonly IEnumerable<IDescription> descriptionList;
 
-        public ConvertDescriptionListToEngine(ISolver solver, IEnumerable<IDescription> descriptionList)
+        public RegistryFactory(ICodeBuilder codeBuilder, IEnumerable<IDescription> descriptionList)
         {
-            this.solver = solver;
+            this.codeBuilder = codeBuilder;
             this.descriptionList = descriptionList;
 
             // TODO: object pooling.
             const int BufferSize = 128;
             registrationBuffer = new List<IRegistration>(BufferSize);
-            typeToRegistration = new Dictionary<Type, IRegistration>(BufferSize);
+            typeToRegistration = new Dictionary<Type, IRegistration?>(BufferSize);
             typeToRegistrationList = new Dictionary<Type, List<IRegistration>>(BufferSize);
         }
 
         private readonly List<IRegistration> registrationBuffer;
-        private readonly Dictionary<Type, IRegistration> typeToRegistration;
+        private readonly Dictionary<Type, IRegistration?> typeToRegistration;
         private readonly Dictionary<Type, List<IRegistration>> typeToRegistrationList;
 
-        public IEngine Convert(out IEnumerable<IRegistration> registrationList)
+        public IRegistry Create(out IEnumerable<IRegistration> registrationList)
         {
             foreach (var description in descriptionList)
             {
@@ -43,6 +43,11 @@ namespace YggdrAshill.Ragnarok.Materialization
                     {
                         AddRegistration(assignedType, registration);
                     }
+
+                    if (!typeToRegistration.ContainsKey(registration.ImplementedType))
+                    {
+                        typeToRegistration.Add(registration.ImplementedType, null);
+                    }
                 }
                 else
                 {
@@ -55,7 +60,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             registrationList = registrationBuffer.ToArray();
 
-            return new Engine(typeToRegistration);
+            return new Registry(codeBuilder, typeToRegistration);
         }
         private void AddRegistration(Type assignedType, IRegistration registration)
         {
@@ -80,7 +85,7 @@ namespace YggdrAshill.Ragnarok.Materialization
                 {
                     collection = new List<IRegistration>()
                     {
-                        found,
+                        found!,
                         registration,
                     };
 
@@ -101,9 +106,11 @@ namespace YggdrAshill.Ragnarok.Materialization
                 var elementType = pair.Key;
                 var registrationList = pair.Value;
 
-                var generation = solver.CreateCollectionGeneration(elementType);
+                var implementedType = CollectionRegistration.GetImplementedType(elementType);
 
-                var collection = new CollectionRegistration(generation, registrationList.ToArray());
+                var activation = codeBuilder.GetActivation(implementedType);
+
+                var collection = new CollectionRegistration(elementType, activation, registrationList.ToArray());
 
                 foreach (var assignedType in collection.AssignedTypeList)
                 {

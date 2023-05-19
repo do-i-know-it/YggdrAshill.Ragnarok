@@ -119,12 +119,23 @@ namespace YggdrAshill.Ragnarok
             public IAfterAnyTypeAssigned As<T>()
                 where T : notnull
             {
+                return And<T>();
+            }
+
+            public IAfterAnyTypeAssigned And<T>()
+                where T : notnull
+            {
                 assignAnyTypeToCompose.AddType<T>();
 
                 return this;
             }
 
             public void AsSelf()
+            {
+                AndSelf();
+            }
+
+            public void AndSelf()
             {
                 assignAnyTypeToCompose.AddImplementedType();
             }
@@ -163,6 +174,11 @@ namespace YggdrAshill.Ragnarok
             }
 
             public void AsSelf()
+            {
+                AndSelf();
+            }
+
+            public void AndSelf()
             {
                 assignAnyTypeToCompose.AddImplementedType();
             }

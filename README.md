@@ -38,23 +38,23 @@ to use this framework.
 
 Using our framework, you can resolve dependencies as below:
 ```cs
-public interface ISender
+interface ISender
 {
     string Send();
 }
 
-public interface IReceiver
+interface IReceiver
 {
     void Receive(string message);
 }
 
-public sealed class Service
+class Service
 {
     private readonly ISender sender;
     private readonly IReciever receiver;
 
     [Inject]
-    public Service(ISender sender, IReceiver receiver)
+    Service(ISender sender, IReceiver receiver)
     {
         this.sender = sender;
         this.receiver = receiver;
@@ -69,13 +69,14 @@ public sealed class Service
 }
 ```
 using implementations as below:
+
 ```cs
-public sealed class AnyMessageSender : ISender
+class AnyMessageSender : ISender
 {
     private readonly string message;
 
     [Inject]
-    public AnyMessageSender(string message)
+    AnyMessageSender(string message)
     {
         this.message = message;
     }
@@ -86,10 +87,10 @@ public sealed class AnyMessageSender : ISender
     }
 }
 
-public sealed class ConsoleReceiver : IReceiver
+class ConsoleReceiver : IReceiver
 {
     [InjectField]
-    private readonly string? header;
+    readonly string? header;
 
     public void Receive(string message)
     {
@@ -104,13 +105,14 @@ public sealed class ConsoleReceiver : IReceiver
     }
 }
 ```
+
 like:
 ```cs
 var context = new DependencyInjectionContext();
 
 // Register AnyMessageSender as ISender to instantiate per scope.
 context.RegisterLocal<AnyMessageSender>()
-    .With("message", "Hello world.") // Add parameter to inject into constructors.
+    .WithArgument("message", "Hello world.") // Add parameter to inject into constructor.
     .As<ISender>();
 // Register ConsoleReceiver as IReceiver to instantiate per scope.
 context.RegisterLocal<ConsoleReceiver>()
@@ -126,6 +128,43 @@ using (var scope = context.Build())
 
     service.Run(); // "Recieved: Hellow world."
 }
+```
+
+### Collection registrataion
+
+In our framework, you can resolve collection as bellow:
+```cs
+interface ILogger
+{
+    void Log(string message);
+}
+
+class ConsoleLogger : ILogger
+{
+    ...
+}
+
+class FileLogger : ILogger
+{
+    ...
+}
+```
+
+like:
+```cs
+var context = new DependencyInjectionContext();
+
+context.RegisterGlobal<ConsoleLogger>().As<ILogger>();
+context.RegisterGlobal<FileLogger>().As<ILogger>();
+
+using (var scope = context.Build())
+{
+    var array = scope.Resolver.Resolve<ILogger[]>();
+    var readOnlyList = scope.Resolver.Resolve<IReadOnlyList<ILogger>>();
+    var readOnlyCollection = scope.Resolver.Resolve<IReadOnlyCollection<ILogger>>();
+    var enumerable = scope.Resolver.Resolve<IEnumerable<ILogger>>();
+}
+
 ```
 
 ## Architecture

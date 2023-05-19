@@ -12,7 +12,7 @@ namespace YggdrAshill.Ragnarok.Construction
         /// Adds a dependency.
         /// </summary>
         /// <param name="composition">
-        /// <see cref="IComposition"/> to define dependencies.
+        /// <see cref="IComposition"/> to define a dependency.
         /// </param>
         void Register(IComposition composition);
 

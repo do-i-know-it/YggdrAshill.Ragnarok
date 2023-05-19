@@ -1,22 +1,16 @@
 using YggdrAshill.Ragnarok.Construction;
 using System;
-using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok.Hierarchization
 {
-    /// <summary>
-    /// Implementation of <see cref="IScope"/> using <see cref="IScopedResolver"/>.
-    /// </summary>
     internal sealed class Scope :
         IScope
     {
         private readonly IScopedResolver scopedResolver;
-        private readonly ICollection<IDisposable> disposableList;
 
-        public Scope(IScopedResolver scopedResolver, ICollection<IDisposable> disposableList)
+        public Scope(IScopedResolver scopedResolver)
         {
             this.scopedResolver = scopedResolver;
-            this.disposableList = disposableList;
         }
 
         private bool isDisposed;
@@ -54,13 +48,6 @@ namespace YggdrAshill.Ragnarok.Hierarchization
             }
 
             scopedResolver.Dispose();
-
-            foreach (var disposable in disposableList)
-            {
-                disposable.Dispose();
-            }
-
-            disposableList.Clear();
 
             isDisposed = true;
         }

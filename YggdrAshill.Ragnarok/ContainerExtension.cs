@@ -38,7 +38,9 @@ namespace YggdrAshill.Ragnarok
         public static IInjectIntoInstance RegisterInstance<T>(this IContainer container, T instance)
             where T : notnull
         {
-            var composition = new InjectIntoInstanceToCompose(container, instance);
+            var implementedType = typeof(T);
+
+            var composition = new InjectIntoInstanceToCompose(container, implementedType, instance);
 
             container.Register(composition);
 

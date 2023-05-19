@@ -2,7 +2,7 @@ using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Hierarchization;
 using System;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class Registration :
         IRegistration

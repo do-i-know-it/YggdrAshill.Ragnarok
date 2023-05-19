@@ -18,8 +18,12 @@ namespace YggdrAshill.Ragnarok.Motorization
         /// <summary>
         /// Constructor of <see cref="ScopedResolverContext"/>.
         /// </summary>
-        /// <param name="engineBuilder"></param>
-        /// <param name="parentScopedResolver"></param>
+        /// <param name="engineBuilder">
+        /// <see cref="IEngineBuilder"/> to instantiate <see cref="ScopedResolverContext"/>.
+        /// </param>
+        /// <param name="parentScopedResolver">
+        /// <see cref="IScopedResolver"/> to chain.
+        /// </param>
         public ScopedResolverContext(IEngineBuilder engineBuilder, IScopedResolver? parentScopedResolver = null)
         {
             this.engineBuilder = engineBuilder;
@@ -28,27 +32,36 @@ namespace YggdrAshill.Ragnarok.Motorization
 
         private readonly List<IComposition> compositionList = new List<IComposition>();
 
+        /// <inheritdoc/>
         public IInstantiation GetInstantiation(Type type, IReadOnlyList<IParameter> parameterList)
         {
             return engineBuilder.GetInstantiation(type, parameterList);
         }
 
+        /// <inheritdoc/>
         public IInjection GetFieldInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
             return engineBuilder.GetFieldInjection(type, parameterList);
         }
 
+        /// <inheritdoc/>
         public IInjection GetPropertyInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
             return engineBuilder.GetPropertyInjection(type, parameterList);
         }
 
+        /// <inheritdoc/>
         public IInjection GetMethodInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
             return engineBuilder.GetMethodInjection(type, parameterList);
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Adds <see cref="IComposition"/> to resolve dependencies.
+        /// </summary>
+        /// <param name="composition">
+        /// <see cref="IComposition"/> to resolve dependencies.
+        /// </param>
         public void Register(IComposition composition)
         {
             if (compositionList.Contains(composition))

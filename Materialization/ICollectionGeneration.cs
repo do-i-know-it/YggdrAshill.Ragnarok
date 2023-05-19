@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok.Materialization
 {
+    [Obsolete("Use IActivation instead.")]
     public interface ICollectionGeneration
     {
         Type ElementType { get; }

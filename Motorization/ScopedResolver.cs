@@ -39,6 +39,7 @@ namespace YggdrAshill.Ragnarok.Motorization
                 return parent.Resolve(type, this);
             }
 
+            // TODO: define exception for framework.
             throw new Exception("Not found type.");
         }
 
@@ -113,6 +114,7 @@ namespace YggdrAshill.Ragnarok.Motorization
                 return parent.Resolve(type, child);
             }
 
+            // TODO: define exception for framework.
             throw new Exception("Not found type.");
         }
 

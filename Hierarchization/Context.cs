@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Hierarchization
 {
     /// <summary>
-    /// Implementation of <see cref="IContext"/> using <see cref="IScopedResolverContext"/>.
+    /// Implementation of <see cref="IContext"/> using <see cref="IScopedResolver"/> and <see cref="IScopedResolverContext"/>.
     /// </summary>
     public sealed class Context :
         IContext
@@ -15,7 +15,9 @@ namespace YggdrAshill.Ragnarok.Hierarchization
         /// <summary>
         /// Constructor of <see cref="Context"/>.
         /// </summary>
-        /// <param name="scopedResolverContext"></param>
+        /// <param name="scopedResolverContext">
+        /// <see cref="IScopedResolverContext"/> to instantiate <see cref="Context"/>.
+        /// </param>
         public Context(IScopedResolverContext scopedResolverContext)
         {
             this.scopedResolverContext = scopedResolverContext;
@@ -23,41 +25,42 @@ namespace YggdrAshill.Ragnarok.Hierarchization
 
         private readonly List<Action<IResolver>> callbacks = new List<Action<IResolver>>();
 
-        private readonly List<IDisposable> disposableList = new List<IDisposable>();
-
+        /// <inheritdoc/>
         public IInstantiation GetInstantiation(Type type, IReadOnlyList<IParameter> parameterList)
         {
             return scopedResolverContext.GetInstantiation(type, parameterList);
         }
 
+        /// <inheritdoc/>
         public IInjection GetFieldInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
             return scopedResolverContext.GetFieldInjection(type, parameterList);
         }
 
+        /// <inheritdoc/>
         public IInjection GetPropertyInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
             return scopedResolverContext.GetPropertyInjection(type, parameterList);
         }
 
+        /// <inheritdoc/>
         public IInjection GetMethodInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
             return scopedResolverContext.GetMethodInjection(type, parameterList);
         }
 
-        /// <summary>
-        /// Adds <see cref="IComposition"/> to <see cref="IScopedResolverContext"/>.
-        /// </summary>
-        /// <param name="composition"></param>
+        /// <inheritdoc/>
         public void Register(IComposition composition)
         {
             scopedResolverContext.Register(composition);
         }
 
         /// <summary>
-        /// Adds <see cref="IComposition"/> to <see cref="IScopedResolverContext"/>.
+        /// Adds <see cref="Action{T}"/> to execute event to use <see cref="IScopedResolverContext"/>.
         /// </summary>
-        /// <param name="callback"></param>
+        /// <param name="callback">
+        /// <see cref="Action{T}"/> to receive <see cref="IResolver"/>.
+        /// </param>
         public void Register(Action<IResolver> callback)
         {
             if (callbacks.Contains(callback))
@@ -85,7 +88,7 @@ namespace YggdrAshill.Ragnarok.Hierarchization
                 callback.Invoke(resolver);
             }
 
-            return new Scope(resolver, disposableList);
+            return new Scope(resolver);
         }
     }
 }

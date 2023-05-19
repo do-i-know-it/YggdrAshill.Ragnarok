@@ -1,4 +1,3 @@
-using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -13,6 +12,12 @@ namespace YggdrAshill.Ragnarok
         private DefaultSelector()
         {
 
+        }
+
+        public Type GetLocalInstanceListType(Type elementType)
+        {
+            // TODO: cache generic type.
+            return typeof(LocalInstanceList<>).MakeGenericType(elementType);
         }
 
         public ConstructorInjection CreateConstructorInjection(Type type)

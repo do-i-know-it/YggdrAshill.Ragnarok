@@ -17,7 +17,19 @@ namespace YggdrAshill.Ragnarok.Materialization
 
         public object Instantiate(IResolver resolver)
         {
-            return activation.Activate(resolver, parameterList);
+            var argumentList = activation.ArgumentList;
+
+            // TODO: object pooling.
+            var instanceList = new object[argumentList.Count];
+
+            for (var index = 0; index < argumentList.Count; index++)
+            {
+                var argument = argumentList[index];
+
+                instanceList[index] = resolver.Resolve(parameterList, argument);
+            }
+
+            return activation.Activate(instanceList);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace YggdrAshill.Ragnarok.Construction
         /// <see cref="IResolver"/> managed in this <see cref="IScope"/>.
         /// </summary>
         /// <exception cref="ObjectDisposedException">
-        /// Thrown if <see cref="IScope"/> is disposed.
+        /// Thrown if this <see cref="IScope"/> is disposed.
         /// </exception>
         IResolver Resolver { get; }
 
