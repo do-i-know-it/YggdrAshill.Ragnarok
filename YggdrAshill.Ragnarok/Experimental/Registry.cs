@@ -37,20 +37,15 @@ namespace YggdrAshill.Ragnarok
                 return registration != null;
             }
 
-            return TryGetSingleElementCollection(type, out registration) ||
+            return TryGetCollection(type, out registration) ||
                    TryGetLocalInstanceList(type, out registration);
         }
 
-        private bool TryGetSingleElementCollection(Type type, out IRegistration? registration)
+        private bool TryGetCollection(Type type, out IRegistration? registration)
         {
             registration = default;
 
             if (!CollectionRegistration.TryGetElementType(type, out var elementType))
-            {
-                return false;
-            }
-
-            if (!TryGet(elementType, out var elementRegistration))
             {
                 return false;
             }
@@ -60,6 +55,11 @@ namespace YggdrAshill.Ragnarok
             registration = registrationCache.GetOrAdd(implementedType, _ =>
             {
                 var activation = codeBuilder.GetActivation(implementedType);
+
+                if (!TryGet(elementType, out var elementRegistration))
+                {
+                    return new CollectionRegistration(elementType, activation, Array.Empty<IRegistration>());
+                }
 
                 return new CollectionRegistration(elementType, activation, new[] { elementRegistration! });
             });
