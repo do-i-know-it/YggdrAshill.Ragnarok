@@ -506,6 +506,23 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
+        public void ShouldResolveRegisteredInstance()
+        {
+            var context = new DependencyInjectionContext();
+
+            var instance = new InjectedClass();
+
+            context.RegisterInstance<IInjectedInterface1>(instance);
+
+            using (var scope = context.Build())
+            {
+                var resolved = scope.Resolver.Resolve<IInjectedInterface1>();
+
+                Assert.That(resolved, Is.EqualTo(instance));
+            }
+        }
+
+        [Test]
         public void CannotInjectIntoFieldsWithoutDependencies()
         {
             var context = new DependencyInjectionContext();

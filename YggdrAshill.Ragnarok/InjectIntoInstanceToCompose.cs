@@ -34,8 +34,8 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public InjectIntoInstanceToCompose(ICompilation compilation, object instance)
-            : this(compilation, instance.GetType(), Lifetime.Global, Ownership.External, new ReturnInstanceDirectly(instance))
+        public InjectIntoInstanceToCompose(ICompilation compilation, Type implementedType, object instance)
+            : this(compilation, implementedType, Lifetime.Global, Ownership.External, new ReturnInstanceDirectly(instance))
         {
 
         }
