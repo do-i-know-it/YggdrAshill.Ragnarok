@@ -5,7 +5,7 @@
         <Configuration></Configuration>
         <MajorVersion>2</MajorVersion>
         <MinorVersion>1</MinorVersion>
-        <Revision>0</Revision>
+        <Revision>1</Revision>
         <BuildNumber>0</BuildNumber>
     </PropertyGroup>
     

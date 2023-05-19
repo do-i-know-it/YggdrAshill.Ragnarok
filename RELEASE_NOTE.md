@@ -1,4 +1,4 @@
-# Release notes for version 2.1.0
+# Release notes for version 2.1.1
 
-- Modified implementations for dependency injection.
-- Refactored architecture of this framework.
+- Modified specification of framework.
+- Fixed implementations for framework.
