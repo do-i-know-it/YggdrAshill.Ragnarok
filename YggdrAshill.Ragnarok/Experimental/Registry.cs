@@ -50,16 +50,16 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            if (!TryGet(elementType, out var elementRegistration))
-            {
-                return false;
-            }
-
             var implementedType = CollectionRegistration.GetImplementedType(elementType);
 
             registration = registrationCache.GetOrAdd(implementedType, _ =>
             {
                 var activation = codeBuilder.GetActivation(implementedType);
+
+                if (!TryGet(elementType, out var elementRegistration))
+                {
+                    return new CollectionRegistration(elementType, activation, Array.Empty<IRegistration>());
+                }
 
                 return new CollectionRegistration(elementType, activation, new[] { elementRegistration! });
             });
