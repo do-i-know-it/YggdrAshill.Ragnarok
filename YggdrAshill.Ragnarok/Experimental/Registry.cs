@@ -37,11 +37,11 @@ namespace YggdrAshill.Ragnarok
                 return registration != null;
             }
 
-            return TryGetSingleElementCollection(type, out registration) ||
+            return TryGetCollection(type, out registration) ||
                    TryGetLocalInstanceList(type, out registration);
         }
 
-        private bool TryGetSingleElementCollection(Type type, out IRegistration? registration)
+        private bool TryGetCollection(Type type, out IRegistration? registration)
         {
             registration = default;
 
