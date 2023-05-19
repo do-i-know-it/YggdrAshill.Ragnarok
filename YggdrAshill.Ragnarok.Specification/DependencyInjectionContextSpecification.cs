@@ -97,6 +97,23 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
+        public void ShouldResolveRegisteredInstance()
+        {
+            var context = new DependencyInjectionContext();
+
+            var instance = new InjectedClass();
+
+            context.RegisterInstance<IInjectedInterface1>(instance);
+
+            using (var scope = context.Build())
+            {
+                var resolved = scope.Resolver.Resolve<IInjectedInterface1>();
+
+                Assert.That(resolved, Is.EqualTo(instance));
+            }
+        }
+
+        [Test]
         public void ShouldInstantiateRegisteredAsInterface()
         {
             var context = new DependencyInjectionContext();
@@ -465,6 +482,25 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
+        public void ShouldResolveCollectionNotRegistered()
+        {
+            using (var scope = new DependencyInjectionContext().Build())
+            {
+                var array = scope.Resolver.Resolve<InjectedClass[]>();
+                Assert.That(array.Length, Is.EqualTo(0));
+
+                var readOnlyList = scope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
+                Assert.That(readOnlyList.Count, Is.EqualTo(0));
+
+                var readOnlyCollection = scope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
+                Assert.That(readOnlyCollection.Count, Is.EqualTo(0));
+
+                var enumerable = scope.Resolver.Resolve<IEnumerable<InjectedClass>>();
+                Assert.That(enumerable.Count(), Is.EqualTo(0));
+            }
+        }
+
+        [Test]
         public void ShouldResolveLocalInstanceList()
         {
             var parentLocalInjectionCount = new Random().Next(1, MaxMultipleInjectionCount);
@@ -505,22 +541,7 @@ namespace YggdrAshill.Ragnarok.Specification
             }
         }
 
-        [Test]
-        public void ShouldResolveRegisteredInstance()
-        {
-            var context = new DependencyInjectionContext();
 
-            var instance = new InjectedClass();
-
-            context.RegisterInstance<IInjectedInterface1>(instance);
-
-            using (var scope = context.Build())
-            {
-                var resolved = scope.Resolver.Resolve<IInjectedInterface1>();
-
-                Assert.That(resolved, Is.EqualTo(instance));
-            }
-        }
 
         [Test]
         public void CannotInjectIntoFieldsWithoutDependencies()
@@ -592,35 +613,13 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotResolveIfYouRegisterNothing()
+        public void CannotResolveNotRegistered()
         {
-            var context = new DependencyInjectionContext();
-
-            using (var scope = context.Build())
+            using (var scope = new DependencyInjectionContext().Build())
             {
                 Assert.That(() =>
                 {
                     _ = scope.Resolver.Resolve<InjectedClass>();
-                }, Throws.TypeOf<Exception>());
-
-                Assert.That(() =>
-                {
-                    _ = scope.Resolver.Resolve<InjectedClass[]>();
-                }, Throws.TypeOf<Exception>());
-
-                Assert.That(() =>
-                {
-                    _ = scope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
-                }, Throws.TypeOf<Exception>());
-
-                Assert.That(() =>
-                {
-                    _ = scope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
-                }, Throws.TypeOf<Exception>());
-
-                Assert.That(() =>
-                {
-                    _ = scope.Resolver.Resolve<IEnumerable<InjectedClass>>();
                 }, Throws.TypeOf<Exception>());
             }
         }
