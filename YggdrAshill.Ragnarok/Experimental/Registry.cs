@@ -25,7 +25,17 @@ namespace YggdrAshill.Ragnarok
 
         private bool isDisposed;
 
+        public bool Have(IRegistration registration)
+        {
+            return dictionary.ContainsKey(registration.ImplementedType);
+        }
+
         public bool TryGet(Type type, out IRegistration? registration)
+        {
+            return Find(type, out registration);
+        }
+
+        public bool Find(Type type, out IRegistration? registration)
         {
             if (isDisposed)
             {
@@ -56,7 +66,7 @@ namespace YggdrAshill.Ragnarok
             {
                 var activation = codeBuilder.GetActivation(implementedType);
 
-                if (!TryGet(elementType, out var elementRegistration))
+                if (!Find(elementType, out var elementRegistration))
                 {
                     return new CollectionRegistration(elementType, activation, Array.Empty<IRegistration>());
                 }
@@ -76,7 +86,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            if (TryGet(readOnlyListType, out var found) && found is CollectionRegistration collection)
+            if (Find(readOnlyListType, out var found) && found is CollectionRegistration collection)
             {
                 registration = registrationCache.GetOrAdd(type, _ =>
                 {

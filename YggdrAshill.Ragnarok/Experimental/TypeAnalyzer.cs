@@ -72,7 +72,7 @@ namespace YggdrAshill.Ragnarok
                     = constructorInjection.ArgumentList.Select(argument => argument.Type).Distinct();
                 foreach (var type in dependentTypeList)
                 {
-                    if (registry.TryGet(type, out var registration) && registration != null)
+                    if (registry.Find(type, out var registration) && registration != null)
                     {
                         CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
                     }
@@ -85,7 +85,7 @@ namespace YggdrAshill.Ragnarok
             {
                 foreach (var type in methodInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (registry.TryGet(type, out var registration) && registration != null)
+                    if (registry.Find(type, out var registration) && registration != null)
                     {
                         CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
                     }
@@ -96,7 +96,7 @@ namespace YggdrAshill.Ragnarok
             {
                 foreach (var type in fieldInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (registry.TryGet(type, out var registration) && registration != null)
+                    if (registry.Find(type, out var registration) && registration != null)
                     {
                         CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
                     }
@@ -107,7 +107,7 @@ namespace YggdrAshill.Ragnarok
             {
                 foreach (var type in propertyInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (registry.TryGet(type, out var registration) && registration != null)
+                    if (registry.Find(type, out var registration) && registration != null)
                     {
                         CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
                     }
