@@ -89,21 +89,38 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(instance2, Is.EqualTo(instance3));
         }
 
-        // TODO: integrate into any other specifications.
         [Test]
-        public void ShouldInjectDependenciesIntoConstructor()
+        public void ShouldResolveDependenciesFromParentScope()
         {
-            var context = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext();
 
-            context.RegisterGlobal<NoDependencyClass>();
-            context.RegisterTemporal<DependencyIntoConstructor>();
+            parentContext.RegisterGlobal<DualInterface1>().AsImplementedInterfaces();
 
-            using var scope = context.Build();
+            using var parentScope = parentContext.Build();
 
-            var noDependencyClass = scope.Resolver.Resolve<NoDependencyClass>();
-            var resolved = scope.Resolver.Resolve<DependencyIntoConstructor>();
+            var childContext = parentScope.CreateContext();
 
-            Assert.That(resolved.NoDependencyClass, Is.EqualTo(noDependencyClass));
+            childContext.RegisterGlobal<DualInterface2>().AsImplementedInterfaces();
+            childContext.RegisterGlobal<MultipleDependencyService>().As<IService>();
+
+            using var childScope = childContext.Build();
+
+            Assert.That(() =>
+            {
+                _ = childScope.Resolver.Resolve<IService>();
+            }, Throws.Nothing);
+
+            var localInstanceList = childScope.Resolver.Resolve<ILocalInstanceList<IService>>().InstanceList;
+            var array = childScope.Resolver.Resolve<IService[]>();
+            var readOnlyList = childScope.Resolver.Resolve<IReadOnlyList<IService>>();
+            var readOnlyCollection = childScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
+            var enumerable = childScope.Resolver.Resolve<IEnumerable<IService>>();
+
+            Assert.That(localInstanceList.Count, Is.EqualTo(1));
+            Assert.That(array.Length, Is.EqualTo(localInstanceList.Count));
+            Assert.That(readOnlyList.Count, Is.EqualTo(localInstanceList.Count));
+            Assert.That(readOnlyCollection.Count, Is.EqualTo(localInstanceList.Count));
+            Assert.That(enumerable.Count(), Is.EqualTo(localInstanceList.Count));
         }
 
         [Test]
@@ -245,7 +262,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<MultipleInterfaceClass>().AsImplementedInterfaces().AndSelf();
+            context.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces().AndSelf();
 
             using var scope = context.Build();
 
@@ -420,8 +437,8 @@ namespace YggdrAshill.Ragnarok.Specification
                 }
             }
 
-            parentContext.RegisterGlobal<SingleDependencyService>().As<IService>();
-            parentContext.RegisterGlobal<DualInterface1>().AsImplementedInterfaces();
+            parentContext.RegisterGlobal<MultipleDependencyService>().As<IService>();
+            parentContext.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces();
 
             using var parentScope = parentContext.Build();
 
@@ -431,8 +448,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             var childContext = parentScope.CreateContext();
 
-            childContext.RegisterGlobal<MultipleDependencyService>().As<IService>();
-            childContext.RegisterGlobal<DualInterface2>().AsImplementedInterfaces();
+            childContext.RegisterGlobal<NoDependencyService>().As<IService>();
 
             using var childScope = childContext.Build();
 
@@ -505,17 +521,6 @@ namespace YggdrAshill.Ragnarok.Specification
                 _ = new DependencyInjectionContext().Build();
 
             }, Throws.Nothing);
-        }
-
-        [Test]
-        public void CannotResolveNotRegistered()
-        {
-            using var scope = new DependencyInjectionContext().Build();
-
-            Assert.That(() =>
-            {
-                _ = scope.Resolver.Resolve<NoDependencyClass>();
-            }, Throws.TypeOf<Exception>());
         }
     }
 }
