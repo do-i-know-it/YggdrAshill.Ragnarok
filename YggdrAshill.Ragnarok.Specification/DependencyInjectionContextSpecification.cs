@@ -109,9 +109,9 @@ namespace YggdrAshill.Ragnarok.Specification
                 _ = childScope.Resolver.Resolve<IService>();
             }, Throws.Nothing);
 
-            var localInstanceList = childScope.Resolver.Resolve<ILocalInstanceList<IService>>().InstanceList;
+            var package = childScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
 
-            Assert.That(localInstanceList.Count, Is.EqualTo(1));
+            Assert.That(package.Count, Is.EqualTo(1));
         }
 
         [Test]
@@ -363,9 +363,9 @@ namespace YggdrAshill.Ragnarok.Specification
 
             using var parentScope = parentContext.Build();
 
-            var parentLocalInstanceList = parentScope.Resolver.Resolve<ILocalInstanceList<IService>>();
+            var parentPackage = parentScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
 
-            Assert.That(parentLocalInstanceList.InstanceList.Count, Is.EqualTo(injectionCount + 1));
+            Assert.That(parentPackage.Count, Is.EqualTo(injectionCount + 1));
 
             var childContext = parentScope.CreateContext();
 
@@ -373,9 +373,9 @@ namespace YggdrAshill.Ragnarok.Specification
 
             using var childScope = childContext.Build();
 
-            var childLocalInstanceList = childScope.Resolver.Resolve<ILocalInstanceList<IService>>();
+            var childPackage = childScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
 
-            Assert.That(childLocalInstanceList.InstanceList.Count, Is.EqualTo(injectionCount + 1));
+            Assert.That(childPackage.Count, Is.EqualTo(injectionCount + 1));
         }
 
         [Test]
