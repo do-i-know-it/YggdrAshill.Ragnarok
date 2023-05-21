@@ -141,7 +141,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldResolveRegisteredInstance()
+        public void ShouldResolveInstanceInstantiatedExternally()
         {
             var context = new DependencyInjectionContext();
 
