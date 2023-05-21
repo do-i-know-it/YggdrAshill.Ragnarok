@@ -340,7 +340,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldResolveLocalInstanceList()
+        public void ShouldResolveServiceBundle()
         {
             var injectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 

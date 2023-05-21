@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    public sealed class LocalInstanceList<T> :
+    [Obsolete()]
+    internal sealed class LocalInstanceList<T> :
         ILocalInstanceList<T>
     {
         public IReadOnlyList<T> InstanceList { get; }

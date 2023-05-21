@@ -34,7 +34,12 @@ namespace YggdrAshill.Ragnarok
                 return solver.CreateCollectionActivation(type.GetElementType()!);
             }
 
-            if (LocalInstanceListRegistration.TryGetReadOnlyListType(type, out var elementType, out _))
+            if (ServiceBundleRegistration.TryGetElementType(type, out var elementType))
+            {
+                return GetActivation(selector.GetServiceBundleType(elementType));
+            }
+
+            if (LocalInstanceListRegistration.TryGetReadOnlyListType(type, out elementType, out _))
             {
                 return GetActivation(solver.GetLocalInstanceListType(elementType));
             }

@@ -11,5 +11,6 @@ namespace YggdrAshill.Ragnarok
         FieldInjection CreateFieldInjection(Type type);
         PropertyInjection CreatePropertyInjection(Type type);
         MethodInjection CreateMethodInjection(Type type);
+        Type GetServiceBundleType(Type elementType);
     }
 }

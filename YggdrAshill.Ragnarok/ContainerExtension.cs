@@ -96,11 +96,13 @@ namespace YggdrAshill.Ragnarok
         public static IInjectIntoInstance RegisterInstance<T>(this IContainer container, T instance)
             where T : notnull
         {
-            var implementedType = typeof(T);
-
             var instantiation = new ReturnInstanceDirectly(instance);
 
-            return container.Register(implementedType, Lifetime.Global, Ownership.External, instantiation);
+            var injectIntoInstance = container.Register(instance.GetType(), Lifetime.Global, Ownership.External, instantiation);
+
+            injectIntoInstance.As<T>();
+
+            return injectIntoInstance;
         }
 
         public static IInjectIntoInstance Register(this IContainer container, Type implementedType, Lifetime lifetime, Ownership ownership, IInstantiation instantiation)

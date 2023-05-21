@@ -14,10 +14,10 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public Type GetLocalInstanceListType(Type elementType)
+        public Type GetServiceBundleType(Type elementType)
         {
             // TODO: cache generic type.
-            return typeof(LocalInstanceList<>).MakeGenericType(elementType);
+            return typeof(ServiceBundle<>).MakeGenericType(elementType);
         }
 
         public ConstructorInjection CreateConstructorInjection(Type type)

@@ -48,6 +48,7 @@ namespace YggdrAshill.Ragnarok
             }
 
             return TryGetCollection(type, out registration) ||
+                   TryGetServiceBundle(type, out registration) ||
                    TryGetLocalInstanceList(type, out registration);
         }
 
@@ -77,6 +78,31 @@ namespace YggdrAshill.Ragnarok
             return true;
         }
 
+        private bool TryGetServiceBundle(Type type, out IRegistration? registration)
+        {
+            registration = default;
+
+            if (!ServiceBundleRegistration.TryGetTargetType(type, out var targetType))
+            {
+                return false;
+            }
+
+            if (Find(targetType, out var found) && found is CollectionRegistration collection)
+            {
+                registration = registrationCache.GetOrAdd(type, _ =>
+                {
+                    var activation = codeBuilder.GetActivation(type);
+
+                    return new ServiceBundleRegistration(type, activation, collection);
+                });
+
+                return true;
+            }
+
+            return false;
+        }
+
+        [Obsolete]
         private bool TryGetLocalInstanceList(Type type, out IRegistration? registration)
         {
             registration = default;
