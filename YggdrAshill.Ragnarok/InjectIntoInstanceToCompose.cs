@@ -5,52 +5,50 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    public sealed class InjectIntoInstanceToCompose :
+    internal sealed class InjectIntoInstanceToCompose :
         IInjectIntoInstance,
         IComposition
     {
         private readonly ICompilation compilation;
-        private readonly Type implementedType;
         private readonly Lifetime lifetime;
         private readonly Ownership ownership;
         private readonly IInstantiation instantiation;
+        private readonly AssignedTypeCollection collection;
 
         private readonly Lazy<AssignAnyTypeToCompose> cache;
 
-        public InjectIntoInstanceToCompose(ICompilation compilation, Type implementedType, Lifetime lifetime, Ownership ownership, IInstantiation instantiation)
+        public InjectIntoInstanceToCompose(ICompilation compilation, AssignedTypeCollection collection, Lifetime lifetime, Ownership ownership, IInstantiation instantiation)
         {
             this.compilation = compilation;
-            this.implementedType = implementedType;
+            this.collection = collection;
             this.lifetime = lifetime;
             this.ownership = ownership;
             this.instantiation = instantiation;
 
-            cache = new Lazy<AssignAnyTypeToCompose>(GetAssignAnyTypeToCompose);
+            cache = new Lazy<AssignAnyTypeToCompose>(CreateAssignAnyTypeToCompose);
+        }
+
+        public InjectIntoInstanceToCompose(ICompilation compilation, Type implementedType, Lifetime lifetime, Ownership ownership, IInstantiation instantiation)
+            : this(compilation, new AssignedTypeCollection(implementedType), lifetime, ownership, instantiation)
+        {
+
         }
 
         public InjectIntoInstanceToCompose(ICompilation compilation, Type implementedType, Lifetime lifetime, Ownership ownership, Func<object> onInstantiated)
-            : this(compilation, implementedType, lifetime, ownership, new InstantiateWithFunction(onInstantiated))
+            : this(compilation, new AssignedTypeCollection(implementedType), lifetime, ownership, new InstantiateWithFunction(onInstantiated))
         {
 
         }
-
-        public InjectIntoInstanceToCompose(ICompilation compilation, Type implementedType, object instance)
-            : this(compilation, implementedType, Lifetime.Global, Ownership.External, new ReturnInstanceDirectly(instance))
-        {
-
-        }
-
-        private Func<ICompilation, Type, IInjection>? getInjection;
 
         private Func<ICompilation, Type, IInjection>? getFieldInjection;
         private Func<ICompilation, Type, IInjection>? getPropertyInjection;
         private Func<ICompilation, Type, IInjection>? getMethodInjection;
 
-        private AssignAnyTypeToCompose GetAssignAnyTypeToCompose()
+        private AssignAnyTypeToCompose CreateAssignAnyTypeToCompose()
         {
             var createdInstantiation = CreateInstantiation();
 
-            return new AssignAnyTypeToCompose(implementedType, lifetime, ownership, createdInstantiation);
+            return new AssignAnyTypeToCompose(collection, lifetime, ownership, createdInstantiation);
         }
 
         private IInstantiation CreateInstantiation()
@@ -67,9 +65,9 @@ namespace YggdrAshill.Ragnarok
 
         private IInjection? GetInjection()
         {
-            var fieldInjection = getFieldInjection?.Invoke(compilation, implementedType);
-            var propertyInjection = getPropertyInjection?.Invoke(compilation, implementedType);
-            var methodInjection = getMethodInjection?.Invoke(compilation, implementedType);
+            var fieldInjection = getFieldInjection?.Invoke(compilation, collection.ImplementedType);
+            var propertyInjection = getPropertyInjection?.Invoke(compilation, collection.ImplementedType);
+            var methodInjection = getMethodInjection?.Invoke(compilation, collection.ImplementedType);
 
             if (fieldInjection == null)
             {
@@ -117,17 +115,23 @@ namespace YggdrAshill.Ragnarok
         public IAfterAnyTypeAssigned As<T>()
             where T : notnull
         {
-            return cache.Value.As<T>();
+            collection.Add(typeof(T));
+
+            return new AfterAnyTypeAssigned(collection);
         }
 
         public IAfterImplementedTypeAssigned AsSelf()
         {
-            return cache.Value.AsSelf();
+            collection.AddSelf();
+
+            return new AfterImplementedTypeAssigned(collection);
         }
 
         public IAfterImplementedInterfacesAssigned AsImplementedInterfaces()
         {
-            return cache.Value.AsImplementedInterfaces();
+            collection.AddImplementedInterfaces();
+
+            return new AfterImplementedInterfacesAssigned(collection);
         }
 
         public IInjectIntoField WithFieldInjection()
@@ -166,36 +170,7 @@ namespace YggdrAshill.Ragnarok
                 return instance;
             }
         }
-        private sealed class InstantiateWithFunction :
-            IInstantiation
-        {
-            private readonly Func<object> onInstantiated;
 
-            public InstantiateWithFunction(Func<object> onInstantiated)
-            {
-                this.onInstantiated = onInstantiated;
-            }
-
-            public object Instantiate(IResolver resolver)
-            {
-                return onInstantiated.Invoke();
-            }
-        }
-        private sealed class ReturnInstanceDirectly :
-            IInstantiation
-        {
-            private readonly object instance;
-
-            public ReturnInstanceDirectly(object instance)
-            {
-                this.instance = instance;
-            }
-
-            public object Instantiate(IResolver resolver)
-            {
-                return instance;
-            }
-        }
 
         private sealed class InjectWithTwoInjection :
             IInjection

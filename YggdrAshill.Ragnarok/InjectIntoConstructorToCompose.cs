@@ -5,66 +5,82 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    public sealed class InjectIntoConstructorToCompose :
+    internal sealed class InjectIntoConstructorToCompose :
         IInjectIntoConstructor,
         IComposition
     {
-        private readonly Lazy<InjectIntoInstanceToCompose> injectIntoInstanceToCompose;
+        private readonly ICompilation compilation;
+        private readonly AssignedTypeCollection collection;
+        private readonly Lifetime lifetime;
+
+        private readonly Lazy<InjectIntoInstanceToCompose> cache;
 
         public InjectIntoConstructorToCompose(ICompilation compilation, Type implementedType, Lifetime lifetime)
         {
             // TODO: check whether implementedType is concrete class.
 
-            injectIntoInstanceToCompose = new Lazy<InjectIntoInstanceToCompose>(() =>
-            {
-                var instantiation = compilation.GetInstantiation(implementedType, parameterList.Value);
+            this.compilation = compilation;
+            this.lifetime = lifetime;
+            collection = new AssignedTypeCollection(implementedType);
 
-                return new InjectIntoInstanceToCompose(compilation, implementedType, lifetime, Ownership.Internal, instantiation);
-            });
+            cache = new Lazy<InjectIntoInstanceToCompose>(CreateInjectIntoInstanceToCompose);
         }
 
         private readonly Lazy<List<IParameter>> parameterList = new Lazy<List<IParameter>>();
 
+        private InjectIntoInstanceToCompose CreateInjectIntoInstanceToCompose()
+        {
+            var instantiation = compilation.GetInstantiation(collection.ImplementedType, parameterList.Value);
+
+            return new InjectIntoInstanceToCompose(compilation, collection, lifetime, Ownership.Internal, instantiation);
+        }
+
         public IDescription Compose()
         {
-            return injectIntoInstanceToCompose.Value.Compose();
+            return cache.Value.Compose();
         }
 
         public IAfterAnyTypeAssigned As<T>()
             where T : notnull
         {
-            return injectIntoInstanceToCompose.Value.As<T>();
+            collection.Add(typeof(T));
+
+            return new AfterAnyTypeAssigned(collection);
         }
 
         public IAfterImplementedTypeAssigned AsSelf()
         {
-            return injectIntoInstanceToCompose.Value.AsSelf();
+            collection.AddSelf();
+
+            return new AfterImplementedTypeAssigned(collection);
         }
 
         public IAfterImplementedInterfacesAssigned AsImplementedInterfaces()
         {
-            return injectIntoInstanceToCompose.Value.AsImplementedInterfaces();
+            collection.AddImplementedInterfaces();
+
+            return new AfterImplementedInterfacesAssigned(collection);
         }
 
         public IInjectIntoField WithFieldInjection()
         {
-            return injectIntoInstanceToCompose.Value.WithFieldInjection();
+            return cache.Value.WithFieldInjection();
         }
 
         public IInjectIntoProperty WithPropertyInjection()
         {
-            return injectIntoInstanceToCompose.Value.WithPropertyInjection();
+            return cache.Value.WithPropertyInjection();
         }
 
         public IInjectIntoMethod WithMethodInjection()
         {
-            return injectIntoInstanceToCompose.Value.WithMethodInjection();
+            return cache.Value.WithMethodInjection();
         }
 
         public IInjectIntoConstructor With<T>(string name, T instance)
             where T: notnull
         {
-            return WithArgument<T>(name, instance);
+            return WithArgument(name, instance);
         }
 
         public IInjectIntoConstructor WithArgument<T>(string name, T instance)
