@@ -2,7 +2,8 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Samples
 {
-    internal sealed class Service
+    internal sealed class Service :
+        IService
     {
         private readonly ISender sender;
         private readonly IFormatter formatter;
@@ -16,8 +17,15 @@ namespace YggdrAshill.Ragnarok.Samples
             this.receiver = receiver;
         }
 
+        [InjectProperty] private string? Announcement { get; set; }
+
         public void Run()
         {
+            if (Announcement != null)
+            {
+                Console.WriteLine(Announcement);
+            }
+
             while (true)
             {
                 var message = sender.Send();

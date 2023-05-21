@@ -6,20 +6,19 @@
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterLocal<ConsoleSender>()
-                .WithArgument("announcement", "Please enter a text")
-                .As<ISender>();
-            context.RegisterLocal<ConsoleReceiver>()
+            context.RegisterTemporal<ISender, ConsoleSender>().WithArgument("announcement", "Please enter a text");
+            context.RegisterLocal<IReceiver, ConsoleReceiver>()
                 .WithFieldInjection()
-                .With("header", "Received")
-                .As<IReceiver>();
+                .With("header", "Received");
             context.RegisterInstance(Formatter.AllCharactersToUpper)
                 .As<IFormatter>();
-            context.RegisterGlobal<Service>();
+            context.RegisterGlobal<IService, Service>()
+                .WithPropertyInjection()
+                .With("Announcement", "Sample application started.\nEnter \"quit\" if you want to quit this application.\n");
 
             using var scope = context.Build();
 
-            scope.Resolver.Resolve<Service>().Run();
+            scope.Resolver.Resolve<IService>().Run();
         }
     }
 }

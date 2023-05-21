@@ -5,8 +5,7 @@ namespace YggdrAshill.Ragnarok.Samples
     internal sealed class ConsoleReceiver :
         IReceiver
     {
-        [InjectField]
-        private readonly string? header;
+        [InjectField] private readonly string? header;
 
         public void Receive(string message)
         {
