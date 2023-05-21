@@ -6,18 +6,20 @@
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterLocal<MessageSender>()
-                .WithArgument("message", "Hello world")
+            context.RegisterLocal<ConsoleSender>()
+                .WithArgument("announcement", "Please enter a text")
                 .As<ISender>();
-            context.RegisterInstance(ConsoleReceiver.Instance).As<IReceiver>();
+            context.RegisterLocal<ConsoleReceiver>()
+                .WithFieldInjection()
+                .With("header", "Received")
+                .As<IReceiver>();
+            context.RegisterInstance(Formatter.AllCharactersToUpper)
+                .As<IFormatter>();
             context.RegisterGlobal<Service>();
 
-            using (var scope = context.Build())
-            {
-                var service = scope.Resolver.Resolve<Service>();
+            using var scope = context.Build();
 
-                service.Run();
-            }
+            scope.Resolver.Resolve<Service>().Run();
         }
     }
 }
