@@ -10,7 +10,7 @@ namespace YggdrAshill.Ragnarok.Specification
     internal sealed class DependencyInjectionContextSpecification
     {
         private const int MinMultipleInjectionCount = 0;
-        private const int MaxMultipleInjectionCount = 3;
+        private const int MaxMultipleInjectionCount = 10;
 
         [Test]
         public void ShouldResolveResolver()
@@ -45,7 +45,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldInstantiateLocalObjectPerScope()
+        public void ShouldInstantiateLocalObjectPerLocalScope()
         {
             var parentContext = new DependencyInjectionContext();
 
@@ -66,9 +66,8 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(instance2, Is.Not.EqualTo(instance3));
         }
 
-        // TODO: Rename method.
         [Test]
-        public void ShouldInstantiateGlobalObjectPerService()
+        public void ShouldInstantiateGlobalObjectPerGlobalScope()
         {
             var parentContext = new DependencyInjectionContext();
 
@@ -111,16 +110,8 @@ namespace YggdrAshill.Ragnarok.Specification
             }, Throws.Nothing);
 
             var localInstanceList = childScope.Resolver.Resolve<ILocalInstanceList<IService>>().InstanceList;
-            var array = childScope.Resolver.Resolve<IService[]>();
-            var readOnlyList = childScope.Resolver.Resolve<IReadOnlyList<IService>>();
-            var readOnlyCollection = childScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
-            var enumerable = childScope.Resolver.Resolve<IEnumerable<IService>>();
 
             Assert.That(localInstanceList.Count, Is.EqualTo(1));
-            Assert.That(array.Length, Is.EqualTo(localInstanceList.Count));
-            Assert.That(readOnlyList.Count, Is.EqualTo(localInstanceList.Count));
-            Assert.That(readOnlyCollection.Count, Is.EqualTo(localInstanceList.Count));
-            Assert.That(enumerable.Count(), Is.EqualTo(localInstanceList.Count));
         }
 
         [Test]
@@ -283,139 +274,69 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void ShouldResolveArray()
+        public void ShouldResolveCollection()
         {
-            var parentInjectionAmount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
+            var parentInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
             var parentContext = new DependencyInjectionContext();
 
-            for (var count = 0; count < parentInjectionAmount; count++)
+            for (var count = 0; count < parentInjectionCount; count++)
             {
-                parentContext.RegisterGlobal<NoDependencyService>().As<IService>();
+                if (count % 2 == 0)
+                {
+                    parentContext.RegisterLocal<NoDependencyService>().As<IService>();
+                }
+                else
+                {
+                    parentContext.RegisterTemporal<NoDependencyService>().As<IService>();
+                }
             }
+
+            parentContext.RegisterGlobal<DualInterface1>().AsImplementedInterfaces();
 
             using var parentScope = parentContext.Build();
 
             var parentArray = parentScope.Resolver.Resolve<IService[]>();
+            var parentReadOnlyList = parentScope.Resolver.Resolve<IReadOnlyList<IService>>();
+            var parentReadOnlyCollection = parentScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
+            var parentEnumerable = parentScope.Resolver.Resolve<IEnumerable<IService>>();
 
-            Assert.That(parentArray.Length, Is.EqualTo(parentInjectionAmount));
+            Assert.That(parentArray.Length, Is.EqualTo(parentInjectionCount));
+            Assert.That(parentReadOnlyList.Count, Is.EqualTo(parentInjectionCount));
+            Assert.That(parentReadOnlyCollection.Count, Is.EqualTo(parentInjectionCount));
+            Assert.That(parentEnumerable.Count(), Is.EqualTo(parentInjectionCount));
 
-            var childInjectionAmount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
+            var childInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
             var childContext = parentScope.CreateContext();
 
-            for (var count = 0; count < childInjectionAmount; count++)
+            for (var count = 0; count < childInjectionCount; count++)
             {
-                childContext.RegisterGlobal<NoDependencyService>().As<IService>();
+                if (count % 2 == 0)
+                {
+                    childContext.RegisterLocal<NoDependencyService>().As<IService>();
+                }
+                else
+                {
+                    childContext.RegisterTemporal<NoDependencyService>().As<IService>();
+                }
             }
+
+            childContext.RegisterGlobal<DualInterface2>().AsImplementedInterfaces();
+            childContext.RegisterGlobal<MultipleDependencyService>().As<IService>();
 
             using var childScope = childContext.Build();
 
             var childArray = childScope.Resolver.Resolve<IService[]>();
-
-            Assert.That(childArray.Length, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
-        }
-
-        [Test]
-        public void ShouldResolveReadOnlyList()
-        {
-            var parentInjectionAmount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
-
-            var parentContext = new DependencyInjectionContext();
-
-            for (var count = 0; count < parentInjectionAmount; count++)
-            {
-                parentContext.RegisterGlobal<NoDependencyService>().As<IService>();
-            }
-
-            using var parentScope = parentContext.Build();
-
-            var parentReadOnlyList = parentScope.Resolver.Resolve<IReadOnlyList<IService>>();
-
-            Assert.That(parentReadOnlyList.Count, Is.EqualTo(parentInjectionAmount));
-
-            var childInjectionAmount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
-
-            var childContext = parentScope.CreateContext();
-
-            for (var count = 0; count < childInjectionAmount; count++)
-            {
-                childContext.RegisterGlobal<NoDependencyService>().As<IService>();
-            }
-
-            using var childScope = childContext.Build();
-
             var childReadOnlyList = childScope.Resolver.Resolve<IReadOnlyList<IService>>();
-
-            Assert.That(childReadOnlyList.Count, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
-        }
-
-        [Test]
-        public void ShouldResolveReadOnlyCollection()
-        {
-            var parentInjectionAmount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
-
-            var parentContext = new DependencyInjectionContext();
-
-            for (var count = 0; count < parentInjectionAmount; count++)
-            {
-                parentContext.RegisterGlobal<NoDependencyService>().As<IService>();
-            }
-
-            using var parentScope = parentContext.Build();
-
-            var parentReadOnlyCollection = parentScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
-
-            Assert.That(parentReadOnlyCollection.Count, Is.EqualTo(parentInjectionAmount));
-
-            var childInjectionAmount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
-
-            var childContext = parentScope.CreateContext();
-
-            for (var count = 0; count < childInjectionAmount; count++)
-            {
-                childContext.RegisterGlobal<NoDependencyService>().As<IService>();
-            }
-
-            using var childScope = childContext.Build();
-
             var childReadOnlyCollection = childScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
-
-            Assert.That(childReadOnlyCollection.Count, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
-        }
-
-        [Test]
-        public void ShouldResolveEnumerable()
-        {
-            var parentInjectionAmount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
-
-            var parentContext = new DependencyInjectionContext();
-
-            for (var count = 0; count < parentInjectionAmount; count++)
-            {
-                parentContext.RegisterGlobal<NoDependencyService>().As<IService>();
-            }
-
-            using var parentScope = parentContext.Build();
-
-            var parentEnumerable = parentScope.Resolver.Resolve<IEnumerable<IService>>();
-
-            Assert.That(parentEnumerable.Count, Is.EqualTo(parentInjectionAmount));
-
-            var childInjectionAmount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
-
-            var childContext = parentScope.CreateContext();
-
-            for (var count = 0; count < childInjectionAmount; count++)
-            {
-                childContext.RegisterGlobal<NoDependencyService>().As<IService>();
-            }
-
-            using var childScope = childContext.Build();
-
             var childEnumerable = childScope.Resolver.Resolve<IEnumerable<IService>>();
 
-            Assert.That(childEnumerable.Count, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
+            var totalInjectionAmount = parentInjectionCount + childInjectionCount + 1;
+            Assert.That(childArray.Length, Is.EqualTo(totalInjectionAmount));
+            Assert.That(childReadOnlyList.Count, Is.EqualTo(totalInjectionAmount));
+            Assert.That(childReadOnlyCollection.Count, Is.EqualTo(totalInjectionAmount));
+            Assert.That(childEnumerable.Count(), Is.EqualTo(totalInjectionAmount));
         }
 
         [Test]
