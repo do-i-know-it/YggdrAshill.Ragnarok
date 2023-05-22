@@ -1,6 +1,6 @@
 namespace YggdrAshill.Ragnarok.Specification
 {
-    internal interface IInjectedInterface3
+    internal sealed class NoDependencyClass
     {
 
     }

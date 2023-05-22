@@ -9,547 +9,381 @@ namespace YggdrAshill.Ragnarok.Specification
     [TestFixture(TestOf = typeof(DependencyInjectionContext))]
     internal sealed class DependencyInjectionContextSpecification
     {
-        private const int MaxMultipleInjectionCount = 3;
+        private const int MinMultipleInjectionCount = 0;
+        private const int MaxMultipleInjectionCount = 10;
 
         [Test]
         public void ShouldResolveResolver()
         {
-            var context = new DependencyInjectionContext();
+            using var scope = new DependencyInjectionContext().Build();
 
-            using (var scope = context.Build())
-            {
-                var resolver = scope.Resolver.Resolve<IResolver>();
+            var resolver = scope.Resolver.Resolve<IResolver>();
 
-                Assert.That(resolver, Is.EqualTo(scope.Resolver));
-            }
+            Assert.That(resolver, Is.EqualTo(scope.Resolver));
         }
 
         [Test]
         public void ShouldInstantiateTemporalObjectPerRequest()
         {
-            var context = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext();
 
-            context.RegisterTemporal<InjectedClass>();
+            parentContext.RegisterTemporal<NoDependencyClass>();
 
-            using (var scope = context.Build())
-            {
-                var instance1 = scope.Resolver.Resolve<InjectedClass>();
-                var instance2 = scope.Resolver.Resolve<InjectedClass>();
+            using var parentScope = parentContext.Build();
 
-                Assert.That(instance1, Is.Not.EqualTo(instance2));
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyClass>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyClass>();
 
-                using (var child = scope.CreateScope())
-                {
-                    var instance3 = child.Resolver.Resolve<InjectedClass>();
+            Assert.That(instance1, Is.Not.EqualTo(instance2));
 
-                    Assert.That(instance1, Is.Not.EqualTo(instance3));
-                    Assert.That(instance2, Is.Not.EqualTo(instance3));
-                }
-            }
+            using var childScope = parentScope.CreateChildScope();
+
+            var instance3 = childScope.Resolver.Resolve<NoDependencyClass>();
+
+            Assert.That(instance1, Is.Not.EqualTo(instance3));
+            Assert.That(instance2, Is.Not.EqualTo(instance3));
         }
 
         [Test]
-        public void ShouldInstantiateLocalObjectPerScope()
+        public void ShouldInstantiateLocalObjectPerLocalScope()
         {
-            var context = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext();
 
-            context.RegisterLocal<InjectedClass>();
+            parentContext.RegisterLocal<NoDependencyClass>();
 
-            using (var scope = context.Build())
-            {
-                var instance1 = scope.Resolver.Resolve<InjectedClass>();
-                var instance2 = scope.Resolver.Resolve<InjectedClass>();
+            using var parentScope = parentContext.Build();
 
-                Assert.That(instance1, Is.EqualTo(instance2));
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyClass>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyClass>();
 
-                using (var child = scope.CreateScope())
-                {
-                    var instance3 = child.Resolver.Resolve<InjectedClass>();
+            Assert.That(instance1, Is.EqualTo(instance2));
 
-                    Assert.That(instance1, Is.Not.EqualTo(instance3));
-                    Assert.That(instance2, Is.Not.EqualTo(instance3));
-                }
-            }
+            using var childScope = parentScope.CreateChildScope();
+
+            var instance3 = childScope.Resolver.Resolve<NoDependencyClass>();
+
+            Assert.That(instance1, Is.Not.EqualTo(instance3));
+            Assert.That(instance2, Is.Not.EqualTo(instance3));
         }
 
         [Test]
-        public void ShouldInstantiateGlobalObjectPerService()
+        public void ShouldInstantiateGlobalObjectPerGlobalScope()
         {
-            var context = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext();
 
-            context.RegisterGlobal<InjectedStruct>().WithArgument("value", new Random().Next());
+            parentContext.RegisterGlobal<NoDependencyClass>();
 
-            using (var scope = context.Build())
-            {
-                var instance1 = scope.Resolver.Resolve<InjectedStruct>();
-                var instance2 = scope.Resolver.Resolve<InjectedStruct>();
+            using var parentScope = parentContext.Build();
 
-                Assert.That(instance1, Is.EqualTo(instance2));
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyClass>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyClass>();
 
-                using (var child = scope.CreateScope())
-                {
-                    var instance3 = child.Resolver.Resolve<InjectedStruct>();
+            Assert.That(instance1, Is.EqualTo(instance2));
 
-                    Assert.That(instance1, Is.EqualTo(instance3));
-                    Assert.That(instance2, Is.EqualTo(instance3));
-                }
-            }
+            using var childScope = parentScope.CreateChildScope();
+
+            var instance3 = childScope.Resolver.Resolve<NoDependencyClass>();
+
+            Assert.That(instance1, Is.EqualTo(instance3));
+            Assert.That(instance2, Is.EqualTo(instance3));
         }
 
         [Test]
-        public void ShouldResolveRegisteredInstance()
+        public void ShouldResolveDependenciesFromParentScope()
+        {
+            var parentContext = new DependencyInjectionContext();
+
+            parentContext.RegisterGlobal<DualInterface1>().AsImplementedInterfaces();
+
+            using var parentScope = parentContext.Build();
+
+            var childContext = parentScope.CreateContext();
+
+            childContext.RegisterGlobal<DualInterface2>().AsImplementedInterfaces();
+            childContext.RegisterGlobal<IService, MultipleDependencyService>();
+
+            using var childScope = childContext.Build();
+
+            Assert.That(() =>
+            {
+                _ = childScope.Resolver.Resolve<IService>();
+            }, Throws.Nothing);
+
+            var package = childScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
+
+            Assert.That(package.Count, Is.EqualTo(1));
+        }
+
+        [Test]
+        public void ShouldInjectDependenciesIntoInstanceAfterEnabled()
         {
             var context = new DependencyInjectionContext();
 
-            var instance = new InjectedClass();
+            var fieldInjected = new NoDependencyClass();
+            var propertyInjected = new NoDependencyClass();
+            var methodInjected = new NoDependencyClass();
 
-            context.RegisterInstance<IInjectedInterface1>(instance);
+            context.RegisterGlobal<DependencyIntoInstance>()
+                .WithFieldInjection()
+                .With("fieldInjected", fieldInjected)
+                .WithPropertyInjection()
+                .With("PropertyInjected", propertyInjected)
+                .WithMethodInjection()
+                .With("methodInjected", methodInjected);
 
-            using (var scope = context.Build())
-            {
-                var resolved = scope.Resolver.Resolve<IInjectedInterface1>();
+            using var scope = context.Build();
 
-                Assert.That(resolved, Is.EqualTo(instance));
-            }
+            var resolved = scope.Resolver.Resolve<DependencyIntoInstance>();
+
+            Assert.That(resolved.FieldInjected, Is.EqualTo(fieldInjected));
+            Assert.That(resolved.PropertyInjected, Is.EqualTo(propertyInjected));
+            Assert.That(resolved.MethodInjected, Is.EqualTo(methodInjected));
         }
 
+        [Test]
+        public void ShouldResolveInstanceInstantiatedExternally()
+        {
+            var context = new DependencyInjectionContext();
+
+            var instance = new NoDependencyService();
+
+            context.RegisterInstance<IService>(instance);
+
+            using var scope = context.Build();
+
+            var resolved = scope.Resolver.Resolve<IService>();
+
+            Assert.That(resolved, Is.EqualTo(instance));
+        }
+
+        // TODO: Rename method.
         [Test]
         public void ShouldInstantiateRegisteredAsInterface()
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<InjectedClass>()
-                .As<IInjectedInterface1>()
-                .And<IInjectedInterface2>()
-                .And<IInjectedInterface3>();
+            context.RegisterGlobal<MultipleInterfaceClass>()
+                .As<IInterfaceA>()
+                .And<IInterfaceB>()
+                .And<IInterfaceC>();
 
-            using (var scope = context.Build())
+            using var scope = context.Build();
+
+            Assert.That(() =>
             {
-                Assert.That(() =>
-                {
-                    _ = scope.Resolver.Resolve<InjectedClass>();
-                }, Throws.TypeOf<Exception>());
+                _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
+            }, Throws.TypeOf<Exception>());
 
-                var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
-                var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
-                var instance3 = scope.Resolver.Resolve<IInjectedInterface3>();
+            Assert.That(() =>
+            {
+                _ = scope.Resolver.Resolve<IInterfaceD>();
+            }, Throws.TypeOf<Exception>());
 
-                Assert.That(instance1 is InjectedClass, Is.True);
-                Assert.That(instance2 is InjectedClass, Is.True);
-                Assert.That(instance3 is InjectedClass, Is.True);
-            }
+            var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
+            var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
+            var interfaceC = scope.Resolver.Resolve<IInterfaceC>();
+
+            Assert.That(interfaceA is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceB is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceC is MultipleInterfaceClass, Is.True);
         }
 
+        // TODO: Rename method.
         [Test]
         public void ShouldInstantiateRegisteredAsImplementedInterfaces()
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<InjectedClass>().AsImplementedInterfaces();
+            context.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces();
 
-            using (var scope = context.Build())
+            using var scope = context.Build();
+
+            Assert.That(() =>
             {
-                Assert.That(() =>
-                {
-                    _ = scope.Resolver.Resolve<InjectedClass>();
-                }, Throws.TypeOf<Exception>());
+                _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
+            }, Throws.TypeOf<Exception>());
 
-                var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
-                var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
-                var instance3 = scope.Resolver.Resolve<IInjectedInterface3>();
+            var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
+            var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
+            var interfaceC = scope.Resolver.Resolve<IInterfaceC>();
+            var interfaceD = scope.Resolver.Resolve<IInterfaceD>();
 
-                Assert.That(instance1 is InjectedClass, Is.True);
-                Assert.That(instance2 is InjectedClass, Is.True);
-                Assert.That(instance3 is InjectedClass, Is.True);
-            }
+            Assert.That(interfaceA is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceB is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceC is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceD is MultipleInterfaceClass, Is.True);
         }
 
+        // TODO: Rename method.
         [Test]
         public void ShouldInstantiateRegisteredAsInterfaceAndSelf()
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<InjectedClass>()
-                .As<IInjectedInterface1>()
-                .And<IInjectedInterface2>()
-                .And<IInjectedInterface3>()
+            context.RegisterGlobal<MultipleInterfaceClass>()
+                .As<IInterfaceA>()
+                .And<IInterfaceB>()
+                .And<IInterfaceC>()
                 .AndSelf();
 
-            using (var scope = context.Build())
+            using var scope = context.Build();
+
+            Assert.That(() =>
             {
-                Assert.That(() =>
-                {
-                    _ = scope.Resolver.Resolve<InjectedClass>();
-                }, Throws.Nothing);
+                _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
+            }, Throws.Nothing);
 
-                var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
-                var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
-                var instance3 = scope.Resolver.Resolve<IInjectedInterface3>();
+            Assert.That(() =>
+            {
+                _ = scope.Resolver.Resolve<IInterfaceD>();
+            }, Throws.TypeOf<Exception>());
 
-                Assert.That(instance1 is InjectedClass, Is.True);
-                Assert.That(instance2 is InjectedClass, Is.True);
-                Assert.That(instance3 is InjectedClass, Is.True);
-            }
+            var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
+            var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
+            var interfaceC = scope.Resolver.Resolve<IInterfaceC>();
+
+            Assert.That(interfaceA is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceB is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceC is MultipleInterfaceClass, Is.True);
         }
 
+        // TODO: Rename method.
         [Test]
         public void ShouldInstantiateRegisteredAsImplementedInterfacesAndSelf()
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<InjectedClass>().AsImplementedInterfaces().AndSelf();
+            context.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces().AndSelf();
 
-            using (var scope = context.Build())
+            using var scope = context.Build();
+
+            Assert.That(() =>
             {
-                Assert.That(() =>
+                _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
+            }, Throws.Nothing);
+
+            var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
+            var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
+            var interfaceC = scope.Resolver.Resolve<IInterfaceC>();
+            var interfaceD = scope.Resolver.Resolve<IInterfaceD>();
+
+            Assert.That(interfaceA is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceB is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceC is MultipleInterfaceClass, Is.True);
+            Assert.That(interfaceD is MultipleInterfaceClass, Is.True);
+        }
+
+        [Test]
+        public void ShouldResolveCollection()
+        {
+            var parentInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
+
+            var parentContext = new DependencyInjectionContext();
+
+            for (var count = 0; count < parentInjectionCount; count++)
+            {
+                if (count % 2 == 0)
                 {
-                    _ = scope.Resolver.Resolve<InjectedClass>();
-                }, Throws.Nothing);
-
-                var instance1 = scope.Resolver.Resolve<IInjectedInterface1>();
-                var instance2 = scope.Resolver.Resolve<IInjectedInterface2>();
-                var instance3 = scope.Resolver.Resolve<IInjectedInterface3>();
-
-                Assert.That(instance1 is InjectedClass, Is.True);
-                Assert.That(instance2 is InjectedClass, Is.True);
-                Assert.That(instance3 is InjectedClass, Is.True);
-            }
-        }
-
-        [Test]
-        public void ShouldInjectDependenciesIntoConstructor()
-        {
-            var context = new DependencyInjectionContext();
-
-            context.RegisterLocal<InjectedClass>();
-            context.RegisterLocal<InjectedStruct>()
-                .WithArgument("value", new Random().Next());
-            context.RegisterTemporal<ConstructorInjectableClass>();
-
-            using (var scope = context.Build())
-            {
-                var injectedClass = scope.Resolver.Resolve<InjectedClass>();
-                var injectedStruct = scope.Resolver.Resolve<InjectedStruct>();
-                var instance = scope.Resolver.Resolve<ConstructorInjectableClass>();
-
-                Assert.That(instance.InjectedClass, Is.EqualTo(injectedClass));
-                Assert.That(instance.InjectedStruct, Is.EqualTo(injectedStruct));
-            }
-        }
-
-        [Test]
-        public void ShouldInjectDependenciesIntoFieldsAfterEnabled()
-        {
-            var context = new DependencyInjectionContext();
-
-            var injectedClass = new InjectedClass();
-
-            context.RegisterLocal<InjectedStruct>()
-                .WithArgument("value", new Random().Next());
-            context.RegisterGlobal<FieldInjectableClass>()
-                .WithFieldInjection()
-                .With("injectedClass", injectedClass);
-
-            using (var scope = context.Build())
-            {
-                var injectedStruct = scope.Resolver.Resolve<InjectedStruct>();
-                var instance = scope.Resolver.Resolve<FieldInjectableClass>();
-
-                Assert.That(instance.InjectedClass, Is.EqualTo(injectedClass));
-                Assert.That(instance.InjectedStruct, Is.EqualTo(injectedStruct));
-            }
-        }
-
-        [Test]
-        public void ShouldInjectDependenciesIntoPropertiesAfterEnabled()
-        {
-            var context = new DependencyInjectionContext();
-
-            var injectedClass = new InjectedClass();
-
-            context.RegisterLocal<InjectedStruct>()
-                .WithArgument("value", new Random().Next());
-            context.RegisterGlobal<PropertyInjectableClass>()
-                .WithPropertyInjection()
-                .With($"{nameof(PropertyInjectableClass.InjectedClass)}", injectedClass);
-
-            using (var scope = context.Build())
-            {
-                var injectedStruct = scope.Resolver.Resolve<InjectedStruct>();
-                var instance = scope.Resolver.Resolve<PropertyInjectableClass>();
-
-                Assert.That(instance.InjectedClass, Is.EqualTo(injectedClass));
-                Assert.That(instance.InjectedStruct, Is.EqualTo(injectedStruct));
-            }
-        }
-
-        [Test]
-        public void ShouldInjectDependenciesIntoMethodsAfterEnabled()
-        {
-            var context = new DependencyInjectionContext();
-
-            var injectedClass = new InjectedClass();
-
-            context.RegisterLocal<InjectedStruct>()
-                .WithArgument("value", new Random().Next());
-            context.RegisterGlobal<MethodInjectableClass>()
-                .WithMethodInjection()
-                .With("injectedClass", injectedClass);
-
-            using (var scope = context.Build())
-            {
-                var injectedStruct = scope.Resolver.Resolve<InjectedStruct>();
-                var instance = scope.Resolver.Resolve<MethodInjectableClass>();
-
-                Assert.That(instance.InjectedClass, Is.EqualTo(injectedClass));
-                Assert.That(instance.InjectedStruct, Is.EqualTo(injectedStruct));
-            }
-        }
-
-        [Test]
-        public void ShouldInjectDependenciesIntoAllAfterEnabled()
-        {
-            var context = new DependencyInjectionContext();
-
-            var fieldInjected = new InjectedStruct(new Random().Next());
-            var propertyInjected = new InjectedStruct(new Random().Next());
-            var methodInjected = new InjectedStruct(new Random().Next());
-
-            context.RegisterLocal<InjectedStruct>()
-                .WithArgument("value", new Random().Next());
-            context.RegisterGlobal<AllInjectableClass>()
-                .WithFieldInjection()
-                .With("fieldInjected", fieldInjected)
-                .WithPropertyInjection()
-                .With(nameof(AllInjectableClass.PropertyInjected), propertyInjected)
-                .WithMethodInjection()
-                .With("methodInjected", methodInjected);
-
-            using (var scope = context.Build())
-            {
-                var injectedStruct = scope.Resolver.Resolve<InjectedStruct>();
-                var instance = scope.Resolver.Resolve<AllInjectableClass>();
-
-                Assert.That(instance.ConstructorInjected, Is.EqualTo(injectedStruct));
-                Assert.That(instance.FieldInjected, Is.EqualTo(fieldInjected));
-                Assert.That(instance.PropertyInjected, Is.EqualTo(propertyInjected));
-                Assert.That(instance.MethodInjected, Is.EqualTo(methodInjected));
-            }
-        }
-
-        [Test]
-        public void ShouldResolveArray()
-        {
-            var parentInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
-
-            var context = new DependencyInjectionContext();
-
-            for (var count = 0; count < parentInjectionAmount; count++)
-            {
-                context.RegisterTemporal<InjectedClass>();
-            }
-
-            using (var scope = context.Build())
-            {
-                var injectedClassList = scope.Resolver.Resolve<InjectedClass[]>();
-
-                Assert.That(injectedClassList.Length, Is.EqualTo(parentInjectionAmount));
-
-                var childInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
-
-                var childContext = scope.CreateContext();
-
-                for (var count = 0; count < childInjectionAmount; count++)
-                {
-                    childContext.RegisterTemporal<InjectedClass>();
+                    parentContext.RegisterLocal<IService, NoDependencyService>();
                 }
-
-                using (var childScope = childContext.Build())
+                else
                 {
-                    injectedClassList = childScope.Resolver.Resolve<InjectedClass[]>();
-
-                    Assert.That(injectedClassList.Length, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
+                    parentContext.RegisterTemporal<IService, NoDependencyService>();
                 }
             }
+
+            parentContext.RegisterGlobal<DualInterface1>().AsImplementedInterfaces();
+
+            using var parentScope = parentContext.Build();
+
+            var parentArray = parentScope.Resolver.Resolve<IService[]>();
+            var parentReadOnlyList = parentScope.Resolver.Resolve<IReadOnlyList<IService>>();
+            var parentReadOnlyCollection = parentScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
+            var parentEnumerable = parentScope.Resolver.Resolve<IEnumerable<IService>>();
+
+            Assert.That(parentArray.Length, Is.EqualTo(parentInjectionCount));
+            Assert.That(parentReadOnlyList.Count, Is.EqualTo(parentInjectionCount));
+            Assert.That(parentReadOnlyCollection.Count, Is.EqualTo(parentInjectionCount));
+            Assert.That(parentEnumerable.Count(), Is.EqualTo(parentInjectionCount));
+
+            var childInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
+
+            var childContext = parentScope.CreateContext();
+
+            for (var count = 0; count < childInjectionCount; count++)
+            {
+                if (count % 2 == 0)
+                {
+                    childContext.RegisterLocal<IService, NoDependencyService>();
+                }
+                else
+                {
+                    childContext.RegisterTemporal<IService, NoDependencyService>();
+                }
+            }
+
+            childContext.RegisterGlobal<DualInterface2>().AsImplementedInterfaces();
+            childContext.RegisterGlobal<IService, MultipleDependencyService>();
+
+            using var childScope = childContext.Build();
+
+            var childArray = childScope.Resolver.Resolve<IService[]>();
+            var childReadOnlyList = childScope.Resolver.Resolve<IReadOnlyList<IService>>();
+            var childReadOnlyCollection = childScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
+            var childEnumerable = childScope.Resolver.Resolve<IEnumerable<IService>>();
+
+            var totalInjectionAmount = parentInjectionCount + childInjectionCount + 1;
+            Assert.That(childArray.Length, Is.EqualTo(totalInjectionAmount));
+            Assert.That(childReadOnlyList.Count, Is.EqualTo(totalInjectionAmount));
+            Assert.That(childReadOnlyCollection.Count, Is.EqualTo(totalInjectionAmount));
+            Assert.That(childEnumerable.Count(), Is.EqualTo(totalInjectionAmount));
         }
 
         [Test]
-        public void ShouldResolveReadOnlyList()
+        public void ShouldResolveServiceBundle()
         {
-            var parentInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
+            var injectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
-            var context = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext();
 
-            for (var count = 0; count < parentInjectionAmount; count++)
+            for (var count = 0; count < injectionCount; count++)
             {
-                context.RegisterTemporal<InjectedClass>();
-            }
-
-            using (var scope = context.Build())
-            {
-                var injectedClassList = scope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
-
-                Assert.That(injectedClassList.Count, Is.EqualTo(parentInjectionAmount));
-
-                var childInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
-
-                var childContext = scope.CreateContext();
-
-                for (var count = 0; count < childInjectionAmount; count++)
+                if (count % 2 == 0)
                 {
-                    childContext.RegisterTemporal<InjectedClass>();
+                    parentContext.RegisterLocal<IService, NoDependencyService>();
                 }
-
-                using (var childScope = childContext.Build())
+                else
                 {
-                    injectedClassList = childScope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
-
-                    Assert.That(injectedClassList.Count, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
+                    parentContext.RegisterTemporal<IService, NoDependencyService>();
                 }
             }
+
+            parentContext.RegisterGlobal<IService, MultipleDependencyService>();
+            parentContext.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces();
+
+            using var parentScope = parentContext.Build();
+
+            var parentPackage = parentScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
+
+            Assert.That(parentPackage.Count, Is.EqualTo(injectionCount + 1));
+
+            var childContext = parentScope.CreateContext();
+
+            childContext.RegisterGlobal<IService, NoDependencyService>();
+
+            using var childScope = childContext.Build();
+
+            var childPackage = childScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
+
+            Assert.That(childPackage.Count, Is.EqualTo(injectionCount + 1));
         }
 
         [Test]
-        public void ShouldResolveReadOnlyCollection()
-        {
-            var parentInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
-
-            var context = new DependencyInjectionContext();
-
-            for (var count = 0; count < parentInjectionAmount; count++)
-            {
-                context.RegisterTemporal<InjectedClass>();
-            }
-
-            using (var scope = context.Build())
-            {
-                var injectedClassList = scope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
-
-                Assert.That(injectedClassList.Count, Is.EqualTo(parentInjectionAmount));
-
-                var childInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
-
-                var childContext = scope.CreateContext();
-
-                for (var count = 0; count < childInjectionAmount; count++)
-                {
-                    childContext.RegisterTemporal<InjectedClass>();
-                }
-
-                using (var childScope = childContext.Build())
-                {
-                    injectedClassList = childScope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
-
-                    Assert.That(injectedClassList.Count, Is.EqualTo(parentInjectionAmount + childInjectionAmount));
-                }
-            }
-        }
-
-        [Test]
-        public void ShouldResolveEnumerable()
-        {
-            var parentInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
-
-            var context = new DependencyInjectionContext();
-
-            for (var count = 0; count < parentInjectionAmount; count++)
-            {
-                context.RegisterTemporal<InjectedClass>();
-            }
-
-            using (var scope = context.Build())
-            {
-                var injectedClassList = scope.Resolver.Resolve<IEnumerable<InjectedClass>>();
-
-                Assert.That(injectedClassList.Count(), Is.EqualTo(parentInjectionAmount));
-
-                var childInjectionAmount = new Random().Next(1, MaxMultipleInjectionCount);
-
-                var childContext = scope.CreateContext();
-
-                for (var count = 0; count < childInjectionAmount; count++)
-                {
-                    childContext.RegisterTemporal<InjectedClass>();
-                }
-
-                using (var childScope = childContext.Build())
-                {
-                    injectedClassList = childScope.Resolver.Resolve<IEnumerable<InjectedClass>>();
-
-                    Assert.That(injectedClassList.Count(), Is.EqualTo(parentInjectionAmount + childInjectionAmount));
-                }
-            }
-        }
-
-        [Test]
-        public void ShouldResolveCollectionNotRegistered()
-        {
-            using (var scope = new DependencyInjectionContext().Build())
-            {
-                var array = scope.Resolver.Resolve<InjectedClass[]>();
-                Assert.That(array.Length, Is.EqualTo(0));
-
-                var readOnlyList = scope.Resolver.Resolve<IReadOnlyList<InjectedClass>>();
-                Assert.That(readOnlyList.Count, Is.EqualTo(0));
-
-                var readOnlyCollection = scope.Resolver.Resolve<IReadOnlyCollection<InjectedClass>>();
-                Assert.That(readOnlyCollection.Count, Is.EqualTo(0));
-
-                var enumerable = scope.Resolver.Resolve<IEnumerable<InjectedClass>>();
-                Assert.That(enumerable.Count(), Is.EqualTo(0));
-            }
-        }
-
-        [Test]
-        public void ShouldResolveLocalInstanceList()
-        {
-            var parentLocalInjectionCount = new Random().Next(1, MaxMultipleInjectionCount);
-
-            var parentValue = 1;
-
-            var context = new DependencyInjectionContext();
-
-            for (var count = 0; count < parentLocalInjectionCount; count++)
-            {
-                context.RegisterLocal<InjectedStruct>().WithArgument("value", parentValue + count);
-            }
-
-            context.RegisterGlobal<InjectedStruct>().WithArgument("value", 0);
-
-            using (var scope = context.Build())
-            {
-                var localInstanceList = scope.Resolver.Resolve<ILocalInstanceList<InjectedStruct>>();
-
-                Assert.That(localInstanceList.InstanceList.Count, Is.EqualTo(parentLocalInjectionCount + 1));
-
-                var childTemporalInjectionCount = new Random().Next(1, MaxMultipleInjectionCount);
-                var childValue = parentLocalInjectionCount + 1;
-
-                var childContext = scope.CreateContext();
-
-                for (var count = 0; count < childTemporalInjectionCount; count++)
-                {
-                    childContext.RegisterTemporal<InjectedStruct>().WithArgument("value", childValue + count);
-                }
-
-                using (var childScope = childContext.Build())
-                {
-                    localInstanceList = childScope.Resolver.Resolve<ILocalInstanceList<InjectedStruct>>();
-
-                    Assert.That(localInstanceList.InstanceList.Count, Is.EqualTo(parentLocalInjectionCount + childTemporalInjectionCount));
-                }
-            }
-        }
-
-
-
-        [Test]
-        public void CannotInjectIntoFieldsWithoutDependencies()
+        public void CannotEnableFieldInjectionWithoutDependencies()
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<InjectedClass>()
-                .WithFieldInjection();
+            context.RegisterTemporal<NoDependencyClass>().WithFieldInjection();
 
             Assert.That(() =>
             {
@@ -558,12 +392,11 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotInjectIntoPropertiesWithoutDependencies()
+        public void CannotEnablePropertyInjectionWithoutDependencies()
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<InjectedClass>()
-                .WithPropertyInjection();
+            context.RegisterTemporal<NoDependencyClass>().WithPropertyInjection();
 
             Assert.That(() =>
             {
@@ -572,12 +405,11 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotInjectIntoMethodsWithoutDependencies()
+        public void CannotEnableMethodInjectionWithoutDependencies()
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<InjectedClass>()
-                .WithMethodInjection();
+            context.RegisterTemporal<NoDependencyClass>().WithMethodInjection();
 
             Assert.That(() =>
             {
@@ -593,35 +425,23 @@ namespace YggdrAshill.Ragnarok.Specification
             context.RegisterTemporal<CircularDependencyClass1>();
             context.RegisterTemporal<CircularDependencyClass2>();
 
-            using (var scope = context.Build())
+            using var scope = context.Build();
+
+            var childContext = scope.CreateContext();
+
+            childContext.RegisterTemporal<CircularDependencyClass3>();
+
+            Assert.That(() =>
             {
-                var childContext = scope.CreateContext();
-                childContext.RegisterTemporal<CircularDependencyClass3>();
+                _ = childContext.Build();
 
-                Assert.That(() =>
-                {
-                    _ = childContext.Build();
-
-                }, Throws.TypeOf<Exception>());
-            }
+            }, Throws.TypeOf<Exception>());
 
             Assert.That(() =>
             {
                 _ = new DependencyInjectionContext().Build();
 
             }, Throws.Nothing);
-        }
-
-        [Test]
-        public void CannotResolveNotRegistered()
-        {
-            using (var scope = new DependencyInjectionContext().Build())
-            {
-                Assert.That(() =>
-                {
-                    _ = scope.Resolver.Resolve<InjectedClass>();
-                }, Throws.TypeOf<Exception>());
-            }
         }
     }
 }

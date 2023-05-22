@@ -25,7 +25,17 @@ namespace YggdrAshill.Ragnarok
 
         private bool isDisposed;
 
+        public bool Have(IRegistration registration)
+        {
+            return dictionary.ContainsKey(registration.ImplementedType);
+        }
+
         public bool TryGet(Type type, out IRegistration? registration)
+        {
+            return Find(type, out registration);
+        }
+
+        public bool Find(Type type, out IRegistration? registration)
         {
             if (isDisposed)
             {
@@ -38,6 +48,7 @@ namespace YggdrAshill.Ragnarok
             }
 
             return TryGetCollection(type, out registration) ||
+                   TryGetServiceBundle(type, out registration) ||
                    TryGetLocalInstanceList(type, out registration);
         }
 
@@ -56,7 +67,7 @@ namespace YggdrAshill.Ragnarok
             {
                 var activation = codeBuilder.GetActivation(implementedType);
 
-                if (!TryGet(elementType, out var elementRegistration))
+                if (!Find(elementType, out var elementRegistration))
                 {
                     return new CollectionRegistration(elementType, activation, Array.Empty<IRegistration>());
                 }
@@ -67,6 +78,31 @@ namespace YggdrAshill.Ragnarok
             return true;
         }
 
+        private bool TryGetServiceBundle(Type type, out IRegistration? registration)
+        {
+            registration = default;
+
+            if (!ServiceBundleRegistration.TryGetTargetType(type, out var targetType))
+            {
+                return false;
+            }
+
+            if (Find(targetType, out var found) && found is CollectionRegistration collection)
+            {
+                registration = registrationCache.GetOrAdd(type, _ =>
+                {
+                    var activation = codeBuilder.GetActivation(type);
+
+                    return new ServiceBundleRegistration(type, activation, collection);
+                });
+
+                return true;
+            }
+
+            return false;
+        }
+
+        [Obsolete]
         private bool TryGetLocalInstanceList(Type type, out IRegistration? registration)
         {
             registration = default;
@@ -76,7 +112,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            if (TryGet(readOnlyListType, out var found) && found is CollectionRegistration collection)
+            if (Find(readOnlyListType, out var found) && found is CollectionRegistration collection)
             {
                 registration = registrationCache.GetOrAdd(type, _ =>
                 {

@@ -10,15 +10,14 @@ namespace YggdrAshill.Ragnarok
         private readonly Func<object> createInstance;
 
         public string Name { get; }
+        public Type Type { get; } = typeof(T);
+        public object Instance => createInstance.Invoke();
 
         public Parameter(string name, Func<object> createInstance)
         {
             Name = name;
             this.createInstance = createInstance;
         }
-
-        public Type Type { get; } = typeof(T);
-        public object Instance => createInstance.Invoke();
 
         public Parameter(string name, T instance) : this(name, () => instance)
         {

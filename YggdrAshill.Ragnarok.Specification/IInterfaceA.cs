@@ -1,6 +1,6 @@
 namespace YggdrAshill.Ragnarok.Specification
 {
-    internal interface IInjectedInterface2
+    internal interface IInterfaceA
     {
 
     }

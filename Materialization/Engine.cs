@@ -29,9 +29,7 @@ namespace YggdrAshill.Ragnarok.Materialization
                 throw new ObjectDisposedException(nameof(IEngine));
             }
 
-            return registry.TryGet(registration.ImplementedType, out var found)
-                   && found != null
-                   && registration == found;
+            return registry.Have(registration);
         }
 
         public bool Find(Type type, out IRegistration registration)
@@ -43,7 +41,7 @@ namespace YggdrAshill.Ragnarok.Materialization
 
             registration = default!;
 
-            if (registry.TryGet(type, out var found) && found != null)
+            if (registry.Find(type, out var found) && found != null)
             {
                 registration = found;
 

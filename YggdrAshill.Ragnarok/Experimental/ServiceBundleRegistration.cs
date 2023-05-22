@@ -7,13 +7,26 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
-    [Obsolete]
-    internal sealed class LocalInstanceListRegistration :
+    internal sealed class ServiceBundleRegistration :
         IRegistration
     {
-        public static bool TryGetReadOnlyListType(Type type, out Type elementType, out Type readOnlyListType)
+        public static bool TryGetTargetType(Type type, out Type targetType)
         {
-            readOnlyListType = default!;
+            targetType = default!;
+
+            if (!TryGetElementType(type, out var elementType))
+            {
+                return false;
+            }
+
+            // TODO: cache type data.
+            targetType = typeof(IReadOnlyList<>).MakeGenericType(elementType);
+
+            return true;
+        }
+
+        public static bool TryGetElementType(Type type, out Type elementType)
+        {
             elementType = default!;
 
             if (!type.IsConstructedGenericType)
@@ -23,16 +36,15 @@ namespace YggdrAshill.Ragnarok
 
             var openGenericType = type.GetGenericTypeDefinition();
 
-            if (openGenericType == typeof(ILocalInstanceList<>))
+            if (openGenericType != typeof(IServiceBundle<>))
             {
-                // TODO: cache type data.
-                elementType = type.GetGenericArguments()[0];
-                readOnlyListType = typeof(IReadOnlyList<>).MakeGenericType(elementType);
-
-                return true;
+                return false;
             }
 
-            return false;
+            // TODO: cache type data.
+            elementType = type.GetGenericArguments()[0];
+
+            return true;
         }
 
         private readonly IActivation activation;
@@ -42,7 +54,7 @@ namespace YggdrAshill.Ragnarok
         public Lifetime Lifetime => Lifetime.Local;
         public Ownership Ownership => Ownership.Internal;
 
-        public LocalInstanceListRegistration(Type implementedType, IActivation activation, CollectionRegistration collection)
+        public ServiceBundleRegistration(Type implementedType, IActivation activation, CollectionRegistration collection)
         {
             ImplementedType = implementedType;
 

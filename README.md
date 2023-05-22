@@ -71,19 +71,21 @@ class Service
 using implementations as below:
 
 ```cs
-class AnyMessageSender : ISender
+class ConsoleSender : ISender
 {
-    private readonly string message;
+    private readonly string announcement;
 
     [Inject]
-    AnyMessageSender(string message)
+    private ConsoleSender(string announcement)
     {
-        this.message = message;
+        this.announcement = announcement;
     }
 
     public string Send()
     {
-        return message;
+        Console.Write($"{announcement}:");
+
+        return Console.ReadLine() ?? string.Empty;
     }
 }
 
@@ -110,9 +112,9 @@ like:
 ```cs
 var context = new DependencyInjectionContext();
 
-// Register AnyMessageSender as ISender to instantiate per scope.
-context.RegisterLocal<AnyMessageSender>()
-    .WithArgument("message", "Hello world.") // Add parameter to inject into constructor.
+// Register ConsoleSender as ISender to instantiate per scope.
+context.RegisterLocal<ConsoleSender>()
+    .WithArgument("announcement", "Enter any text") // Add parameter to inject into constructor.
     .As<ISender>();
 // Register ConsoleReceiver as IReceiver to instantiate per scope.
 context.RegisterLocal<ConsoleReceiver>()
@@ -126,7 +128,9 @@ using (var scope = context.Build())
 {
     var service = scope.Resolver.Resolve<Service>();
 
-    service.Run(); // "Recieved: Hellow world."
+    service.Run();
+    // "Enter any text: This is a test."
+    // "Recieved: This is a test."
 }
 ```
 
@@ -182,6 +186,7 @@ Please see [GitHub Projects](https://github.com/do-i-know-it/YggdrAshill.Ragnaro
 - Implementations using Expression or IL emission.
 - Sub containers (inspired by [Zenject/Extenject/UniDi](https://github.com/UniDi/UniDi))
 - Decolation/Interception (inspired by [Autofac](https://autofac.org/))
+- Configuration (inspired by [Microsoft.Extensions.Configuration](https://www.nuget.org/packages/Microsoft.Extensions.Configuration/) and [Microsoft.Extensions.Hosting](https://www.nuget.org/packages/Microsoft.Extensions.Hosting/))
 
 ## License
 
