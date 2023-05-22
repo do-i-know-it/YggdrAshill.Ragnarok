@@ -103,7 +103,7 @@ namespace YggdrAshill.Ragnarok
                 throw new Exception($"Type does not found injectable constructor, type: {type.Name}");
             }
 
-            return new FieldInjection(buffer.ToArray());
+            return new FieldInjection(type, buffer.ToArray());
         }
 
         public PropertyInjection CreatePropertyInjection(Type type)
@@ -136,7 +136,7 @@ namespace YggdrAshill.Ragnarok
                 throw new Exception($"Type does not found injectable constructor, type: {type.Name}");
             }
 
-            return new PropertyInjection(buffer.ToArray());
+            return new PropertyInjection(type, buffer.ToArray());
         }
 
         public MethodInjection CreateMethodInjection(Type type)
@@ -163,7 +163,7 @@ namespace YggdrAshill.Ragnarok
                 throw new Exception($"Type does not found injectable method, type: {type.Name}");
             }
 
-            return new MethodInjection(injectedMethod);
+            return new MethodInjection(type, injectedMethod);
         }
     }
 }
