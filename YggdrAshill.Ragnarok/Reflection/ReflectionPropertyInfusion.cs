@@ -1,4 +1,3 @@
-using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
@@ -13,29 +12,12 @@ namespace YggdrAshill.Ragnarok.Reflection
         private readonly PropertyInfo[] propertyList;
 
         public IReadOnlyList<Argument> ArgumentList { get; }
-        public IReadOnlyList<Type> DependentTypeList { get; }
 
         public ReflectionPropertyInfusion(PropertyInjection injection)
         {
             propertyList = injection.PropertyList;
 
             ArgumentList = propertyList.Select(info => new Argument(info.Name, info.PropertyType)).ToArray();
-            DependentTypeList
-                = propertyList.Select(field =>  field.PropertyType).Distinct().ToArray();
-        }
-
-        public void Infuse(object instance, IResolver resolver, IReadOnlyList<IParameter> parameterList)
-        {
-            if (propertyList.Length == 0)
-            {
-                return;
-            }
-
-            foreach (var field in propertyList)
-            {
-                var value = resolver.Resolve(parameterList, field.PropertyType, field.Name);
-                field.SetValue(instance, value);
-            }
         }
 
         public void Infuse(object instance, object[] parameterList)

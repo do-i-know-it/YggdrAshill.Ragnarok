@@ -77,12 +77,6 @@ namespace YggdrAshill.Ragnarok
             return cache.Value.WithMethodInjection();
         }
 
-        public IInjectIntoConstructor With<T>(string name, T instance)
-            where T: notnull
-        {
-            return WithArgument(name, instance);
-        }
-
         public IInjectIntoConstructor WithArgument<T>(string name, T instance)
             where T : notnull
         {

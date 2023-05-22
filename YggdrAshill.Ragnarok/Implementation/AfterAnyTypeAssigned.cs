@@ -12,23 +12,12 @@ namespace YggdrAshill.Ragnarok
             this.collection = collection;
         }
 
-        public IAfterAnyTypeAssigned As<T>()
-            where T : notnull
-        {
-            return And<T>();
-        }
-
         public IAfterAnyTypeAssigned And<T>()
             where T : notnull
         {
             collection.Add(typeof(T));
 
             return this;
-        }
-
-        public void AsSelf()
-        {
-            AndSelf();
         }
 
         public void AndSelf()

@@ -1,4 +1,3 @@
-using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,6 @@ namespace YggdrAshill.Ragnarok.Reflection
         private readonly ParameterInfo[] argumentList;
 
         public IReadOnlyList<Argument> ArgumentList { get; }
-        public IReadOnlyList<Type> DependentTypeList { get; }
 
         public ReflectionActivation(ConstructorInjection injection)
         {
@@ -22,24 +20,6 @@ namespace YggdrAshill.Ragnarok.Reflection
             argumentList = injection.ParameterList;
 
             ArgumentList = argumentList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
-
-            DependentTypeList
-                = argumentList.Select(parameter => parameter.ParameterType).Distinct().ToArray();
-        }
-
-        public object Activate(IResolver resolver, IReadOnlyList<IParameter> parameterList)
-        {
-            // TODO: object pooling.
-            var parameterValueList = new object[argumentList.Length];
-
-            for (var index = 0; index < argumentList.Length; index++)
-            {
-                var parameter = argumentList[index];
-
-                parameterValueList[index] = resolver.Resolve(parameterList, parameter.ParameterType, parameter.Name);
-            }
-
-            return constructor.Invoke(parameterValueList);
         }
 
         public object Activate(object[] parameterList)
