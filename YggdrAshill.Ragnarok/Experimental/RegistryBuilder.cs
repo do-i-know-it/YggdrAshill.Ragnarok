@@ -14,18 +14,27 @@ namespace YggdrAshill.Ragnarok
         private readonly ISelector selector;
         private readonly ISolver solver;
 
+        private readonly Func<Type, IActivation> activation;
+        private readonly Func<Type, IInfusion> fieldInfusion;
+        private readonly Func<Type, IInfusion> propertyInfusion;
+        private readonly Func<Type, IInfusion> methodInfusion;
+
         public RegistryBuilder(ISelector selector, ISolver solver)
         {
             this.selector = selector;
             this.solver = solver;
+
+            activation = CreateActivation;
+            fieldInfusion = CreateFieldInfusion;
+            propertyInfusion = CreatePropertyInfusion;
+            methodInfusion = CreateMethodInfusion;
         }
 
         private readonly TypeAnalyzer typeAnalyzer = new TypeAnalyzer();
 
         public IActivation GetActivation(Type type)
         {
-            // TODO: cache function.
-            return typeAnalyzer.GetActivation(type, CreateActivation);
+            return typeAnalyzer.GetActivation(type, activation);
         }
         private IActivation CreateActivation(Type type)
         {
@@ -51,8 +60,7 @@ namespace YggdrAshill.Ragnarok
 
         public IInfusion GetFieldInfusion(Type type)
         {
-            // TODO: cache function.
-            return typeAnalyzer.GetFieldInfusion(type, CreateFieldInfusion);
+            return typeAnalyzer.GetFieldInfusion(type, fieldInfusion);
         }
         private IInfusion CreateFieldInfusion(Type type)
         {
@@ -63,8 +71,7 @@ namespace YggdrAshill.Ragnarok
 
         public IInfusion GetPropertyInfusion(Type type)
         {
-            // TODO: cache function.
-            return typeAnalyzer.GetPropertyInfusion(type, CreatePropertyInfusion);
+            return typeAnalyzer.GetPropertyInfusion(type, propertyInfusion);
         }
         private IInfusion CreatePropertyInfusion(Type type)
         {
@@ -75,8 +82,7 @@ namespace YggdrAshill.Ragnarok
 
         public IInfusion GetMethodInfusion(Type type)
         {
-            // TODO: cache function.
-            return typeAnalyzer.GetMethodInfusion(type, CreateMethodInfusion);
+            return typeAnalyzer.GetMethodInfusion(type, methodInfusion);
         }
         private IInfusion CreateMethodInfusion(Type type)
         {

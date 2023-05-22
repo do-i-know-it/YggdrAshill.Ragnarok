@@ -12,7 +12,7 @@ namespace YggdrAshill.Ragnarok
     {
         public static Type GetImplementedType(Type elementType)
         {
-            return elementType.MakeArrayType();
+            return TypeCache.ArrayTypeOf(elementType);
         }
 
         public static bool TryGetElementType(Type type, out Type elementType)
@@ -31,7 +31,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var openGenericType = type.GetGenericTypeDefinition();
+            var openGenericType = TypeCache.OpenGenericTypeOf(type);
 
             var isCollectionType
                 = openGenericType == typeof(IEnumerable<>) ||
@@ -40,8 +40,7 @@ namespace YggdrAshill.Ragnarok
 
             if (isCollectionType)
             {
-                // TODO: cache type data.
-                elementType = type.GetGenericArguments()[0];
+                elementType = TypeCache.GenericTypeParameterListOf(type)[0];
 
                 return true;
             }
@@ -62,15 +61,14 @@ namespace YggdrAshill.Ragnarok
             this.activation = activation;
             this.registrationList = registrationList;
 
-            ImplementedType = elementType.MakeArrayType();
+            ImplementedType = TypeCache.ArrayTypeOf(elementType);
 
-            // TODO: cache generated type information.
             AssignedTypeList = new List<Type>
             {
                 ImplementedType,
-                typeof(IEnumerable<>).MakeGenericType(elementType),
-                typeof(IReadOnlyCollection<>).MakeGenericType(elementType),
-                typeof(IReadOnlyList<>).MakeGenericType(elementType),
+                TypeCache.EnumerableOf(elementType),
+                TypeCache.ReadOnlyListOf(elementType),
+                TypeCache.ReadOnlyCollectionOf(elementType),
             };
         }
 

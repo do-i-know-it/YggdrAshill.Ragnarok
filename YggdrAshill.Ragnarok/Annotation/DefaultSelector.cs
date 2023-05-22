@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -11,13 +12,20 @@ namespace YggdrAshill.Ragnarok
 
         private DefaultSelector()
         {
+            createServiceBundleType = CreateServiceBundleTypeOf;
+        }
 
+        private readonly ConcurrentDictionary<Type, Type> serviceBundleTypeCache
+            = new ConcurrentDictionary<Type, Type>();
+        private readonly Func<Type, Type> createServiceBundleType;
+        private Type CreateServiceBundleTypeOf(Type elementType)
+        {
+            return typeof(ServiceBundle<>).MakeGenericType(elementType);
         }
 
         public Type GetServiceBundleType(Type elementType)
         {
-            // TODO: cache generic type.
-            return typeof(ServiceBundle<>).MakeGenericType(elementType);
+            return serviceBundleTypeCache.GetOrAdd(elementType, createServiceBundleType);
         }
 
         public ConstructorInjection CreateConstructorInjection(Type type)
