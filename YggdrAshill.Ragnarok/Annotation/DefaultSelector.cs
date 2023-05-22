@@ -44,7 +44,7 @@ namespace YggdrAshill.Ragnarok
                 {
                     if (injectedConstructor != null)
                     {
-                        throw new Exception($"Type found multiple [Inject] marked constructors, type: {type.Name}");
+                        throw new Exception($"Type found multiple constructors marked [Inject], type: {type.Name}");
                     }
 
                     injectedConstructor = constructorInfo;
@@ -89,6 +89,11 @@ namespace YggdrAshill.Ragnarok
                     continue;
                 }
 
+                if (fieldInfo.IsInitOnly)
+                {
+                    continue;
+                }
+
                 if (buffer == null)
                 {
                     // TODO: object pooling.
@@ -100,7 +105,7 @@ namespace YggdrAshill.Ragnarok
 
             if (buffer == null)
             {
-                throw new Exception($"Type does not found injectable constructor, type: {type.Name}");
+                throw new Exception($"Type does not found injectable field, type: {type.Name}");
             }
 
             return new FieldInjection(type, buffer.ToArray());
@@ -133,7 +138,7 @@ namespace YggdrAshill.Ragnarok
 
             if (buffer == null)
             {
-                throw new Exception($"Type does not found injectable constructor, type: {type.Name}");
+                throw new Exception($"Type does not found injectable property, type: {type.Name}");
             }
 
             return new PropertyInjection(type, buffer.ToArray());
@@ -152,7 +157,7 @@ namespace YggdrAshill.Ragnarok
 
                 if (injectedMethod != null)
                 {
-                    throw new Exception($"Type found multiple [Inject] marked constructors, type: {type.Name}");
+                    throw new Exception($"Type found multiple methods marked [InjectMethod], type: {type.Name}");
                 }
 
                 injectedMethod = methodInfo;
