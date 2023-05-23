@@ -12,20 +12,26 @@ namespace YggdrAshill.Ragnarok.Specification
         private const int MinMultipleInjectionCount = 0;
         private const int MaxMultipleInjectionCount = 10;
 
-        [Test]
-        public void ShouldResolveResolver()
+        private static object[] SolverList { get; } =
         {
-            using var scope = new DependencyInjectionContext().Build();
+            ReflectionSolver.Instance,
+            ExpressionSolver.Instance,
+        };
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveResolver(ISolver solver)
+        {
+            using var scope = new DependencyInjectionContext(solver).Build();
 
             var resolver = scope.Resolver.Resolve<IResolver>();
 
             Assert.That(resolver, Is.EqualTo(scope.Resolver));
         }
 
-        [Test]
-        public void ShouldInstantiateTemporalObjectPerRequest()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInstantiateTemporalObjectPerRequest(ISolver solver)
         {
-            var parentContext = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext(solver);
 
             parentContext.RegisterTemporal<NoDependencyClass>();
 
@@ -44,10 +50,10 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(instance2, Is.Not.EqualTo(instance3));
         }
 
-        [Test]
-        public void ShouldInstantiateLocalObjectPerLocalScope()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInstantiateLocalObjectPerLocalScope(ISolver solver)
         {
-            var parentContext = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext(solver);
 
             parentContext.RegisterLocal<NoDependencyClass>();
 
@@ -66,10 +72,10 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(instance2, Is.Not.EqualTo(instance3));
         }
 
-        [Test]
-        public void ShouldInstantiateGlobalObjectPerGlobalScope()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInstantiateGlobalObjectPerGlobalScope(ISolver solver)
         {
-            var parentContext = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext(solver);
 
             parentContext.RegisterGlobal<NoDependencyClass>();
 
@@ -88,10 +94,10 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(instance2, Is.EqualTo(instance3));
         }
 
-        [Test]
-        public void ShouldResolveDependenciesFromParentScope()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveDependenciesFromParentScope(ISolver solver)
         {
-            var parentContext = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext(solver);
 
             parentContext.RegisterGlobal<DualInterface1>().AsImplementedInterfaces();
 
@@ -114,10 +120,10 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(package.Count, Is.EqualTo(1));
         }
 
-        [Test]
-        public void ShouldInjectDependenciesIntoInstanceAfterEnabled()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInjectDependenciesIntoInstanceAfterEnabled(ISolver solver)
         {
-            var context = new DependencyInjectionContext();
+            var context = new DependencyInjectionContext(solver);
 
             var fieldInjected = new NoDependencyClass();
             var propertyInjected = new NoDependencyClass();
@@ -273,12 +279,12 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(interfaceD is MultipleInterfaceClass, Is.True);
         }
 
-        [Test]
-        public void ShouldResolveCollection()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveCollection(ISolver solver)
         {
             var parentInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
-            var parentContext = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext(solver);
 
             for (var count = 0; count < parentInjectionCount; count++)
             {
@@ -339,12 +345,12 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(childEnumerable.Count(), Is.EqualTo(totalInjectionAmount));
         }
 
-        [Test]
-        public void ShouldResolveServiceBundle()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveServiceBundle(ISolver solver)
         {
             var injectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
-            var parentContext = new DependencyInjectionContext();
+            var parentContext = new DependencyInjectionContext(solver);
 
             for (var count = 0; count < injectionCount; count++)
             {
