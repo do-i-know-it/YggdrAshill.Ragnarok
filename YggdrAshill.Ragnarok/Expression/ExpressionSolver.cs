@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace YggdrAshill.Ragnarok.Reflection
+namespace YggdrAshill.Ragnarok
 {
     public sealed class ExpressionSolver :
         ISolver

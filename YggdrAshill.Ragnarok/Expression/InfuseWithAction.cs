@@ -2,7 +2,7 @@ using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Reflection
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class InfuseWithAction :
         IInfusion

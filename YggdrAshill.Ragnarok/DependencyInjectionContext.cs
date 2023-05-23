@@ -2,7 +2,6 @@ using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Hierarchization;
 using YggdrAshill.Ragnarok.Motorization;
 using YggdrAshill.Ragnarok.Materialization;
-using YggdrAshill.Ragnarok.Reflection;
 using System;
 using System.Collections.Generic;
 
@@ -16,16 +15,27 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly IContext context;
 
-        public DependencyInjectionContext(ISelector selector, ISolver solver)
+        public DependencyInjectionContext(IContext context)
         {
-            var registryBuilder = new RegistryBuilder(selector, solver);
-            var engineBuilder = new EngineBuilder(registryBuilder);
-            var scopedResolverContext = new ScopedResolverContext(engineBuilder);
-
-            context = new Context(scopedResolverContext);
+            this.context = context;
         }
 
-        public DependencyInjectionContext(ISelector selector) : this(selector, ReflectionSolver.Instance)
+        public DependencyInjectionContext(IScopedResolverContext context) : this(new Context(context))
+        {
+
+        }
+
+        public DependencyInjectionContext(IEngineBuilder builder) : this(new ScopedResolverContext(builder))
+        {
+
+        }
+
+        public DependencyInjectionContext(IRegistryBuilder builder) : this(new EngineBuilder(builder))
+        {
+
+        }
+
+        public DependencyInjectionContext(ISelector selector, ISolver solver) : this(new RegistryBuilder(selector, solver))
         {
 
         }
@@ -35,7 +45,7 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public DependencyInjectionContext() : this(DefaultSelector.Instance, ReflectionSolver.Instance)
+        public DependencyInjectionContext() : this(DefaultSelector.Instance, ExpressionSolver.Instance)
         {
 
         }
