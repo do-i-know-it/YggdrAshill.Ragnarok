@@ -135,7 +135,9 @@ namespace YggdrAshill.Ragnarok.Specification
                 .WithPropertyInjection()
                 .With("PropertyInjected", propertyInjected)
                 .WithMethodInjection()
-                .With("methodInjected", methodInjected);
+                .With("methodInjected", methodInjected)
+                .AsImplementedInterfaces()
+                .AndSelf();
 
             using var scope = context.Build();
 
