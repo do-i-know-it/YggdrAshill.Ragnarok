@@ -10,21 +10,6 @@ namespace YggdrAshill.Ragnarok.Materialization
         IDisposable
     {
         /// <summary>
-        /// Finds <see cref="IRegistration"/> for <see cref="Type"/>.
-        /// </summary>
-        /// <param name="type">
-        /// <see cref="Type"/> to find.
-        /// </param>
-        /// <param name="registration">
-        /// <see cref="IRegistration"/> found.
-        /// </param>
-        /// <returns>
-        /// True if <see cref="IRegistry"/> has <see cref="IRegistration"/> for <see cref="Type"/>.
-        /// </returns>
-        [Obsolete("Use Find(Type, out IRegistration?) instead.")]
-        bool TryGet(Type type, out IRegistration? registration);
-
-        /// <summary>
         /// Checks if <see cref="IRegistry"/> has <see cref="IRegistration"/>.
         /// </summary>
         /// <param name="registration">

@@ -2,7 +2,6 @@ using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Hierarchization;
 using YggdrAshill.Ragnarok.Materialization;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace YggdrAshill.Ragnarok
@@ -19,8 +18,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            // TODO: cache type data.
-            targetType = typeof(IReadOnlyList<>).MakeGenericType(elementType);
+            targetType = TypeCache.ReadOnlyListOf(elementType);
 
             return true;
         }
@@ -34,15 +32,14 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var openGenericType = type.GetGenericTypeDefinition();
+            var openGenericType = TypeCache.OpenGenericTypeOf(type);
 
             if (openGenericType != typeof(IServiceBundle<>))
             {
                 return false;
             }
 
-            // TODO: cache type data.
-            elementType = type.GetGenericArguments()[0];
+            elementType = TypeCache.GenericTypeParameterListOf(type)[0];
 
             return true;
         }

@@ -2,6 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
     /// <summary>
     /// Defines how to select type information to resolve dependencies.
     /// </summary>

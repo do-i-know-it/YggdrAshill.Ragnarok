@@ -1,15 +1,21 @@
+using System;
 using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
+    // TODO: rename class?
     public sealed class ConstructorInjection
     {
+        public Type ImplementedType { get; }
         public ConstructorInfo Constructor { get; }
-        public ParameterInfo[] ParameterList => Constructor.GetParameters();
+        public ParameterInfo[] ParameterList { get; }
 
-        public ConstructorInjection(ConstructorInfo constructor)
+        public ConstructorInjection(Type implementedType, ConstructorInfo constructor)
         {
+            ImplementedType = implementedType;
             Constructor = constructor;
+            ParameterList = Constructor.GetParameters();
         }
     }
 }

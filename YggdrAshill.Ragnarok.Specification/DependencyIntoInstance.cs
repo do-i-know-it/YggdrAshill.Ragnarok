@@ -1,6 +1,7 @@
 namespace YggdrAshill.Ragnarok.Specification
 {
-    internal sealed class DependencyIntoInstance
+    internal sealed class DependencyIntoInstance :
+        IService
     {
         [InjectField]
         private NoDependencyClass fieldInjected;

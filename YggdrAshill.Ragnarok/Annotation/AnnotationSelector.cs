@@ -1,28 +1,43 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
 {
-    public sealed class DefaultSelector :
+    // TODO: add document comments.
+    /// <summary>
+    /// Implementation of <see cref="ISelector"/> with annotation.
+    /// </summary>
+    public sealed class AnnotationSelector :
         ISelector
     {
-        public static DefaultSelector Instance { get; } = new DefaultSelector();
+        public static AnnotationSelector Instance { get; } = new AnnotationSelector();
 
-        private DefaultSelector()
+        private AnnotationSelector()
         {
+            createServiceBundleType = CreateServiceBundleTypeOf;
+        }
 
+        private readonly ConcurrentDictionary<Type, Type> serviceBundleTypeCache
+            = new ConcurrentDictionary<Type, Type>();
+        private readonly Func<Type, Type> createServiceBundleType;
+        private Type CreateServiceBundleTypeOf(Type elementType)
+        {
+            return typeof(ServiceBundle<>).MakeGenericType(elementType);
         }
 
         public Type GetServiceBundleType(Type elementType)
         {
-            // TODO: cache generic type.
-            return typeof(ServiceBundle<>).MakeGenericType(elementType);
+            return serviceBundleTypeCache.GetOrAdd(elementType, createServiceBundleType);
         }
 
         public ConstructorInjection CreateConstructorInjection(Type type)
         {
-            // TODO: check whether type is for concrete class.
+            if (!ValidateType.IsInstantiatable(type))
+            {
+                throw new RagnarokNotInstantiatableException(type);
+            }
 
             const BindingFlags BindingFlags
                 = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -36,7 +51,7 @@ namespace YggdrAshill.Ragnarok
                 {
                     if (injectedConstructor != null)
                     {
-                        throw new Exception($"Type found multiple [Inject] marked constructors, type: {type.Name}");
+                        throw new RagnarokMultipleAnnotationFoundException(type, $"Multiple injectable constructors of {type} found.");
                     }
 
                     injectedConstructor = constructorInfo;
@@ -58,22 +73,22 @@ namespace YggdrAshill.Ragnarok
 
             if (injectedConstructor != null)
             {
-                return new ConstructorInjection(injectedConstructor);
+                return new ConstructorInjection(type, injectedConstructor);
             }
 
             if (constructorHavingMaxParameterCount != null)
             {
-                return new ConstructorInjection(constructorHavingMaxParameterCount);
+                return new ConstructorInjection(type, constructorHavingMaxParameterCount);
             }
 
-            throw new Exception($"Type does not found injectable constructor, type: {type.Name}");
+            throw new RagnarokAnnotationNotFoundException(type, $"Injectable constructor of {type} not found.");
         }
 
         public FieldInjection CreateFieldInjection(Type type)
         {
-            // TODO: check whether type is for concrete class.
+            // TODO: concrete class?
 
-            var buffer = default(List<FieldInfo>);
+            var buffer = new List<FieldInfo>();
             foreach (var fieldInfo in type.GetRuntimeFields())
             {
                 if (!fieldInfo.IsDefined(typeof(InjectFieldAttribute), true))
@@ -81,28 +96,22 @@ namespace YggdrAshill.Ragnarok
                     continue;
                 }
 
-                if (buffer == null)
+                if (fieldInfo.IsInitOnly)
                 {
-                    // TODO: object pooling.
-                    buffer = new List<FieldInfo>();
+                    continue;
                 }
 
                 buffer.Add(fieldInfo);
             }
 
-            if (buffer == null)
-            {
-                throw new Exception($"Type does not found injectable constructor, type: {type.Name}");
-            }
-
-            return new FieldInjection(buffer.ToArray());
+            return new FieldInjection(type, buffer.ToArray());
         }
 
         public PropertyInjection CreatePropertyInjection(Type type)
         {
-            // TODO: check whether type is for concrete class.
+            // TODO: concrete class?
 
-            var buffer = default(List<PropertyInfo>);
+            var buffer = new List<PropertyInfo>();
             foreach (var propertyInfo in type.GetRuntimeProperties())
             {
                 if (!propertyInfo.IsDefined(typeof(InjectPropertyAttribute), true))
@@ -115,20 +124,10 @@ namespace YggdrAshill.Ragnarok
                     continue;
                 }
 
-                if (buffer == null)
-                {
-                    buffer = new List<PropertyInfo>();
-                }
-
                 buffer.Add(propertyInfo);
             }
 
-            if (buffer == null)
-            {
-                throw new Exception($"Type does not found injectable constructor, type: {type.Name}");
-            }
-
-            return new PropertyInjection(buffer.ToArray());
+            return new PropertyInjection(type, buffer.ToArray());
         }
 
         public MethodInjection CreateMethodInjection(Type type)
@@ -144,7 +143,7 @@ namespace YggdrAshill.Ragnarok
 
                 if (injectedMethod != null)
                 {
-                    throw new Exception($"Type found multiple [Inject] marked constructors, type: {type.Name}");
+                    throw new RagnarokMultipleAnnotationFoundException(type, $"Multiple injectable methods of {type} found.");
                 }
 
                 injectedMethod = methodInfo;
@@ -152,10 +151,10 @@ namespace YggdrAshill.Ragnarok
 
             if (injectedMethod == null)
             {
-                throw new Exception($"Type does not found injectable method, type: {type.Name}");
+                throw new RagnarokAnnotationNotFoundException(type, $"Injectable method of {type} not found.");
             }
 
-            return new MethodInjection(injectedMethod);
+            return new MethodInjection(type, injectedMethod);
         }
     }
 }

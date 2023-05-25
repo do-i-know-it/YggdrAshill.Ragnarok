@@ -30,11 +30,6 @@ namespace YggdrAshill.Ragnarok
             return dictionary.ContainsKey(registration.ImplementedType);
         }
 
-        public bool TryGet(Type type, out IRegistration? registration)
-        {
-            return Find(type, out registration);
-        }
-
         public bool Find(Type type, out IRegistration? registration)
         {
             if (isDisposed)
@@ -47,9 +42,7 @@ namespace YggdrAshill.Ragnarok
                 return registration != null;
             }
 
-            return TryGetCollection(type, out registration) ||
-                   TryGetServiceBundle(type, out registration) ||
-                   TryGetLocalInstanceList(type, out registration);
+            return TryGetCollection(type, out registration) || TryGetServiceBundle(type, out registration);
         }
 
         private bool TryGetCollection(Type type, out IRegistration? registration)
@@ -94,31 +87,6 @@ namespace YggdrAshill.Ragnarok
                     var activation = codeBuilder.GetActivation(type);
 
                     return new ServiceBundleRegistration(type, activation, collection);
-                });
-
-                return true;
-            }
-
-            return false;
-        }
-
-        [Obsolete]
-        private bool TryGetLocalInstanceList(Type type, out IRegistration? registration)
-        {
-            registration = default;
-
-            if (!LocalInstanceListRegistration.TryGetReadOnlyListType(type, out _, out var readOnlyListType))
-            {
-                return false;
-            }
-
-            if (Find(readOnlyListType, out var found) && found is CollectionRegistration collection)
-            {
-                registration = registrationCache.GetOrAdd(type, _ =>
-                {
-                    var activation = codeBuilder.GetActivation(type);
-
-                    return new LocalInstanceListRegistration(type, activation, collection);
                 });
 
                 return true;

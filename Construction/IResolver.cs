@@ -16,6 +16,9 @@ namespace YggdrAshill.Ragnarok.Construction
         /// <returns>
         /// <see cref="object"/> resolved.
         /// </returns>
+        /// <exception cref="RagnarokException">
+        /// Thrown if something goes wrong in resolving dependencies.
+        /// </exception>
         object Resolve(Type type);
     }
 }

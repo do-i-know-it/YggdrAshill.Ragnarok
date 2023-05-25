@@ -1,53 +1,34 @@
-using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Materialization;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
-namespace YggdrAshill.Ragnarok.Reflection
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionPropertyInfusion :
         IInfusion
     {
-        private readonly PropertyInfo[] propertyList;
+        private readonly PropertyInjection injection;
 
-        public IReadOnlyList<Argument> ArgumentList { get; }
-        public IReadOnlyList<Type> DependentTypeList { get; }
+        public IReadOnlyList<Argument> ArgumentList
+            => injection.PropertyList.Select(info => new Argument(info.Name, info.PropertyType)).ToArray();
 
         public ReflectionPropertyInfusion(PropertyInjection injection)
         {
-            propertyList = injection.PropertyList;
-
-            ArgumentList = propertyList.Select(info => new Argument(info.Name, info.PropertyType)).ToArray();
-            DependentTypeList
-                = propertyList.Select(field =>  field.PropertyType).Distinct().ToArray();
-        }
-
-        public void Infuse(object instance, IResolver resolver, IReadOnlyList<IParameter> parameterList)
-        {
-            if (propertyList.Length == 0)
-            {
-                return;
-            }
-
-            foreach (var field in propertyList)
-            {
-                var value = resolver.Resolve(parameterList, field.PropertyType, field.Name);
-                field.SetValue(instance, value);
-            }
+            this.injection = injection;
         }
 
         public void Infuse(object instance, object[] parameterList)
         {
-            if (propertyList.Length == 0)
-            {
-                return;
-            }
+            var implementedType = injection.ImplementedType;
+            var propertyList = injection.PropertyList;
 
+            if (!implementedType.IsInstanceOfType(instance))
+            {
+                throw new RagnarokArgumentException(implementedType, $"{instance} is not {implementedType}.");
+            }
             if (propertyList.Length != parameterList.Length)
             {
-                throw new ArgumentException();
+                throw new RagnarokArgumentException(implementedType, nameof(parameterList));
             }
 
             for (var index = 0; index < propertyList.Length; index++)
@@ -55,13 +36,13 @@ namespace YggdrAshill.Ragnarok.Reflection
                 var property = propertyList[index];
                 var parameter = parameterList[index];
 
-                var fieldType = property.PropertyType;
+                var propertyType = property.PropertyType;
                 var parameterType = parameter.GetType();
 
                 // TODO: Type.IsInstanceOfType(object)?
-                if (!fieldType.IsAssignableFrom(parameterType))
+                if (!propertyType.IsAssignableFrom(parameterType))
                 {
-                    throw new Exception();
+                    throw new RagnarokArgumentException(implementedType, $"{parameterType} is not assignable from {propertyType}.");
                 }
 
                 property.SetValue(instance, parameter);

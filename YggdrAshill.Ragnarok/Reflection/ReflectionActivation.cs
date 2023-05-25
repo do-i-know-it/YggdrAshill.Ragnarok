@@ -1,52 +1,30 @@
-using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Materialization;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
-namespace YggdrAshill.Ragnarok.Reflection
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionActivation :
         IActivation
     {
-        private readonly ConstructorInfo constructor;
-        private readonly ParameterInfo[] argumentList;
+        private readonly ConstructorInjection injection;
 
-        public IReadOnlyList<Argument> ArgumentList { get; }
-        public IReadOnlyList<Type> DependentTypeList { get; }
+        public IReadOnlyList<Argument> ArgumentList
+            => injection.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
 
         public ReflectionActivation(ConstructorInjection injection)
         {
-            constructor = injection.Constructor;
-            argumentList = injection.ParameterList;
-
-            ArgumentList = argumentList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
-
-            DependentTypeList
-                = argumentList.Select(parameter => parameter.ParameterType).Distinct().ToArray();
-        }
-
-        public object Activate(IResolver resolver, IReadOnlyList<IParameter> parameterList)
-        {
-            // TODO: object pooling.
-            var parameterValueList = new object[argumentList.Length];
-
-            for (var index = 0; index < argumentList.Length; index++)
-            {
-                var parameter = argumentList[index];
-
-                parameterValueList[index] = resolver.Resolve(parameterList, parameter.ParameterType, parameter.Name);
-            }
-
-            return constructor.Invoke(parameterValueList);
+            this.injection = injection;
         }
 
         public object Activate(object[] parameterList)
         {
+            var constructor = injection.Constructor;
+            var argumentList = injection.ParameterList;
+
             if (argumentList.Length != parameterList.Length)
             {
-                throw new ArgumentException();
+                throw new RagnarokArgumentException(injection.ImplementedType, nameof(parameterList));
             }
 
             for (var index = 0; index < argumentList.Length; index++)
@@ -57,7 +35,7 @@ namespace YggdrAshill.Ragnarok.Reflection
                 // TODO: Type.IsInstanceOfType(object)?
                 if (!argumentType.IsAssignableFrom(parameterType))
                 {
-                    throw new Exception();
+                    throw new RagnarokArgumentException(parameterType, $"{parameterType} is not assignable from {argumentType}.");
                 }
             }
 
