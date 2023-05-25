@@ -2,13 +2,13 @@ using YggdrAshill.Ragnarok.Construction;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InstantiateAndInjectIntoInstance :
+    internal sealed class InstantiateWithInjection :
         IInstantiation
     {
         private readonly IInstantiation instantiation;
         private readonly IInjection injection;
 
-        public InstantiateAndInjectIntoInstance(IInstantiation instantiation, IInjection injection)
+        public InstantiateWithInjection(IInstantiation instantiation, IInjection injection)
         {
             this.instantiation = instantiation;
             this.injection = injection;

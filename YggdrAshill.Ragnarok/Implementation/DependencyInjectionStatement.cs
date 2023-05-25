@@ -37,7 +37,7 @@ namespace YggdrAshill.Ragnarok
 
                     if (injection != null)
                     {
-                        instantiation = new InstantiateAndInjectIntoInstance(instantiation, injection);
+                        instantiation = new InstantiateWithInjection(instantiation, injection);
                     }
                 }
 

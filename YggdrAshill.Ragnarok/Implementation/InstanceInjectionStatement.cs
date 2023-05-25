@@ -36,7 +36,7 @@ namespace YggdrAshill.Ragnarok
                     }
                     else
                     {
-                        cache = new InstantiateAndInjectIntoInstance(instantiation, injection);
+                        cache = new InstantiateWithInjection(instantiation, injection);
                     }
                 }
 
