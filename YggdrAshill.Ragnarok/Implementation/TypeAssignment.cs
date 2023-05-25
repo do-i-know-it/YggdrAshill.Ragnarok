@@ -1,13 +1,15 @@
+using YggdrAshill.Ragnarok.Fabrication;
 using System;
 using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class AssignedTypeCollection
+    public sealed class TypeAssignment :
+        ITypeAssignment
     {
         public Type ImplementedType { get; }
 
-        public AssignedTypeCollection(Type implementedType)
+        public TypeAssignment(Type implementedType)
         {
             ImplementedType = implementedType;
         }
@@ -15,27 +17,31 @@ namespace YggdrAshill.Ragnarok
         private readonly List<Type> assignedTypeList = new List<Type>();
         public IReadOnlyList<Type> AssignedTypeList => assignedTypeList;
 
-        public void Add(Type type)
-        {
-            if (!type.IsAssignableFrom(ImplementedType))
-            {
-                throw new Exception($"{ImplementedType} is not assignable from {type}");
-            }
-
-            AddToAssignedTypeList(type);
-        }
-
-        public void AddSelf()
+        public void AsSelf()
         {
             AddToAssignedTypeList(ImplementedType);
         }
 
-        public void AddImplementedInterfaces()
+        public IAssignImplementedInterface As(Type implementedInterface)
+        {
+            if (!implementedInterface.IsAssignableFrom(ImplementedType))
+            {
+                throw new Exception($"{ImplementedType} is not assignable from {implementedInterface}.");
+            }
+
+            AddToAssignedTypeList(implementedInterface);
+
+            return this;
+        }
+
+        public IAssignImplementedType AsImplementedInterfaces()
         {
             foreach (var interfaceType in ImplementedType.GetInterfaces())
             {
                 AddToAssignedTypeList(interfaceType);
             }
+
+            return this;
         }
 
         private void AddToAssignedTypeList(Type type)

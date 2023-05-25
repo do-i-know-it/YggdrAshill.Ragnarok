@@ -6,112 +6,113 @@ namespace YggdrAshill.Ragnarok
 {
     public static class ContainerExtension
     {
-        public static IInjectIntoConstructor RegisterTemporal<T>(this IContainer container)
+        public static IDependencyInjection RegisterTemporal<T>(this IContainer container)
             where T : notnull
         {
             return container.Register<T>(Lifetime.Temporal);
         }
-        public static IInjectIntoConstructor RegisterLocal<T>(this IContainer container)
+        public static IDependencyInjection RegisterLocal<T>(this IContainer container)
             where T : notnull
         {
             return container.Register<T>(Lifetime.Local);
         }
-        public static IInjectIntoConstructor RegisterGlobal<T>(this IContainer container)
+        public static IDependencyInjection RegisterGlobal<T>(this IContainer container)
             where T : notnull
         {
             return container.Register<T>(Lifetime.Global);
         }
-        private static IInjectIntoConstructor Register<T>(this IContainer container, Lifetime lifetime)
+        private static IDependencyInjection Register<T>(this IContainer container, Lifetime lifetime)
             where T : notnull
         {
             var implementedType = typeof(T);
 
             // check implementedType is concrete class.
 
-            var composition = new InjectIntoConstructorToCompose(container, implementedType, lifetime);
+            var statement = new DependencyInjectionStatement(container, implementedType);
+
+            var composition = new Composition(lifetime, Ownership.Internal, statement);
 
             container.Register(composition);
 
-            return composition;
+            return statement;
         }
 
-        public static IInjectIntoConstructor RegisterTemporal<TInterface, TImplementation>(this IContainer container)
+        public static IDependencyInjection RegisterTemporal<TInterface, TImplementation>(this IContainer container)
             where TInterface : notnull
             where TImplementation : TInterface
         {
-            var injectIntoConstructor = container.RegisterTemporal<TImplementation>();
+            var dependencyInjection = container.RegisterTemporal<TImplementation>();
 
-            injectIntoConstructor.As<TInterface>();
+            dependencyInjection.As<TInterface>();
 
-            return injectIntoConstructor;
+            return dependencyInjection;
         }
-        public static IInjectIntoConstructor RegisterLocal<TInterface, TImplementation>(this IContainer container)
+        public static IDependencyInjection RegisterLocal<TInterface, TImplementation>(this IContainer container)
             where TInterface : notnull
             where TImplementation : TInterface
         {
-            var injectIntoConstructor = container.RegisterLocal<TImplementation>();
+            var dependencyInjection = container.RegisterLocal<TImplementation>();
 
-            injectIntoConstructor.As<TInterface>();
+            dependencyInjection.As<TInterface>();
 
-            return injectIntoConstructor;
+            return dependencyInjection;
         }
-        public static IInjectIntoConstructor RegisterGlobal<TInterface, TImplementation>(this IContainer container)
+        public static IDependencyInjection RegisterGlobal<TInterface, TImplementation>(this IContainer container)
             where TInterface : notnull
             where TImplementation : TInterface
         {
-            var injectIntoConstructor = container.RegisterGlobal<TImplementation>();
+            var dependencyInjection = container.RegisterGlobal<TImplementation>();
 
-            injectIntoConstructor.As<TInterface>();
+            dependencyInjection.As<TInterface>();
 
-            return injectIntoConstructor;
+            return dependencyInjection;
         }
 
-        public static IAssignAnyType RegisterTemporal<T>(this IContainer container, Func<T> instantiation, bool external = true)
-            where T : notnull
-        {
-            return container.Register(instantiation, Lifetime.Temporal, external);
-        }
-        public static IAssignAnyType RegisterLocal<T>(this IContainer container, Func<T> instantiation, bool external = true)
-            where T : notnull
-        {
-            return container.Register(instantiation, Lifetime.Local, external);
-        }
-        public static IAssignAnyType RegisterGlobal<T>(this IContainer container, Func<T> instantiation, bool external = true)
-            where T : notnull
-        {
-            return container.Register(instantiation, Lifetime.Global, external);
-        }
-        private static IAssignAnyType Register<T>(this IContainer container, Func<T> onInstantiated, Lifetime lifetime, bool external)
-            where T : notnull
-        {
-            var implementedType = typeof(T);
-
-            var ownership = external ? Ownership.External : Ownership.Internal;
-
-            var instantiation = new InstantiateWithFunction(() => onInstantiated.Invoke());
-
-            return container.Register(implementedType, lifetime, ownership, instantiation);
-        }
-
-        public static IInjectIntoInstance RegisterInstance<T>(this IContainer container, T instance)
+        public static ITypeAssignment RegisterInstance<T>(this IContainer container, T instance)
             where T : notnull
         {
             var instantiation = new ReturnInstanceDirectly(instance);
 
-            var injectIntoInstance = container.Register(instance.GetType(), Lifetime.Global, Ownership.External, instantiation);
+            var statement = new TypeAssignmentStatement(instance.GetType(), instantiation);
 
-            injectIntoInstance.As<T>();
-
-            return injectIntoInstance;
-        }
-
-        public static IInjectIntoInstance Register(this IContainer container, Type implementedType, Lifetime lifetime, Ownership ownership, IInstantiation instantiation)
-        {
-            var composition = new InjectIntoInstanceToCompose(container, implementedType, lifetime, ownership, instantiation);
+            var composition = new Composition(Lifetime.Global, Ownership.External, statement);
 
             container.Register(composition);
 
-            return composition;
+            statement.As<T>();
+
+            return statement;
+        }
+
+        public static IInstanceInjection RegisterTemporalInstance<T>(this IContainer container, Func<T> instantiation, bool external = true)
+            where T : notnull
+        {
+            return container.RegisterInstance(Lifetime.Temporal, external, instantiation);
+        }
+        public static IInstanceInjection RegisterLocalInstance<T>(this IContainer container, Func<T> instantiation, bool external = true)
+            where T : notnull
+        {
+            return container.RegisterInstance(Lifetime.Local, external, instantiation);
+        }
+        public static IInstanceInjection RegisterGlobalInstance<T>(this IContainer container, Func<T> instantiation, bool external = true)
+            where T : notnull
+        {
+            return container.RegisterInstance(Lifetime.Global, external, instantiation);
+        }
+        private static IInstanceInjection RegisterInstance<T>(this IContainer container, Lifetime lifetime, bool external, Func<T> onInstantiated)
+            where T : notnull
+        {
+            var ownership = external ? Ownership.External : Ownership.Internal;
+
+            var instantiation = new InstantiateWithFunction(() => onInstantiated.Invoke());
+
+            var statement = new InstanceInjectionStatement(container, typeof(T), instantiation);
+
+            var composition = new Composition(lifetime, ownership, statement);
+
+            container.Register(composition);
+
+            return statement;
         }
     }
 }

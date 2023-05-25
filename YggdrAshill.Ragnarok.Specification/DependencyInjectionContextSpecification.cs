@@ -130,14 +130,14 @@ namespace YggdrAshill.Ragnarok.Specification
             var methodInjected = new NoDependencyClass();
 
             context.RegisterGlobal<DependencyIntoInstance>()
-                .WithFieldInjection()
-                .With("fieldInjected", fieldInjected)
-                .WithPropertyInjection()
-                .With("PropertyInjected", propertyInjected)
-                .WithMethodInjection()
-                .With("methodInjected", methodInjected)
+                .WithFieldsInjected()
+                .From("fieldInjected", fieldInjected)
+                .WithPropertiesInjected()
+                .From("PropertyInjected", propertyInjected)
+                .WithMethodInjected()
+                .From("methodInjected", methodInjected)
                 .AsImplementedInterfaces()
-                .AndSelf();
+                .AsSelf();
 
             using var scope = context.Build();
 
@@ -172,8 +172,8 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterGlobal<MultipleInterfaceClass>()
                 .As<IInterfaceA>()
-                .And<IInterfaceB>()
-                .And<IInterfaceC>();
+                .As<IInterfaceB>()
+                .As<IInterfaceC>();
 
             using var scope = context.Build();
 
@@ -230,9 +230,9 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterGlobal<MultipleInterfaceClass>()
                 .As<IInterfaceA>()
-                .And<IInterfaceB>()
-                .And<IInterfaceC>()
-                .AndSelf();
+                .As<IInterfaceB>()
+                .As<IInterfaceC>()
+                .AsSelf();
 
             using var scope = context.Build();
 
@@ -261,7 +261,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces().AndSelf();
+            context.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces().AsSelf();
 
             using var scope = context.Build();
 
@@ -391,7 +391,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<NoDependencyClass>().WithFieldInjection();
+            context.RegisterTemporal<NoDependencyClass>().WithFieldsInjected();
 
             Assert.That(() =>
             {
@@ -404,7 +404,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<NoDependencyClass>().WithPropertyInjection();
+            context.RegisterTemporal<NoDependencyClass>().WithPropertiesInjected();
 
             Assert.That(() =>
             {
@@ -417,7 +417,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<NoDependencyClass>().WithMethodInjection();
+            context.RegisterTemporal<NoDependencyClass>().WithMethodInjected();
 
             Assert.That(() =>
             {
