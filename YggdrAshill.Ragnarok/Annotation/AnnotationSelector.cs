@@ -36,8 +36,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (!ValidateType.IsInstantiatable(type))
             {
-                // TODO: throw original exception.
-                throw new Exception($"{type} is not instantiatable.");
+                throw new RagnarokNotInstantiatableException(type);
             }
 
             const BindingFlags BindingFlags
@@ -52,8 +51,7 @@ namespace YggdrAshill.Ragnarok
                 {
                     if (injectedConstructor != null)
                     {
-                        // TODO: throw original exception.
-                        throw new Exception($"Type found multiple constructors marked [Inject], type: {type.Name}");
+                        throw new RagnarokMultipleAnnotationFoundException(type, $"Multiple injectable constructors of {type} found.");
                     }
 
                     injectedConstructor = constructorInfo;
@@ -75,23 +73,22 @@ namespace YggdrAshill.Ragnarok
 
             if (injectedConstructor != null)
             {
-                return new ConstructorInjection(injectedConstructor);
+                return new ConstructorInjection(type, injectedConstructor);
             }
 
             if (constructorHavingMaxParameterCount != null)
             {
-                return new ConstructorInjection(constructorHavingMaxParameterCount);
+                return new ConstructorInjection(type, constructorHavingMaxParameterCount);
             }
 
-            // TODO: throw original exception.
-            throw new Exception($"Type does not found injectable constructor, type: {type.Name}");
+            throw new RagnarokAnnotationNotFoundException(type, $"Injectable constructor of {type} not found.");
         }
 
         public FieldInjection CreateFieldInjection(Type type)
         {
             // TODO: concrete class?
 
-            var buffer = default(List<FieldInfo>);
+            var buffer = new List<FieldInfo>();
             foreach (var fieldInfo in type.GetRuntimeFields())
             {
                 if (!fieldInfo.IsDefined(typeof(InjectFieldAttribute), true))
@@ -104,19 +101,7 @@ namespace YggdrAshill.Ragnarok
                     continue;
                 }
 
-                if (buffer == null)
-                {
-                    // TODO: object pooling.
-                    buffer = new List<FieldInfo>();
-                }
-
                 buffer.Add(fieldInfo);
-            }
-
-            if (buffer == null)
-            {
-                // TODO: throw original exception.
-                throw new Exception($"Type does not found injectable field, type: {type.Name}");
             }
 
             return new FieldInjection(type, buffer.ToArray());
@@ -126,7 +111,7 @@ namespace YggdrAshill.Ragnarok
         {
             // TODO: concrete class?
 
-            var buffer = default(List<PropertyInfo>);
+            var buffer = new List<PropertyInfo>();
             foreach (var propertyInfo in type.GetRuntimeProperties())
             {
                 if (!propertyInfo.IsDefined(typeof(InjectPropertyAttribute), true))
@@ -139,19 +124,7 @@ namespace YggdrAshill.Ragnarok
                     continue;
                 }
 
-                if (buffer == null)
-                {
-                    // TODO: object pooling.
-                    buffer = new List<PropertyInfo>();
-                }
-
                 buffer.Add(propertyInfo);
-            }
-
-            if (buffer == null)
-            {
-                // TODO: throw original exception.
-                throw new Exception($"Type does not found injectable property, type: {type.Name}");
             }
 
             return new PropertyInjection(type, buffer.ToArray());
@@ -170,8 +143,7 @@ namespace YggdrAshill.Ragnarok
 
                 if (injectedMethod != null)
                 {
-                    // TODO: throw original exception.
-                    throw new Exception($"Type found multiple methods marked [InjectMethod], type: {type.Name}");
+                    throw new RagnarokMultipleAnnotationFoundException(type, $"Multiple injectable methods of {type} found.");
                 }
 
                 injectedMethod = methodInfo;
@@ -179,8 +151,7 @@ namespace YggdrAshill.Ragnarok
 
             if (injectedMethod == null)
             {
-                // TODO: throw original exception.
-                throw new Exception($"Type does not found injectable method, type: {type.Name}");
+                throw new RagnarokAnnotationNotFoundException(type, $"Injectable method of {type} not found.");
             }
 
             return new MethodInjection(type, injectedMethod);

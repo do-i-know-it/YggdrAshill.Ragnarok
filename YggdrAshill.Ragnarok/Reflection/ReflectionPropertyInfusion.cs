@@ -1,5 +1,4 @@
 using YggdrAshill.Ragnarok.Materialization;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,13 +24,11 @@ namespace YggdrAshill.Ragnarok
 
             if (!implementedType.IsInstanceOfType(instance))
             {
-                // TODO: throw original exception.
-                throw new ArgumentException($"{instance} is not {implementedType}.");
+                throw new RagnarokArgumentException(implementedType, $"{instance} is not {implementedType}.");
             }
             if (propertyList.Length != parameterList.Length)
             {
-                // TODO: throw original exception.
-                throw new ArgumentException(nameof(parameterList));
+                throw new RagnarokArgumentException(implementedType, nameof(parameterList));
             }
 
             for (var index = 0; index < propertyList.Length; index++)
@@ -45,8 +42,7 @@ namespace YggdrAshill.Ragnarok
                 // TODO: Type.IsInstanceOfType(object)?
                 if (!propertyType.IsAssignableFrom(parameterType))
                 {
-                    // TODO: throw original exception.
-                    throw new ArgumentException($"{parameterType} is not assignable from {propertyType}.");
+                    throw new RagnarokArgumentException(implementedType, $"{parameterType} is not assignable from {propertyType}.");
                 }
 
                 property.SetValue(instance, parameter);

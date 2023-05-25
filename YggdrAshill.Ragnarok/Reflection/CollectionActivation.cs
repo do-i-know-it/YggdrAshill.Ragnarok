@@ -28,8 +28,7 @@ namespace YggdrAshill.Ragnarok
                 // TODO: Type.IsInstanceOfType(object)?
                 if (!elementType.IsAssignableFrom(parameterType))
                 {
-                    // TODO: throw original exception.
-                    throw new ArgumentException($"{parameterType} is not assignable from {elementType}.");
+                    throw new RagnarokArgumentException(parameterType, $"{parameterType} is not assignable from {elementType}.");
                 }
 
                 array.SetValue(parameter, index);

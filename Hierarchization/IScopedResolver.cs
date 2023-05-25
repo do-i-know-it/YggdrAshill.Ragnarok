@@ -26,6 +26,9 @@ namespace YggdrAshill.Ragnarok.Hierarchization
         /// <exception cref="ObjectDisposedException">
         /// Thrown if this <see cref="IScopedResolver"/> is disposed.
         /// </exception>
+        /// <exception cref="RagnarokNotRegisteredException">
+        /// Thrown if this <see cref="IScopedResolver"/> finds no <see cref="IRegistration"/>s.
+        /// </exception>
         object Resolve(Type type, IScopedResolver child);
 
         /// <summary>

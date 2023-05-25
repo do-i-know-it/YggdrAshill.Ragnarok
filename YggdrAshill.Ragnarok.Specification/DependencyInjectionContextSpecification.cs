@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using YggdrAshill.Ragnarok.Construction;
+using YggdrAshill.Ragnarok.Hierarchization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -282,12 +283,12 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(() =>
             {
                 _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
-            }, Throws.TypeOf<Exception>());
+            }, Throws.TypeOf<RagnarokNotRegisteredException>());
 
             Assert.That(() =>
             {
                 _ = scope.Resolver.Resolve<IInterfaceD>();
-            }, Throws.TypeOf<Exception>());
+            }, Throws.TypeOf<RagnarokNotRegisteredException>());
 
             var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
             var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
@@ -311,7 +312,7 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(() =>
             {
                 _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
-            }, Throws.TypeOf<Exception>());
+            }, Throws.TypeOf<RagnarokNotRegisteredException>());
 
             var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
             var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
@@ -346,7 +347,7 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(() =>
             {
                 _ = scope.Resolver.Resolve<IInterfaceD>();
-            }, Throws.TypeOf<Exception>());
+            }, Throws.TypeOf<RagnarokNotRegisteredException>());
 
             var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
             var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
@@ -486,66 +487,6 @@ namespace YggdrAshill.Ragnarok.Specification
             var childPackage = childScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
 
             Assert.That(childPackage.Count, Is.EqualTo(injectionCount + 1));
-        }
-
-        [Test]
-        public void CannotEnableFieldInjectionWithoutDependencies()
-        {
-            Assert.That(() =>
-            {
-                var context = new DependencyInjectionContext();
-                context.RegisterTemporal<NoDependencyClass>().WithFieldsInjected();
-
-                _ = context.Build();
-            }, Throws.TypeOf<Exception>());
-
-            Assert.That(() =>
-            {
-                var context = new DependencyInjectionContext();
-
-                context.RegisterTemporalInstance<IService>(() => new DependencyIntoInstance())
-                    .WithFieldsInjected();
-            }, Throws.TypeOf<Exception>());
-        }
-
-        [Test]
-        public void CannotEnablePropertyInjectionWithoutDependencies()
-        {
-            Assert.That(() =>
-            {
-                var context = new DependencyInjectionContext();
-                context.RegisterTemporal<NoDependencyClass>().WithPropertiesInjected();
-
-                _ = context.Build();
-            }, Throws.TypeOf<Exception>());
-
-            Assert.That(() =>
-            {
-                var context = new DependencyInjectionContext();
-
-                context.RegisterTemporalInstance<IService>(() => new DependencyIntoInstance())
-                    .WithPropertiesInjected();
-            }, Throws.TypeOf<Exception>());
-        }
-
-        [Test]
-        public void CannotEnableMethodInjectionWithoutDependencies()
-        {
-            Assert.That(() =>
-            {
-                var context = new DependencyInjectionContext();
-                context.RegisterTemporal<NoDependencyClass>().WithMethodInjected();
-
-                _ = context.Build();
-            }, Throws.TypeOf<Exception>());
-
-            Assert.That(() =>
-            {
-                var context = new DependencyInjectionContext();
-
-                context.RegisterTemporalInstance<IService>(() => new DependencyIntoInstance())
-                    .WithMethodInjected();
-            }, Throws.TypeOf<Exception>());
         }
 
         [Test]

@@ -39,8 +39,7 @@ namespace YggdrAshill.Ragnarok.Motorization
                 return parent.Resolve(type, this);
             }
 
-            // TODO: throw original exception.
-            throw new Exception($"{type} not found.");
+            throw new RagnarokNotRegisteredException(type);
         }
 
         private object ResolveInternally(IRegistration registration)
@@ -114,8 +113,7 @@ namespace YggdrAshill.Ragnarok.Motorization
                 return parent.Resolve(type, child);
             }
 
-            // TODO: throw original exception.
-            throw new Exception($"{type} not found.");
+            throw new RagnarokNotRegisteredException(type);
         }
 
         public object Resolve(IRegistration registration)

@@ -29,8 +29,7 @@ namespace YggdrAshill.Ragnarok
 
             if (!ValidateType.IsInstantiatable(implementedType))
             {
-                // TODO: throw original exception.
-                throw new ArgumentException($"{implementedType} is not instantiatable.");
+                throw new RagnarokArgumentException(implementedType, $"{implementedType} is not instantiatable.");
             }
 
             var statement = new DependencyInjectionStatement(container, implementedType);

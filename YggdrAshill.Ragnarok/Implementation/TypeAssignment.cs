@@ -27,8 +27,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (!implementedInterface.IsAssignableFrom(ImplementedType))
             {
-                // TODO: throw original exception.
-                throw new ArgumentException($"{ImplementedType} is not assignable from {implementedInterface}.");
+                throw new RagnarokArgumentException(implementedInterface, $"{ImplementedType} is not assignable from {implementedInterface}.");
             }
 
             AddToAssignedTypeList(implementedInterface);
