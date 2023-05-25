@@ -2,7 +2,6 @@ using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Hierarchization;
 using YggdrAshill.Ragnarok.Materialization;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace YggdrAshill.Ragnarok
