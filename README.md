@@ -183,7 +183,7 @@ Please see [GitHub Issues](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/
 
 Please see [GitHub Projects](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/projects/1).
 
-- Implementations using Expression or IL emission.
+- Implementations using IL emission or Source Generator.
 - Sub containers (inspired by [Zenject/Extenject/UniDi](https://github.com/UniDi/UniDi))
 - Decolation/Interception (inspired by [Autofac](https://autofac.org/))
 - Configuration (inspired by [Microsoft.Extensions.Configuration](https://www.nuget.org/packages/Microsoft.Extensions.Configuration/) and [Microsoft.Extensions.Hosting](https://www.nuget.org/packages/Microsoft.Extensions.Hosting/))
