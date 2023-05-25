@@ -1,6 +1,7 @@
-# Release notes for version 2.2.0
+# Release notes for version 0.8.0
 
-- Modified specification of framework.
-- Modified sample script for framework
-- Fixed to resolve element object in collection.
-- Fixed to register assigned types any time.
+- Downgraded version from 2.2.0 to 0.8.0.
+- Added implementation of ISolver using Expression tree.
+- Modified to optimize implementation.
+- Refactored definitions for Fabrication.
+- Fixed not to find readonly field as injectable target
