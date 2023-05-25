@@ -3,6 +3,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
     public sealed class Parameter<T> :
         IParameter
         where T: notnull
