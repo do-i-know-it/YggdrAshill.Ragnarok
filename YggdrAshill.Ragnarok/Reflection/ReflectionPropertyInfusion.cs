@@ -2,34 +2,36 @@ using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionPropertyInfusion :
         IInfusion
     {
-        private readonly PropertyInfo[] propertyList;
+        private readonly PropertyInjection injection;
 
-        public IReadOnlyList<Argument> ArgumentList { get; }
+        public IReadOnlyList<Argument> ArgumentList
+            => injection.PropertyList.Select(info => new Argument(info.Name, info.PropertyType)).ToArray();
 
         public ReflectionPropertyInfusion(PropertyInjection injection)
         {
-            propertyList = injection.PropertyList;
-
-            ArgumentList = propertyList.Select(info => new Argument(info.Name, info.PropertyType)).ToArray();
+            this.injection = injection;
         }
 
         public void Infuse(object instance, object[] parameterList)
         {
-            if (propertyList.Length == 0)
-            {
-                return;
-            }
+            var implementedType = injection.ImplementedType;
+            var propertyList = injection.PropertyList;
 
+            if (!implementedType.IsInstanceOfType(instance))
+            {
+                // TODO: throw original exception.
+                throw new ArgumentException($"{instance} is not {implementedType}.");
+            }
             if (propertyList.Length != parameterList.Length)
             {
-                throw new ArgumentException();
+                // TODO: throw original exception.
+                throw new ArgumentException(nameof(parameterList));
             }
 
             for (var index = 0; index < propertyList.Length; index++)
@@ -37,13 +39,14 @@ namespace YggdrAshill.Ragnarok
                 var property = propertyList[index];
                 var parameter = parameterList[index];
 
-                var fieldType = property.PropertyType;
+                var propertyType = property.PropertyType;
                 var parameterType = parameter.GetType();
 
                 // TODO: Type.IsInstanceOfType(object)?
-                if (!fieldType.IsAssignableFrom(parameterType))
+                if (!propertyType.IsAssignableFrom(parameterType))
                 {
-                    throw new Exception();
+                    // TODO: throw original exception.
+                    throw new ArgumentException($"{parameterType} is not assignable from {propertyType}.");
                 }
 
                 property.SetValue(instance, parameter);

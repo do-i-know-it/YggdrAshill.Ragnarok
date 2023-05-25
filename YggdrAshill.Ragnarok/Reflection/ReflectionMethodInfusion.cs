@@ -9,24 +9,31 @@ namespace YggdrAshill.Ragnarok
     internal sealed class ReflectionMethodInfusion :
         IInfusion
     {
-        private readonly MethodInfo method;
-        private readonly ParameterInfo[] argumentList;
+        private readonly MethodInjection injection;
 
-        public IReadOnlyList<Argument> ArgumentList { get; }
+        public IReadOnlyList<Argument> ArgumentList
+            => injection.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
 
         public ReflectionMethodInfusion(MethodInjection injection)
         {
-            method = injection.Method;
-            argumentList = injection.ParameterList;
-
-            ArgumentList = argumentList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
+            this.injection = injection;
         }
 
         public void Infuse(object instance, object[] parameterList)
         {
+            var implementedType = injection.ImplementedType;
+            var method = injection.Method;
+            var argumentList = injection.ParameterList;
+
+            if (!implementedType.IsInstanceOfType(instance))
+            {
+                // TODO: throw original exception.
+                throw new ArgumentException($"{instance} is not {implementedType}.");
+            }
             if (argumentList.Length != parameterList.Length)
             {
-                throw new ArgumentException();
+                // TODO: throw original exception.
+                throw new ArgumentException(nameof(parameterList));
             }
 
             for (var index = 0; index < argumentList.Length; index++)
@@ -37,9 +44,11 @@ namespace YggdrAshill.Ragnarok
                 // TODO: Type.IsInstanceOfType(object)?
                 if (!argumentType.IsAssignableFrom(parameterType))
                 {
-                    throw new Exception();
+                    // TODO: throw original exception.
+                    throw new ArgumentException($"{parameterType} is not assignable from {argumentType}.");
                 }
             }
+
             method.Invoke(instance, parameterList);
         }
     }

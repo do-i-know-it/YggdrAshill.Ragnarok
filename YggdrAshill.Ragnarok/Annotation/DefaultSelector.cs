@@ -48,6 +48,7 @@ namespace YggdrAshill.Ragnarok
                 {
                     if (injectedConstructor != null)
                     {
+                        // TODO: throw original exception.
                         throw new Exception($"Type found multiple constructors marked [Inject], type: {type.Name}");
                     }
 
@@ -78,12 +79,13 @@ namespace YggdrAshill.Ragnarok
                 return new ConstructorInjection(constructorHavingMaxParameterCount);
             }
 
+            // TODO: throw original exception.
             throw new Exception($"Type does not found injectable constructor, type: {type.Name}");
         }
 
         public FieldInjection CreateFieldInjection(Type type)
         {
-            // TODO: check whether type is for concrete class.
+            // TODO: concrete class?
 
             var buffer = default(List<FieldInfo>);
             foreach (var fieldInfo in type.GetRuntimeFields())
@@ -109,6 +111,7 @@ namespace YggdrAshill.Ragnarok
 
             if (buffer == null)
             {
+                // TODO: throw original exception.
                 throw new Exception($"Type does not found injectable field, type: {type.Name}");
             }
 
@@ -117,7 +120,7 @@ namespace YggdrAshill.Ragnarok
 
         public PropertyInjection CreatePropertyInjection(Type type)
         {
-            // TODO: check whether type is for concrete class.
+            // TODO: concrete class?
 
             var buffer = default(List<PropertyInfo>);
             foreach (var propertyInfo in type.GetRuntimeProperties())
@@ -134,6 +137,7 @@ namespace YggdrAshill.Ragnarok
 
                 if (buffer == null)
                 {
+                    // TODO: object pooling.
                     buffer = new List<PropertyInfo>();
                 }
 
@@ -142,6 +146,7 @@ namespace YggdrAshill.Ragnarok
 
             if (buffer == null)
             {
+                // TODO: throw original exception.
                 throw new Exception($"Type does not found injectable property, type: {type.Name}");
             }
 
@@ -161,6 +166,7 @@ namespace YggdrAshill.Ragnarok
 
                 if (injectedMethod != null)
                 {
+                    // TODO: throw original exception.
                     throw new Exception($"Type found multiple methods marked [InjectMethod], type: {type.Name}");
                 }
 
@@ -169,6 +175,7 @@ namespace YggdrAshill.Ragnarok
 
             if (injectedMethod == null)
             {
+                // TODO: throw original exception.
                 throw new Exception($"Type does not found injectable method, type: {type.Name}");
             }
 

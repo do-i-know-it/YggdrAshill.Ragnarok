@@ -26,7 +26,8 @@ namespace YggdrAshill.Ragnarok
         {
             if (argumentList.Length != parameterList.Length)
             {
-                throw new ArgumentException();
+                // TODO: throw original exception.
+                throw new ArgumentException(nameof(parameterList));
             }
 
             for (var index = 0; index < argumentList.Length; index++)
@@ -37,7 +38,8 @@ namespace YggdrAshill.Ragnarok
                 // TODO: Type.IsInstanceOfType(object)?
                 if (!argumentType.IsAssignableFrom(parameterType))
                 {
-                    throw new Exception();
+                    // TODO: throw original exception.
+                    throw new ArgumentException($"{parameterType} is not assignable from {argumentType}.");
                 }
             }
 

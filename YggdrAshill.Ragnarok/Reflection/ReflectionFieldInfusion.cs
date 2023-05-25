@@ -2,34 +2,36 @@ using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionFieldInfusion :
         IInfusion
     {
-        private readonly FieldInfo[] fieldList;
+        private readonly FieldInjection injection;
 
-        public IReadOnlyList<Argument> ArgumentList { get; }
+        public IReadOnlyList<Argument> ArgumentList
+            => injection.FieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray();
 
         public ReflectionFieldInfusion(FieldInjection injection)
         {
-            fieldList = injection.FieldList;
-
-            ArgumentList = fieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray();
+            this.injection = injection;
         }
 
         public void Infuse(object instance, object[] parameterList)
         {
-            if (fieldList.Length == 0)
-            {
-                return;
-            }
+            var implementedType = injection.ImplementedType;
+            var fieldList = injection.FieldList;
 
+            if (!implementedType.IsInstanceOfType(instance))
+            {
+                // TODO: throw original exception.
+                throw new ArgumentException($"{instance} is not {implementedType}.");
+            }
             if (fieldList.Length != parameterList.Length)
             {
-                throw new ArgumentException();
+                // TODO: throw original exception.
+                throw new ArgumentException(nameof(parameterList));
             }
 
             for (var index = 0; index < fieldList.Length; index++)
@@ -43,7 +45,8 @@ namespace YggdrAshill.Ragnarok
                 // TODO: Type.IsInstanceOfType(object)?
                 if (!fieldType.IsAssignableFrom(parameterType))
                 {
-                    throw new Exception();
+                    // TODO: throw original exception.
+                    throw new ArgumentException($"{parameterType} is not assignable from {fieldType}.");
                 }
 
                 field.SetValue(instance, parameter);

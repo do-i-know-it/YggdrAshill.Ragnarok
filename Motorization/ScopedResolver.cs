@@ -39,8 +39,8 @@ namespace YggdrAshill.Ragnarok.Motorization
                 return parent.Resolve(type, this);
             }
 
-            // TODO: define exception for framework.
-            throw new Exception("Not found type.");
+            // TODO: throw original exception.
+            throw new Exception($"{type} not found.");
         }
 
         private object ResolveInternally(IRegistration registration)
@@ -114,8 +114,8 @@ namespace YggdrAshill.Ragnarok.Motorization
                 return parent.Resolve(type, child);
             }
 
-            // TODO: define exception for framework.
-            throw new Exception("Not found type.");
+            // TODO: throw original exception.
+            throw new Exception($"{type} not found.");
         }
 
         public object Resolve(IRegistration registration)
