@@ -113,6 +113,12 @@ namespace YggdrAshill.Ragnarok
 
         public IInjectIntoMethodExternally WithMethodInjected()
         {
+            if (!ValidateType.IsInstantiatable(ImplementedType))
+            {
+                // TODO: throw original exception.
+                throw new Exception($"{ImplementedType} is not instantiatable.");
+            }
+
             methodParameterList = new List<IParameter>();
 
             return this;
@@ -135,6 +141,12 @@ namespace YggdrAshill.Ragnarok
 
         public IInjectIntoPropertiesExternally WithPropertiesInjected()
         {
+            if (!ValidateType.IsInstantiatable(ImplementedType))
+            {
+                // TODO: throw original exception.
+                throw new Exception($"{ImplementedType} is not instantiatable.");
+            }
+
             propertyParameterList = new List<IParameter>();
 
             return this;
@@ -157,6 +169,12 @@ namespace YggdrAshill.Ragnarok
 
         public IInjectIntoFieldsExternally WithFieldsInjected()
         {
+            if (!ValidateType.IsInstantiatable(ImplementedType))
+            {
+                // TODO: throw original exception.
+                throw new Exception($"{ImplementedType} is not instantiatable.");
+            }
+
             fieldParameterList = new List<IParameter>();
 
             return this;

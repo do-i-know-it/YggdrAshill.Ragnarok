@@ -502,10 +502,9 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(() =>
             {
                 var context = new DependencyInjectionContext();
+
                 context.RegisterTemporalInstance<IService>(() => new DependencyIntoInstance())
                     .WithFieldsInjected();
-
-                _ = context.Build();
             }, Throws.TypeOf<Exception>());
         }
 
@@ -523,10 +522,9 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(() =>
             {
                 var context = new DependencyInjectionContext();
+
                 context.RegisterTemporalInstance<IService>(() => new DependencyIntoInstance())
                     .WithPropertiesInjected();
-
-                _ = context.Build();
             }, Throws.TypeOf<Exception>());
         }
 
@@ -544,10 +542,9 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(() =>
             {
                 var context = new DependencyInjectionContext();
+
                 context.RegisterTemporalInstance<IService>(() => new DependencyIntoInstance())
                     .WithMethodInjected();
-
-                _ = context.Build();
             }, Throws.TypeOf<Exception>());
         }
 

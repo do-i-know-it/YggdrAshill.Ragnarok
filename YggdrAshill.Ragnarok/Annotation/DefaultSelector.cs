@@ -30,7 +30,11 @@ namespace YggdrAshill.Ragnarok
 
         public ConstructorInjection CreateConstructorInjection(Type type)
         {
-            // TODO: check whether type is for concrete class.
+            if (!ValidateType.IsInstantiatable(type))
+            {
+                // TODO: throw original exception.
+                throw new Exception($"{type} is not instantiatable.");
+            }
 
             const BindingFlags BindingFlags
                 = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
