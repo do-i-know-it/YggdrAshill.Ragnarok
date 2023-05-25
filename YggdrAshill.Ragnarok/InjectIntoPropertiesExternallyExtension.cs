@@ -2,6 +2,8 @@ using YggdrAshill.Ragnarok.Fabrication;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
+    // TODO: rename class?
     public static class InjectIntoPropertiesExternallyExtension
     {
         public static IInjectIntoPropertiesExternally From<T>(this IInjectIntoPropertiesExternally injection, string name, T instance)

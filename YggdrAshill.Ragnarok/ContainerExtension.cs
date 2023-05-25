@@ -4,6 +4,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
     public static class ContainerExtension
     {
         public static IDependencyInjection RegisterTemporal<T>(this IContainer container)

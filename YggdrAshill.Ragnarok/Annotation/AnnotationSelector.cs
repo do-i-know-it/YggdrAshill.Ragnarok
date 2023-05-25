@@ -5,6 +5,10 @@ using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
+    /// <summary>
+    /// Implementation of <see cref="ISelector"/> with annotation.
+    /// </summary>
     public sealed class AnnotationSelector :
         ISelector
     {

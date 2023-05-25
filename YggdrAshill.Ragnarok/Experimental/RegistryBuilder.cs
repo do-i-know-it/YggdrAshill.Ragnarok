@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
     /// <summary>
     /// Implementation of <see cref="IRegistryBuilder"/> using <see cref="ISelector"/> and <see cref="ISolver"/>.
     /// </summary>

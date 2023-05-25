@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
+    /// <summary>
+    /// Implementation of <see cref="IInstallation"/>.
+    /// </summary>
     public sealed class Installation :
         IInstallation
     {

@@ -3,6 +3,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
     public interface ISolver
     {
         IActivation CreateActivation(ConstructorInjection injection);

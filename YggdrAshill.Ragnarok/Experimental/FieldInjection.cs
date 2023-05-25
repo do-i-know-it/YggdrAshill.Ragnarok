@@ -4,6 +4,8 @@ using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
+    // TODO: rename class?
     public sealed class FieldInjection
     {
         public Type ImplementedType { get; }

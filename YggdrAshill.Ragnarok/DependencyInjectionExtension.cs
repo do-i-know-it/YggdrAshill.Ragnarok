@@ -2,6 +2,7 @@ using YggdrAshill.Ragnarok.Fabrication;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
     public static class DependencyInjectionExtension
     {
         public static IDependencyInjection WithArgument<T>(this IDependencyInjection injection, string name, T instance)

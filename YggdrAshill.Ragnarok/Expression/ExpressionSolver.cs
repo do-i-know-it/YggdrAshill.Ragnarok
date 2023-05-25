@@ -5,6 +5,10 @@ using System.Linq.Expressions;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
+    /// <summary>
+    /// Implementation of <see cref="ISolver"/> with expression.
+    /// </summary>
     public sealed class ExpressionSolver :
         ISolver
     {

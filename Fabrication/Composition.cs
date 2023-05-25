@@ -2,6 +2,10 @@ using YggdrAshill.Ragnarok.Construction;
 
 namespace YggdrAshill.Ragnarok.Fabrication
 {
+    // TODO: add document comments.
+    /// <summary>
+    /// Implementation of <see cref="IComposition"/> with <see cref="IStatement"/>.
+    /// </summary>
     public sealed class Composition :
         IComposition
     {

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: add document comments.
     public sealed class TypeAssignment :
         ITypeAssignment
     {
