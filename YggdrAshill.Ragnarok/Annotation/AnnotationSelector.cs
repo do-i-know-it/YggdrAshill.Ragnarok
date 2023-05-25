@@ -5,12 +5,12 @@ using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
 {
-    public sealed class DefaultSelector :
+    public sealed class AnnotationSelector :
         ISelector
     {
-        public static DefaultSelector Instance { get; } = new DefaultSelector();
+        public static AnnotationSelector Instance { get; } = new AnnotationSelector();
 
-        private DefaultSelector()
+        private AnnotationSelector()
         {
             createServiceBundleType = CreateServiceBundleTypeOf;
         }

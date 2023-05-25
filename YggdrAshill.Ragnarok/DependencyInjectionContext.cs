@@ -40,12 +40,12 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public DependencyInjectionContext(ISolver solver) : this(DefaultSelector.Instance, solver)
+        public DependencyInjectionContext(ISolver solver) : this(AnnotationSelector.Instance, solver)
         {
 
         }
 
-        public DependencyInjectionContext() : this(DefaultSelector.Instance, ExpressionSolver.Instance)
+        public DependencyInjectionContext() : this(AnnotationSelector.Instance, ExpressionSolver.Instance)
         {
 
         }
