@@ -416,6 +416,10 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(parentReadOnlyList.Count, Is.EqualTo(parentInjectionCount));
             Assert.That(parentReadOnlyCollection.Count, Is.EqualTo(parentInjectionCount));
             Assert.That(parentEnumerable.Count(), Is.EqualTo(parentInjectionCount));
+            foreach (var service in parentArray)
+            {
+                Assert.That(service, Is.Not.Null);
+            }
 
             var childInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
@@ -448,6 +452,10 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(childReadOnlyList.Count, Is.EqualTo(totalInjectionAmount));
             Assert.That(childReadOnlyCollection.Count, Is.EqualTo(totalInjectionAmount));
             Assert.That(childEnumerable.Count(), Is.EqualTo(totalInjectionAmount));
+            foreach (var service in parentArray)
+            {
+                Assert.That(service, Is.Not.Null);
+            }
         }
 
         [TestCaseSource(nameof(SolverList))]
@@ -477,6 +485,10 @@ namespace YggdrAshill.Ragnarok.Specification
             var parentPackage = parentScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
 
             Assert.That(parentPackage.Count, Is.EqualTo(injectionCount + 1));
+            foreach (var service in parentPackage)
+            {
+                Assert.That(service, Is.Not.Null);
+            }
 
             var childContext = parentScope.CreateContext();
 
@@ -487,6 +499,10 @@ namespace YggdrAshill.Ragnarok.Specification
             var childPackage = childScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
 
             Assert.That(childPackage.Count, Is.EqualTo(injectionCount + 1));
+            foreach (var service in childPackage)
+            {
+                Assert.That(service, Is.Not.Null);
+            }
         }
 
         [Test]
