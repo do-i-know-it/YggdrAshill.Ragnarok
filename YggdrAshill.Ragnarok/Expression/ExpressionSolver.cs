@@ -117,29 +117,29 @@ namespace YggdrAshill.Ragnarok
         public IActivation CreateCollectionActivation(Type elementType)
         {
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
+            var length = Expression.Parameter(typeof(int), "length");
+            var assignParameterListLength = Expression.Assign(length, Expression.ArrayLength(parameterList));
 
-            var length = Expression.ArrayLength(parameterList);
-            var array = Expression.NewArrayBounds(elementType, length);
+            var array = Expression.Parameter(elementType.MakeArrayType(), "array");
+            var assignArray = Expression.Assign(array, Expression.NewArrayBounds(elementType, length));
 
             var index = Expression.Parameter(typeof(int), "index");
-
-            var parameter = Expression.ArrayAccess(parameterList, index);
-            var convertedParameter = Expression.Convert(parameter, elementType);
+            var parameterElement = Expression.ArrayAccess(parameterList, index);
+            var parameter = Expression.Convert(parameterElement, elementType);
             var arrayElement = Expression.ArrayAccess(array, index);
-            var parameterToArrayElement = Expression.Assign(arrayElement, convertedParameter);
+            var parameterToArrayElement = Expression.Assign(arrayElement, parameter);
 
             var loopCondition = Expression.LessThan(index, length);
             var increment = Expression.PostIncrementAssign(index);
             var terminal = Expression.Label("Terminal");
+            var loopInitializer = Expression.Assign(index, Expression.Constant(0));
+            var loopBody
+                = Expression.IfThenElse(loopCondition, Expression.Block(parameterToArrayElement, increment), Expression.Break(terminal));
+            var loop
+                = Expression.Block(new[] { index }, loopInitializer, Expression.Loop(loopBody, terminal));
 
-            var loop = Expression.Block(
-                new[] { index },
-                Expression.Assign(index, Expression.Constant(0)),
-                Expression.Loop(Expression.IfThenElse(loopCondition, Expression.Block(parameterToArrayElement, increment), Expression.Break(terminal)), terminal)
-            );
-
-            var body = Expression.Block( typeof(object), loop, array);
-
+            var body
+                = Expression.Block(typeof(object), new[]{ length , array}, assignParameterListLength, assignArray, loop, array);
             var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList);
 
             var method = lambda.Compile();
