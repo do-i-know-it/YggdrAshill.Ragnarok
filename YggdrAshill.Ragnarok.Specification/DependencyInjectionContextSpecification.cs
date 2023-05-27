@@ -34,7 +34,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentContext = new DependencyInjectionContext(solver);
 
-            parentContext.RegisterTemporal<NoDependencyClass>();
+            parentContext.Register<NoDependencyClass>(Lifetime.Temporal);
 
             using var parentScope = parentContext.Build();
 
@@ -56,7 +56,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentContext = new DependencyInjectionContext(solver);
 
-            parentContext.RegisterLocal<NoDependencyClass>();
+            parentContext.Register<NoDependencyClass>(Lifetime.Local);
 
             using var parentScope = parentContext.Build();
 
@@ -78,7 +78,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentContext = new DependencyInjectionContext(solver);
 
-            parentContext.RegisterGlobal<NoDependencyClass>();
+            parentContext.Register<NoDependencyClass>(Lifetime.Global);
 
             using var parentScope = parentContext.Build();
 
@@ -100,14 +100,14 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentContext = new DependencyInjectionContext(solver);
 
-            parentContext.RegisterGlobal<DualInterface1>().AsImplementedInterfaces();
+            parentContext.Register<DualInterface1>(Lifetime.Global).AsImplementedInterfaces();
 
             using var parentScope = parentContext.Build();
 
             var childContext = parentScope.CreateContext();
 
-            childContext.RegisterGlobal<DualInterface2>().AsImplementedInterfaces();
-            childContext.RegisterGlobal<IService, MultipleDependencyService>();
+            childContext.Register<DualInterface2>(Lifetime.Global).AsImplementedInterfaces();
+            childContext.Register<IService, MultipleDependencyService>(Lifetime.Global);
 
             using var childScope = childContext.Build();
 
@@ -130,7 +130,7 @@ namespace YggdrAshill.Ragnarok.Specification
             var propertyInjected = new NoDependencyClass();
             var methodInjected = new NoDependencyClass();
 
-            context.RegisterGlobal<DependencyIntoInstance>()
+            context.Register<DependencyIntoInstance>(Lifetime.Global)
                 .WithFieldsInjected()
                 .From("fieldInjected", fieldInjected)
                 .WithPropertiesInjected()
@@ -174,7 +174,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             var parentContext = new DependencyInjectionContext(solver);
 
-            parentContext.RegisterTemporalInstance(() => new DependencyIntoInstance())
+            parentContext.Register(() => new DependencyIntoInstance(), Lifetime.Temporal)
                 .WithFieldsInjected()
                 .From("fieldInjected", fieldInjected)
                 .WithPropertiesInjected()
@@ -208,7 +208,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             var parentContext = new DependencyInjectionContext(solver);
 
-            parentContext.RegisterLocalInstance(() => new DependencyIntoInstance())
+            parentContext.Register(() => new DependencyIntoInstance(), Lifetime.Local)
                 .WithFieldsInjected()
                 .From("fieldInjected", fieldInjected)
                 .WithPropertiesInjected()
@@ -242,7 +242,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             var parentContext = new DependencyInjectionContext(solver);
 
-            parentContext.RegisterGlobalInstance(() => new DependencyIntoInstance())
+            parentContext.Register(() => new DependencyIntoInstance(), Lifetime.Global)
                 .WithFieldsInjected()
                 .From("fieldInjected", fieldInjected)
                 .WithPropertiesInjected()
@@ -273,7 +273,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterGlobal<MultipleInterfaceClass>()
+            context.Register<MultipleInterfaceClass>(Lifetime.Global)
                 .As<IInterfaceA>()
                 .As<IInterfaceB>()
                 .As<IInterfaceC>();
@@ -305,7 +305,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces();
+            context.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces();
 
             using var scope = context.Build();
 
@@ -331,7 +331,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterGlobal<MultipleInterfaceClass>()
+            context.Register<MultipleInterfaceClass>(Lifetime.Global)
                 .As<IInterfaceA>()
                 .As<IInterfaceB>()
                 .As<IInterfaceC>()
@@ -364,7 +364,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces().AsSelf();
+            context.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsSelf();
 
             using var scope = context.Build();
 
@@ -395,15 +395,15 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 if (count % 2 == 0)
                 {
-                    parentContext.RegisterLocal<IService, NoDependencyService>();
+                    parentContext.Register<IService, NoDependencyService>(Lifetime.Local);
                 }
                 else
                 {
-                    parentContext.RegisterTemporal<IService, NoDependencyService>();
+                    parentContext.Register<IService, NoDependencyService>(Lifetime.Temporal);
                 }
             }
 
-            parentContext.RegisterGlobal<DualInterface1>().AsImplementedInterfaces();
+            parentContext.Register<DualInterface1>(Lifetime.Global).AsImplementedInterfaces();
 
             using var parentScope = parentContext.Build();
 
@@ -429,16 +429,16 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 if (count % 2 == 0)
                 {
-                    childContext.RegisterLocal<IService, NoDependencyService>();
+                    childContext.Register<IService, NoDependencyService>(Lifetime.Local);
                 }
                 else
                 {
-                    childContext.RegisterTemporal<IService, NoDependencyService>();
+                    childContext.Register<IService, NoDependencyService>(Lifetime.Temporal);
                 }
             }
 
-            childContext.RegisterGlobal<DualInterface2>().AsImplementedInterfaces();
-            childContext.RegisterGlobal<IService, MultipleDependencyService>();
+            childContext.Register<DualInterface2>(Lifetime.Global).AsImplementedInterfaces();
+            childContext.Register<IService, MultipleDependencyService>(Lifetime.Global);
 
             using var childScope = childContext.Build();
 
@@ -469,16 +469,16 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 if (count % 2 == 0)
                 {
-                    parentContext.RegisterLocal<IService, NoDependencyService>();
+                    parentContext.Register<IService, NoDependencyService>(Lifetime.Local);
                 }
                 else
                 {
-                    parentContext.RegisterTemporal<IService, NoDependencyService>();
+                    parentContext.Register<IService, NoDependencyService>(Lifetime.Temporal);
                 }
             }
 
-            parentContext.RegisterGlobal<IService, MultipleDependencyService>();
-            parentContext.RegisterGlobal<MultipleInterfaceClass>().AsImplementedInterfaces();
+            parentContext.Register<IService, MultipleDependencyService>(Lifetime.Global);
+            parentContext.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces();
 
             using var parentScope = parentContext.Build();
 
@@ -492,7 +492,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             var childContext = parentScope.CreateContext();
 
-            childContext.RegisterGlobal<IService, NoDependencyService>();
+            childContext.Register<IService, NoDependencyService>(Lifetime.Global);
 
             using var childScope = childContext.Build();
 
@@ -510,14 +510,14 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyInjectionContext();
 
-            context.RegisterTemporal<CircularDependencyClass1>();
-            context.RegisterTemporal<CircularDependencyClass2>();
+            context.Register<CircularDependencyClass1>(Lifetime.Temporal);
+            context.Register<CircularDependencyClass2>(Lifetime.Temporal);
 
             using var scope = context.Build();
 
             var childContext = scope.CreateContext();
 
-            childContext.RegisterTemporal<CircularDependencyClass3>();
+            childContext.Register<CircularDependencyClass3>(Lifetime.Temporal);
 
             Assert.That(() =>
             {
