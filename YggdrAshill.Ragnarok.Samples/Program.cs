@@ -1,21 +1,19 @@
-﻿using YggdrAshill.Ragnarok.Construction;
-
-namespace YggdrAshill.Ragnarok.Samples
+﻿namespace YggdrAshill.Ragnarok.Samples
 {
-    internal sealed class Program
+    internal static class Program
     {
         private static void Main(string[] arguments)
         {
-            var context = new DependencyInjectionContext();
+            var context = new DependencyContext();
 
-            context.Register<ISender, ConsoleSender>(Lifetime.Global)
+            context.RegisterGlobal<ISender, ConsoleSender>()
                 .WithArgument("announcement", "Please enter a text");
-            context.Register<IReceiver, ConsoleReceiver>(Lifetime.Global)
+            context.RegisterGlobal<IReceiver, ConsoleReceiver>()
                 .WithFieldsInjected()
                 .From("header", "Received");
             context.RegisterInstance(Formatter.AllCharactersToUpper)
                 .As<IFormatter>();
-            context.Register<IService, Service>(Lifetime.Global)
+            context.RegisterGlobal<IService, Service>()
                 .WithPropertiesInjected()
                 .From("Announcement", "Sample application started.\nEnter \"quit\" if you want to quit this application.\n");
 
