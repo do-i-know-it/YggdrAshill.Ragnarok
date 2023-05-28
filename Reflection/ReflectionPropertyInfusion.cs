@@ -23,11 +23,11 @@ namespace YggdrAshill.Ragnarok
 
             if (!implementedType.IsInstanceOfType(instance))
             {
-                throw new RagnarokArgumentException(implementedType, $"{instance} is not {implementedType}.");
+                throw new RagnarokReflectionException(implementedType, $"{instance} is not {implementedType}.");
             }
             if (propertyList.Length != parameterList.Length)
             {
-                throw new RagnarokArgumentException(implementedType, nameof(parameterList));
+                throw new RagnarokReflectionException(implementedType, nameof(parameterList));
             }
 
             for (var index = 0; index < propertyList.Length; index++)
@@ -41,7 +41,7 @@ namespace YggdrAshill.Ragnarok
                 // TODO: Type.IsInstanceOfType(object)?
                 if (!propertyType.IsAssignableFrom(parameterType))
                 {
-                    throw new RagnarokArgumentException(implementedType, $"{parameterType} is not assignable from {propertyType}.");
+                    throw new RagnarokReflectionException(implementedType, $"{parameterType} is not assignable from {propertyType}.");
                 }
 
                 property.SetValue(instance, parameter);

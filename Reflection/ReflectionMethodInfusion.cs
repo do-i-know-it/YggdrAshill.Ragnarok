@@ -3,27 +3,32 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ReflectionActivation :
-        IActivation
+    internal sealed class ReflectionMethodInfusion :
+        IInfusion
     {
-        private readonly ConstructorInjection injection;
+        private readonly MethodInjection injection;
 
         public IReadOnlyList<Argument> ArgumentList
             => injection.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
 
-        public ReflectionActivation(ConstructorInjection injection)
+        public ReflectionMethodInfusion(MethodInjection injection)
         {
             this.injection = injection;
         }
 
-        public object Activate(object[] parameterList)
+        public void Infuse(object instance, object[] parameterList)
         {
-            var constructor = injection.Constructor;
+            var implementedType = injection.ImplementedType;
+            var method = injection.Method;
             var argumentList = injection.ParameterList;
 
+            if (!implementedType.IsInstanceOfType(instance))
+            {
+                throw new RagnarokReflectionException(implementedType, $"{instance} is not {implementedType}.");
+            }
             if (argumentList.Length != parameterList.Length)
             {
-                throw new RagnarokArgumentException(injection.ImplementedType, nameof(parameterList));
+                throw new RagnarokReflectionException(implementedType, nameof(parameterList));
             }
 
             for (var index = 0; index < argumentList.Length; index++)
@@ -34,11 +39,11 @@ namespace YggdrAshill.Ragnarok
                 // TODO: Type.IsInstanceOfType(object)?
                 if (!argumentType.IsAssignableFrom(parameterType))
                 {
-                    throw new RagnarokArgumentException(parameterType, $"{parameterType} is not assignable from {argumentType}.");
+                    throw new RagnarokReflectionException(parameterType, $"{parameterType} is not assignable from {argumentType}.");
                 }
             }
 
-            return constructor.Invoke(parameterList);
+            method.Invoke(instance, parameterList);
         }
     }
 }
