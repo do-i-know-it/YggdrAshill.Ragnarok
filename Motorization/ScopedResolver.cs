@@ -9,13 +9,13 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly IScopedResolver? parent;
         private readonly IEngine engine;
-        private readonly IEngineBuilder engineBuilder;
+        private readonly IEngineContext engineContext;
 
-        public ScopedResolver(IScopedResolver? parent, IEngine engine, IEngineBuilder engineBuilder)
+        public ScopedResolver(IScopedResolver? parent, IEngine engine, IEngineContext engineContext)
         {
             this.parent = parent;
             this.engine = engine;
-            this.engineBuilder = engineBuilder;
+            this.engineContext = engineContext;
         }
 
         private bool isDisposed;
@@ -181,7 +181,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            return new ScopedResolverContext(engineBuilder, this);
+            return new ScopedResolverContext(engineContext, this);
         }
 
         public void Dispose()

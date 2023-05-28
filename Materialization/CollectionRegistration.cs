@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YggdrAshill.Ragnarok.Memorization
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class CollectionRegistration :
         IRegistration

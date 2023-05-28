@@ -1,4 +1,3 @@
-using YggdrAshill.Ragnarok.Memorization;
 using System;
 using System.Collections.Generic;
 
@@ -23,17 +22,12 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public DependencyContext(IEngineBuilder builder) : this(new ScopedResolverContext(builder))
+        public DependencyContext(IEngineContext context) : this(new ScopedResolverContext(context))
         {
 
         }
 
-        public DependencyContext(IRegistryBuilder builder) : this(new EngineBuilder(builder))
-        {
-
-        }
-
-        public DependencyContext(ISelector selector, ISolver solver) : this(new RegistryBuilder(selector, solver))
+        public DependencyContext(ISelector selector, ISolver solver) : this(new EngineContext(selector, solver))
         {
 
         }

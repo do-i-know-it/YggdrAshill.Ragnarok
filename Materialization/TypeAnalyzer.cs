@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YggdrAshill.Ragnarok.Memorization
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class TypeAnalyzer
     {
@@ -38,7 +38,7 @@ namespace YggdrAshill.Ragnarok.Memorization
         [ThreadStatic]
         private static Stack<Type>? circularDependencyChecker;
 
-        public void Validate(IEnumerable<IRegistration> registrationList, IRegistry registry)
+        public void Validate(IEnumerable<IDescription> descriptionList, IEngine engine)
         {
             // ThreadStatic
             if (circularDependencyChecker == null)
@@ -46,13 +46,13 @@ namespace YggdrAshill.Ragnarok.Memorization
                 circularDependencyChecker = new Stack<Type>();
             }
 
-            foreach (var registration in registrationList)
+            foreach (var description in descriptionList)
             {
                 circularDependencyChecker.Clear();
-                CheckCircularDependencyRecursively(registration.ImplementedType, registry, circularDependencyChecker);
+                CheckCircularDependencyRecursively(description.ImplementedType, engine, circularDependencyChecker);
             }
         }
-        private void CheckCircularDependencyRecursively(Type current, IRegistry registry, Stack<Type> stack)
+        private void CheckCircularDependencyRecursively(Type current, IEngine engine, Stack<Type> stack)
         {
             foreach (var stacked in stack)
             {
@@ -70,12 +70,12 @@ namespace YggdrAshill.Ragnarok.Memorization
                     = constructorInjection.ArgumentList.Select(argument => argument.Type).Distinct();
                 foreach (var type in dependentTypeList)
                 {
-                    if (registry.Find(type, out var registration) && registration != null)
+                    if (engine.Find(type, out var registration) && registration != null)
                     {
-                        CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
+                        CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
                     }
 
-                    CheckCircularDependencyRecursively(type, registry, stack);
+                    CheckCircularDependencyRecursively(type, engine, stack);
                 }
             }
 
@@ -83,9 +83,9 @@ namespace YggdrAshill.Ragnarok.Memorization
             {
                 foreach (var type in methodInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (registry.Find(type, out var registration) && registration != null)
+                    if (engine.Find(type, out var registration) && registration != null)
                     {
-                        CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
+                        CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
                     }
                 }
             }
@@ -94,9 +94,9 @@ namespace YggdrAshill.Ragnarok.Memorization
             {
                 foreach (var type in fieldInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (registry.Find(type, out var registration) && registration != null)
+                    if (engine.Find(type, out var registration) && registration != null)
                     {
-                        CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
+                        CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
                     }
                 }
             }
@@ -105,9 +105,9 @@ namespace YggdrAshill.Ragnarok.Memorization
             {
                 foreach (var type in propertyInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (registry.Find(type, out var registration) && registration != null)
+                    if (engine.Find(type, out var registration) && registration != null)
                     {
-                        CheckCircularDependencyRecursively(registration.ImplementedType, registry, stack);
+                        CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
                     }
                 }
             }

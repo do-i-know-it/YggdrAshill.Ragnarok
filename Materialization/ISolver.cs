@@ -1,6 +1,6 @@
 using System;
 
-namespace YggdrAshill.Ragnarok.Memorization
+namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
     public interface ISolver

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Memorization
+namespace YggdrAshill.Ragnarok
 {
     internal static class TypeCache
     {

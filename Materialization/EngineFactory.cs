@@ -1,38 +1,34 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Memorization
+namespace YggdrAshill.Ragnarok
 {
-    internal readonly struct RegistryFactory :
+    internal readonly struct EngineFactory :
         IDisposable
     {
-        private readonly ICodeBuilder codeBuilder;
+        private readonly IEngineBuilder builder;
         private readonly IEnumerable<IDescription> descriptionList;
 
-        public RegistryFactory(ICodeBuilder codeBuilder, IEnumerable<IDescription> descriptionList)
+        public EngineFactory(IEngineBuilder builder, IEnumerable<IDescription> descriptionList)
         {
-            this.codeBuilder = codeBuilder;
+            this.builder = builder;
             this.descriptionList = descriptionList;
 
             // TODO: object pooling.
             const int BufferSize = 128;
-            registrationBuffer = new List<IRegistration>(BufferSize);
             typeToRegistration = new Dictionary<Type, IRegistration?>(BufferSize);
             typeToRegistrationList = new Dictionary<Type, List<IRegistration>>(BufferSize);
         }
 
-        private readonly List<IRegistration> registrationBuffer;
         private readonly Dictionary<Type, IRegistration?> typeToRegistration;
         private readonly Dictionary<Type, List<IRegistration>> typeToRegistrationList;
 
-        public IRegistry Create(out IEnumerable<IRegistration> registrationList)
+        public IEngine Create()
         {
             foreach (var description in descriptionList)
             {
                 var assignedTypeList = description.AssignedTypeList;
                 var registration = new Registration(description);
-
-                registrationBuffer.Add(registration);
 
                 if (assignedTypeList.Count != 0)
                 {
@@ -55,9 +51,7 @@ namespace YggdrAshill.Ragnarok.Memorization
 
             AddCollection();
 
-            registrationList = registrationBuffer.ToArray();
-
-            return new Registry(codeBuilder, typeToRegistration);
+            return new Engine(builder, typeToRegistration);
         }
         private void AddRegistration(Type assignedType, IRegistration registration)
         {
@@ -105,7 +99,7 @@ namespace YggdrAshill.Ragnarok.Memorization
 
                 var implementedType = CollectionRegistration.GetImplementedType(elementType);
 
-                var activation = codeBuilder.GetActivation(implementedType);
+                var activation = builder.GetActivation(implementedType);
 
                 var collection = new CollectionRegistration(elementType, activation, registrationList.ToArray());
 
@@ -123,7 +117,6 @@ namespace YggdrAshill.Ragnarok.Memorization
 
         public void Dispose()
         {
-            registrationBuffer.Clear();
             typeToRegistration.Clear();
             typeToRegistrationList.Clear();
         }

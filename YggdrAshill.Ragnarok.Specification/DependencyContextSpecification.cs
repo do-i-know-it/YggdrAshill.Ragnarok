@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using YggdrAshill.Ragnarok.Memorization;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
@@ -22,6 +23,7 @@ namespace YggdrAshill.Ragnarok
             this.scopedResolverContext = scopedResolverContext;
         }
 
+        private readonly List<IComposition> compositionList = new List<IComposition>();
         private readonly List<Action<IResolver>> callbacks = new List<Action<IResolver>>();
 
         /// <inheritdoc/>
@@ -51,7 +53,12 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public void Register(IComposition composition)
         {
-            scopedResolverContext.Register(composition);
+            if (compositionList.Contains(composition))
+            {
+                return;
+            }
+
+            compositionList.Add(composition);
         }
 
         /// <summary>
@@ -80,7 +87,11 @@ namespace YggdrAshill.Ragnarok
         /// </returns>
         public IScope Build()
         {
-            var resolver = scopedResolverContext.Build();
+            var descriptionList = compositionList
+                .Select(composition => composition.Compose())
+                .Append(ResolverDescription.Instance);
+
+            var resolver = scopedResolverContext.Build(descriptionList);
 
             foreach (var callback in callbacks)
             {

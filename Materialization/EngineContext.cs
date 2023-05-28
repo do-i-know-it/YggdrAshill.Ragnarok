@@ -1,24 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Memorization
+namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    /// <summary>
-    /// Implementation of <see cref="IRegistryBuilder"/> using <see cref="ISelector"/> and <see cref="ISolver"/>.
-    /// </summary>
-    public sealed class RegistryBuilder :
-        IRegistryBuilder
+    public sealed class EngineContext :
+        IEngineContext
     {
         private readonly ISelector selector;
         private readonly ISolver solver;
 
-        private readonly Func<Type, IActivation> activation;
-        private readonly Func<Type, IInfusion> fieldInfusion;
-        private readonly Func<Type, IInfusion> propertyInfusion;
-        private readonly Func<Type, IInfusion> methodInfusion;
-
-        public RegistryBuilder(ISelector selector, ISolver solver)
+        public EngineContext(ISelector selector, ISolver solver)
         {
             this.selector = selector;
             this.solver = solver;
@@ -28,6 +19,11 @@ namespace YggdrAshill.Ragnarok.Memorization
             propertyInfusion = CreatePropertyInfusion;
             methodInfusion = CreateMethodInfusion;
         }
+
+        private readonly Func<Type, IActivation> activation;
+        private readonly Func<Type, IInfusion> fieldInfusion;
+        private readonly Func<Type, IInfusion> propertyInfusion;
+        private readonly Func<Type, IInfusion> methodInfusion;
 
         private readonly TypeAnalyzer typeAnalyzer = new TypeAnalyzer();
 
@@ -85,15 +81,15 @@ namespace YggdrAshill.Ragnarok.Memorization
             return solver.CreateMethodInfusion(injection);
         }
 
-        public IRegistry Build(IEnumerable<IDescription> descriptionList)
+        public IEngine Build(IEnumerable<IDescription> descriptionList)
         {
-            using var factory = new RegistryFactory(this, descriptionList);
+            using var factory = new EngineFactory(this, descriptionList);
 
-            var registry = factory.Create(out var registrationList);
+            var engine = factory.Create();
 
-            typeAnalyzer.Validate(registrationList, registry);
+            typeAnalyzer.Validate(descriptionList, engine);
 
-            return registry;
+            return engine;
         }
     }
 }

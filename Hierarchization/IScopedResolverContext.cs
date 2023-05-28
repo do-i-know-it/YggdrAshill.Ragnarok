@@ -1,17 +1,22 @@
+using System.Collections.Generic;
+
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to build <see cref="IScopedResolver"/>.
     /// </summary>
     public interface IScopedResolverContext :
-        IScopedResolverContainer
+        ICompilation
     {
         /// <summary>
-        /// Creates a new <see cref="IScopedResolver"/>.
+        /// Creates <see cref="IScopedResolver"/> from <see cref="IDescription"/>s.
         /// </summary>
+        /// <param name="descriptionList">
+        /// <see cref="IDescription"/>s to build.
+        /// </param>
         /// <returns>
         /// <see cref="IScopedResolver"/> created.
         /// </returns>
-        IScopedResolver Build();
+        IScopedResolver Build(IEnumerable<IDescription> descriptionList);
     }
 }

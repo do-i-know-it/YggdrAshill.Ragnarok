@@ -1,4 +1,3 @@
-using YggdrAshill.Ragnarok.Memorization;
 using System;
 
 namespace YggdrAshill.Ragnarok
