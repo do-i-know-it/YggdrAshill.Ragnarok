@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="IScopedResolverContext"/> using <see cref="IEngineBuilder"/>.
+    /// Implementation of <see cref="IScopedResolverContext"/> using <see cref="IEngineContext"/>.
     /// </summary>
     public sealed class ScopedResolverContext :
         IScopedResolverContext
@@ -16,10 +16,10 @@ namespace YggdrAshill.Ragnarok
         /// Constructor of <see cref="ScopedResolverContext"/>.
         /// </summary>
         /// <param name="engineContext">
-        /// <see cref="IEngineBuilder"/> to instantiate <see cref="ScopedResolverContext"/>.
+        /// <see cref="IEngineContext"/> to instantiate <see cref="ScopedResolverContext"/>.
         /// </param>
         /// <param name="parentScopedResolver">
-        /// <see cref="IScopedResolver"/> to chain.
+        /// <see cref="IScopedResolver"/> to instantiate <see cref="ScopedResolverContext"/>.
         /// </param>
         public ScopedResolverContext(IEngineContext engineContext, IScopedResolver? parentScopedResolver = null)
         {
@@ -60,13 +60,13 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// Collects <see cref="IDescription"/>s to create <see cref="IEngine"/> from <see cref="IEngineBuilder"/>,
+        /// Creates <see cref="IEngine"/> from <see cref="IDescription"/>s using <see cref="IEngineContext"/>,
         /// then creates <see cref="IScopedResolver"/>.
         /// </summary>
         /// <returns>
         /// <see cref="IScopedResolver"/> created.
         /// </returns>
-        public IScopedResolver Build(IEnumerable<IDescription> descriptionList)
+        public IScopedResolver Build(IReadOnlyList<IDescription> descriptionList)
         {
             var engine = engineContext.Build(descriptionList);
 

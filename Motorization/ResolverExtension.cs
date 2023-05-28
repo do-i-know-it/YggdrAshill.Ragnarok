@@ -5,7 +5,7 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Extension for <see cref="IResolver"/>.
     /// </summary>
-    public static class ResolverExtension
+    public static partial class ResolverExtension
     {
         /// <summary>
         /// Resolve <see cref="Argument"/> from <see cref="IResolver"/> or <see cref="IParameter"/>s.

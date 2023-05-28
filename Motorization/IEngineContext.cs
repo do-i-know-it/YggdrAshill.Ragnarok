@@ -2,6 +2,9 @@
 
 namespace YggdrAshill.Ragnarok
 {
+    /// <summary>
+    /// Defines how to build <see cref="IEngine"/>.
+    /// </summary>
     public interface IEngineContext :
         IEngineBuilder
     {
@@ -14,6 +17,6 @@ namespace YggdrAshill.Ragnarok
         /// <returns>
         /// <see cref="IEngine"/> created.
         /// </returns>
-        IEngine Build(IEnumerable<IDescription> descriptionList);
+        IEngine Build(IReadOnlyList<IDescription> descriptionList);
     }
 }

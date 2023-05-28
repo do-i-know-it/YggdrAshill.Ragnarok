@@ -2,6 +2,9 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
+    /// <summary>
+    /// Defines how to instantiate and inject into objects.
+    /// </summary>
     public interface IEngineBuilder
     {
         /// <summary>

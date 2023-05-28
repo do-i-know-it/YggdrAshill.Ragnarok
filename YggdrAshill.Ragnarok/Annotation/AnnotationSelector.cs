@@ -5,13 +5,15 @@ using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
     /// <summary>
     /// Implementation of <see cref="ISelector"/> with annotation.
     /// </summary>
     public sealed class AnnotationSelector :
         ISelector
     {
+        /// <summary>
+        /// Singleton of <see cref="AnnotationSelector"/>.
+        /// </summary>
         public static AnnotationSelector Instance { get; } = new AnnotationSelector();
 
         private AnnotationSelector()
@@ -27,11 +29,13 @@ namespace YggdrAshill.Ragnarok
             return typeof(ServiceBundle<>).MakeGenericType(elementType);
         }
 
+        /// <inheritdoc/>
         public Type GetServiceBundleType(Type elementType)
         {
             return serviceBundleTypeCache.GetOrAdd(elementType, createServiceBundleType);
         }
 
+        /// <inheritdoc/>
         public ConstructorInjection CreateConstructorInjection(Type type)
         {
             if (!ValidateType.IsInstantiatable(type))
@@ -84,6 +88,7 @@ namespace YggdrAshill.Ragnarok
             throw new RagnarokAnnotationNotFoundException(type, $"Injectable constructor of {type} not found.");
         }
 
+        /// <inheritdoc/>
         public FieldInjection CreateFieldInjection(Type type)
         {
             // TODO: concrete class?
@@ -107,6 +112,7 @@ namespace YggdrAshill.Ragnarok
             return new FieldInjection(type, buffer.ToArray());
         }
 
+        /// <inheritdoc/>
         public PropertyInjection CreatePropertyInjection(Type type)
         {
             // TODO: concrete class?
@@ -130,6 +136,7 @@ namespace YggdrAshill.Ragnarok
             return new PropertyInjection(type, buffer.ToArray());
         }
 
+        /// <inheritdoc/>
         public MethodInjection CreateMethodInjection(Type type)
         {
             var injectedMethod = default(MethodInfo);

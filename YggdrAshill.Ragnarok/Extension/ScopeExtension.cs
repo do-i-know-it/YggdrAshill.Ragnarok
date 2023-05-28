@@ -3,7 +3,6 @@ using System;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    // TODO: rename class?
     public static class ScopeExtension
     {
         public static IScope CreateChildScope(this IScope scope)

@@ -4,13 +4,15 @@ using System.Linq.Expressions;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
     /// <summary>
     /// Implementation of <see cref="ISolver"/> with expression.
     /// </summary>
     public sealed class ExpressionSolver :
         ISolver
     {
+        /// <summary>
+        /// Singleton instance of <see cref="ExpressionSolver"/>.
+        /// </summary>
         public static ExpressionSolver Instance { get; } = new ExpressionSolver();
 
         private ExpressionSolver()
@@ -18,6 +20,7 @@ namespace YggdrAshill.Ragnarok
 
         }
 
+        /// <inheritdoc/>
         public IActivation CreateActivation(ConstructorInjection injection)
         {
             var constructor = injection.Constructor;
@@ -38,6 +41,7 @@ namespace YggdrAshill.Ragnarok
             return new ActivateWithFunction(lambda, argumentList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray());
         }
 
+        /// <inheritdoc/>
         public IInfusion CreateFieldInfusion(FieldInjection injection)
         {
             var implementedType = injection.ImplementedType;
@@ -63,6 +67,7 @@ namespace YggdrAshill.Ragnarok
             return new InfuseWithAction(lambda, fieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray());
         }
 
+        /// <inheritdoc/>
         public IInfusion CreatePropertyInfusion(PropertyInjection injection)
         {
             var implementedType = injection.ImplementedType;
@@ -89,6 +94,7 @@ namespace YggdrAshill.Ragnarok
             return new InfuseWithAction(lambda, propertyList.Select(info => new Argument(info.Name, info.PropertyType)).ToArray());
         }
 
+        /// <inheritdoc/>
         public IInfusion CreateMethodInfusion(MethodInjection injection)
         {
             var implementedType = injection.ImplementedType;
@@ -113,6 +119,7 @@ namespace YggdrAshill.Ragnarok
             return new InfuseWithAction(lambda, argumentList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray());
         }
 
+        /// <inheritdoc/>
         public IActivation CreateCollectionActivation(Type elementType)
         {
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");

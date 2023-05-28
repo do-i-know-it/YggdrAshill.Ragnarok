@@ -17,6 +17,6 @@ namespace YggdrAshill.Ragnarok
         /// <returns>
         /// <see cref="IScopedResolver"/> created.
         /// </returns>
-        IScopedResolver Build(IEnumerable<IDescription> descriptionList);
+        IScopedResolver Build(IReadOnlyList<IDescription> descriptionList);
     }
 }

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
+    /// <summary>
+    /// Implementation of <see cref="IEngineContext"/> using <see cref="ISelector"/> and <see cref="ISolver"/>.
+    /// </summary>
     public sealed class EngineContext :
         IEngineContext
     {
@@ -27,6 +30,7 @@ namespace YggdrAshill.Ragnarok
 
         private readonly TypeAnalyzer typeAnalyzer = new TypeAnalyzer();
 
+        /// <inheritdoc/>
         public IActivation GetActivation(Type type)
         {
             return typeAnalyzer.GetActivation(type, activation);
@@ -48,6 +52,7 @@ namespace YggdrAshill.Ragnarok
             return solver.CreateActivation(injection);
         }
 
+        /// <inheritdoc/>
         public IInfusion GetFieldInfusion(Type type)
         {
             return typeAnalyzer.GetFieldInfusion(type, fieldInfusion);
@@ -59,6 +64,7 @@ namespace YggdrAshill.Ragnarok
             return solver.CreateFieldInfusion(injection);
         }
 
+        /// <inheritdoc/>
         public IInfusion GetPropertyInfusion(Type type)
         {
             return typeAnalyzer.GetPropertyInfusion(type, propertyInfusion);
@@ -70,6 +76,7 @@ namespace YggdrAshill.Ragnarok
             return solver.CreatePropertyInfusion(injection);
         }
 
+        /// <inheritdoc/>
         public IInfusion GetMethodInfusion(Type type)
         {
             return typeAnalyzer.GetMethodInfusion(type, methodInfusion);
@@ -81,7 +88,8 @@ namespace YggdrAshill.Ragnarok
             return solver.CreateMethodInfusion(injection);
         }
 
-        public IEngine Build(IEnumerable<IDescription> descriptionList)
+        /// <inheritdoc/>
+        public IEngine Build(IReadOnlyList<IDescription> descriptionList)
         {
             using var factory = new EngineFactory(this, descriptionList);
 

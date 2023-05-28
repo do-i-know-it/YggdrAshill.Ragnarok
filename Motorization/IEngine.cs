@@ -8,6 +8,7 @@ namespace YggdrAshill.Ragnarok
     public interface IEngine :
         IDisposable
     {
+        // TODO: rename method.
         /// <summary>
         /// Checks if this <see cref="IEngine"/> has <see cref="IRegistration"/>.
         /// </summary>

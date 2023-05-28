@@ -78,7 +78,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// Creates <see cref="IScopedResolver"/> from <see cref="IScopedResolverContext"/>,
+        /// Creates <see cref="IScopedResolver"/> from <see cref="IDescription"/>>s using <see cref="IScopedResolverContext"/>,
         /// then executes callbacks with <see cref="IScopedResolver"/>,
         /// and creates <see cref="IScope"/>.
         /// </summary>
@@ -89,7 +89,8 @@ namespace YggdrAshill.Ragnarok
         {
             var descriptionList = compositionList
                 .Select(composition => composition.Compose())
-                .Append(ResolverDescription.Instance);
+                .Append(ResolverDescription.Instance)
+                .ToArray();
 
             var resolver = scopedResolverContext.Build(descriptionList);
 

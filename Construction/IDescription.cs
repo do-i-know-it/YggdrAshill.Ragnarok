@@ -19,12 +19,12 @@ namespace YggdrAshill.Ragnarok
         IReadOnlyList<Type> AssignedTypeList { get; }
 
         /// <summary>
-        /// <see cref="Construction.Lifetime"/> for <see cref="ImplementedType"/>.
+        /// <see cref="Ragnarok.Lifetime"/> for <see cref="ImplementedType"/>.
         /// </summary>
         Lifetime Lifetime { get; }
 
         /// <summary>
-        /// <see cref="Construction.Ownership"/> for <see cref="ImplementedType"/>.
+        /// <see cref="Ragnarok.Ownership"/> for <see cref="ImplementedType"/>.
         /// </summary>
         Ownership Ownership { get; }
 
