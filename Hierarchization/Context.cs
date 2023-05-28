@@ -1,8 +1,7 @@
-using YggdrAshill.Ragnarok.Construction;
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Hierarchization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Implementation of <see cref="IContext"/> using <see cref="IScopedResolver"/> and <see cref="IScopedResolverContext"/>.

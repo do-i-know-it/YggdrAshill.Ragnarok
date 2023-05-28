@@ -6,14 +6,16 @@
         {
             var context = new DependencyContext();
 
-            context.RegisterGlobal<ISender, ConsoleSender>()
+            context.Register<ConsoleSender>(Lifetime.Global);
+
+            context.Register<ISender, ConsoleSender>(Lifetime.Global)
                 .WithArgument("announcement", "Please enter a text");
-            context.RegisterGlobal<IReceiver, ConsoleReceiver>()
+            context.Register<IReceiver, ConsoleReceiver>(Lifetime.Global)
                 .WithFieldsInjected()
                 .From("header", "Received");
             context.RegisterInstance(Formatter.AllCharactersToUpper)
                 .As<IFormatter>();
-            context.RegisterGlobal<IService, Service>()
+            context.Register<IService, Service>(Lifetime.Global)
                 .WithPropertiesInjected()
                 .From("Announcement", "Sample application started.\nEnter \"quit\" if you want to quit this application.\n");
 

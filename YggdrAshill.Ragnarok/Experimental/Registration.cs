@@ -1,5 +1,3 @@
-using YggdrAshill.Ragnarok.Construction;
-using YggdrAshill.Ragnarok.Hierarchization;
 using System;
 
 namespace YggdrAshill.Ragnarok.Memorization

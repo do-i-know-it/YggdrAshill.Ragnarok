@@ -1,7 +1,6 @@
-using YggdrAshill.Ragnarok.Construction;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Motorization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to build <see cref="IEngine"/>.

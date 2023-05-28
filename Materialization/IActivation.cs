@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to create instance.

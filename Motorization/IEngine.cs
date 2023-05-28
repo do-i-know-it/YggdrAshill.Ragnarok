@@ -1,7 +1,6 @@
-using YggdrAshill.Ragnarok.Hierarchization;
 using System;
 
-namespace YggdrAshill.Ragnarok.Motorization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to realize features of <see cref="IScopedResolver"/>.

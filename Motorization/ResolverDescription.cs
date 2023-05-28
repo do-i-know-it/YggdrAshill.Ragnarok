@@ -1,8 +1,7 @@
-using YggdrAshill.Ragnarok.Construction;
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Motorization
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class ResolverDescription :
         IDescription, IInstantiation

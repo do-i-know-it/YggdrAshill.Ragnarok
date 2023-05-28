@@ -1,4 +1,4 @@
-namespace YggdrAshill.Ragnarok.Construction
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to build <see cref="IScope"/>.

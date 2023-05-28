@@ -1,7 +1,6 @@
-using YggdrAshill.Ragnarok.Construction;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to build <see cref="IRegistry"/>.

@@ -1,5 +1,3 @@
-using YggdrAshill.Ragnarok.Fabrication;
-
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.

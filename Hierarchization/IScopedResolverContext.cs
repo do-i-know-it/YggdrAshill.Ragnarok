@@ -1,4 +1,4 @@
-namespace YggdrAshill.Ragnarok.Hierarchization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to build <see cref="IScopedResolver"/>.

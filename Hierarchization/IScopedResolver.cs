@@ -1,8 +1,7 @@
-using YggdrAshill.Ragnarok.Construction;
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Hierarchization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines <see cref="IResolver"/> chained hierarchically.

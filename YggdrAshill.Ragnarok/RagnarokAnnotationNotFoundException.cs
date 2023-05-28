@@ -1,4 +1,3 @@
-using YggdrAshill.Ragnarok.Construction;
 using System;
 using System.Runtime.Serialization;
 

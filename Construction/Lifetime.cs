@@ -1,4 +1,4 @@
-namespace YggdrAshill.Ragnarok.Construction
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines period of life for an instance resolved.

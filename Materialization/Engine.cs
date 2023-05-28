@@ -1,9 +1,7 @@
-using YggdrAshill.Ragnarok.Hierarchization;
-using YggdrAshill.Ragnarok.Motorization;
 using System;
 using System.Collections.Concurrent;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class Engine :
         IEngine

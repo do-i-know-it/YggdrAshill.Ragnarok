@@ -1,10 +1,8 @@
-using YggdrAshill.Ragnarok.Construction;
-using YggdrAshill.Ragnarok.Hierarchization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YggdrAshill.Ragnarok.Motorization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Implementation of <see cref="IScopedResolverContext"/> using <see cref="IEngineBuilder"/>.

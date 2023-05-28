@@ -1,6 +1,6 @@
 using System;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines argument to inject a dependency into.

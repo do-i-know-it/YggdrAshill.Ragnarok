@@ -1,7 +1,6 @@
-using YggdrAshill.Ragnarok.Hierarchization;
 using System;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to find <see cref="IRegistration"/> for <see cref="Type"/>

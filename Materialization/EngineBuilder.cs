@@ -1,9 +1,7 @@
-using YggdrAshill.Ragnarok.Construction;
-using YggdrAshill.Ragnarok.Motorization;
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Implementation of <see cref="IEngineBuilder"/> using <see cref="IRegistryBuilder"/>.

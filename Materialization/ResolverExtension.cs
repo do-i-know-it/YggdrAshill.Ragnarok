@@ -1,7 +1,6 @@
-using YggdrAshill.Ragnarok.Construction;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Materialization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Extension for <see cref="IResolver"/>.
