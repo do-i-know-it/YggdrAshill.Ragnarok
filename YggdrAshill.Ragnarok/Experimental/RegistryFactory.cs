@@ -4,7 +4,7 @@ using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Memorization
 {
     internal readonly struct RegistryFactory :
         IDisposable

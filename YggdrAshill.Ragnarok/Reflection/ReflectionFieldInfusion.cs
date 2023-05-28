@@ -1,4 +1,5 @@
 using YggdrAshill.Ragnarok.Materialization;
+using YggdrAshill.Ragnarok.Memorization;
 using System.Collections.Generic;
 using System.Linq;
 

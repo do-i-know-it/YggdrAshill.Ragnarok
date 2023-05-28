@@ -4,7 +4,7 @@ using YggdrAshill.Ragnarok.Materialization;
 using System;
 using System.Linq;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Memorization
 {
     internal sealed class ServiceBundleRegistration :
         IRegistration

@@ -5,7 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Memorization
 {
     internal sealed class Registry :
         IRegistry

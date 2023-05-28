@@ -2,6 +2,7 @@ using YggdrAshill.Ragnarok.Construction;
 using YggdrAshill.Ragnarok.Hierarchization;
 using YggdrAshill.Ragnarok.Motorization;
 using YggdrAshill.Ragnarok.Materialization;
+using YggdrAshill.Ragnarok.Memorization;
 using YggdrAshill.Ragnarok.Fabrication;
 using System;
 using System.Collections.Generic;

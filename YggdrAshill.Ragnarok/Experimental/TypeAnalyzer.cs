@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Memorization
 {
     internal sealed class TypeAnalyzer
     {

@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Memorization
 {
     // TODO: add document comments.
     // TODO: rename class?

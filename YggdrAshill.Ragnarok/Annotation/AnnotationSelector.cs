@@ -1,3 +1,4 @@
+using YggdrAshill.Ragnarok.Memorization;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

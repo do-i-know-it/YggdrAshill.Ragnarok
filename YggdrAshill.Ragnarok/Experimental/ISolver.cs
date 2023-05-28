@@ -1,7 +1,7 @@
 using YggdrAshill.Ragnarok.Materialization;
 using System;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Memorization
 {
     // TODO: add document comments.
     public interface ISolver

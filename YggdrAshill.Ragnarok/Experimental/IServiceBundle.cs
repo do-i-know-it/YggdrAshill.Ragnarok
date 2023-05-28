@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Memorization
 {
     // TODO: add document comments.
     public interface IServiceBundle<T>
