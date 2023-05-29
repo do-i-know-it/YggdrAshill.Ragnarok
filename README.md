@@ -112,17 +112,17 @@ like:
 ```cs
 var context = new DependencyInjectionContext();
 
-// Register ConsoleSender as ISender to instantiate per scope.
-context.RegisterLocal<ConsoleSender>()
+// Register ConsoleSender as ISender to instantiate per local scope.
+context.Register<ConsoleSender>(Lifetime.Local)
     .WithArgument("announcement", "Enter any text") // Add parameter to inject into constructor.
     .As<ISender>();
-// Register ConsoleReceiver as IReceiver to instantiate per scope.
-context.RegisterLocal<ConsoleReceiver>()
-    .WithFieldInjection() // Enable field injection.
-    .With("header", "Recieved") // Add parameter to inject into fields.
+// Register ConsoleReceiver as IReceiver to instantiate per global scope.
+context.Register<ConsoleReceiver>(Lifetime.Global)
+    .WithFieldsInjected() // Enable field injection.
+    .From("header", "Recieved") // Add parameter to inject into fields.
     .As<IReceiver>();
 // Register Service to instantiate per request.
-context.RegisterTemporal<Service>();
+context.Register<Service>(Lifetime.Temporal);
 
 using (var scope = context.Build())
 {
@@ -158,14 +158,18 @@ like:
 ```cs
 var context = new DependencyInjectionContext();
 
-context.RegisterGlobal<ConsoleLogger>().As<ILogger>();
-context.RegisterGlobal<FileLogger>().As<ILogger>();
+context.Register<ILogger, ConsoleLogger>(Lifetime.Global); // Same as Register<ConsoleLogger>(Lifetime.Global).As<ILogger>();
+context.Register<ILogger, FileLogger>(Lifetime.Global);
 
 using (var scope = context.Build())
 {
+    // you can resolve collection like:
     var array = scope.Resolver.Resolve<ILogger[]>();
+    // or
     var readOnlyList = scope.Resolver.Resolve<IReadOnlyList<ILogger>>();
+    // or
     var readOnlyCollection = scope.Resolver.Resolve<IReadOnlyCollection<ILogger>>();
+    // or
     var enumerable = scope.Resolver.Resolve<IEnumerable<ILogger>>();
 }
 
