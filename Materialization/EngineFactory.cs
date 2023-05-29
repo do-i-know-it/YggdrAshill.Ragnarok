@@ -6,12 +6,12 @@ namespace YggdrAshill.Ragnarok
     internal readonly struct EngineFactory :
         IDisposable
     {
-        private readonly IEngineBuilder builder;
+        private readonly EngineContext context;
         private readonly IEnumerable<IDescription> descriptionList;
 
-        public EngineFactory(IEngineBuilder builder, IEnumerable<IDescription> descriptionList)
+        public EngineFactory(EngineContext context, IEnumerable<IDescription> descriptionList)
         {
-            this.builder = builder;
+            this.context = context;
             this.descriptionList = descriptionList;
 
             // TODO: object pooling.
@@ -51,7 +51,7 @@ namespace YggdrAshill.Ragnarok
 
             AddCollection();
 
-            return new Engine(builder, typeToRegistration);
+            return new Engine(context, typeToRegistration);
         }
         private void AddRegistration(Type assignedType, IRegistration registration)
         {
@@ -66,6 +66,7 @@ namespace YggdrAshill.Ragnarok
 
                         if (lifetime == Lifetime.Global && implementedType == registration.ImplementedType)
                         {
+                            // TODO: throw original exception.
                             throw new Exception($"Conflict implementation type : {implementedType}");
                         }
                     }
@@ -99,7 +100,7 @@ namespace YggdrAshill.Ragnarok
 
                 var implementedType = CollectionRegistration.GetImplementedType(elementType);
 
-                var activation = builder.GetActivation(implementedType);
+                var activation = context.GetActivation(implementedType);
 
                 var collection = new CollectionRegistration(elementType, activation, registrationList.ToArray());
 
@@ -107,6 +108,7 @@ namespace YggdrAshill.Ragnarok
                 {
                     if (typeToRegistration.TryGetValue(assignedType, out _))
                     {
+                        // TODO: throw original exception.
                         throw new Exception($"Collection of {assignedType} already exists.");
                     }
 

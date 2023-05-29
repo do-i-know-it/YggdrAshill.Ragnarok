@@ -2,6 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
+    // TODO: rename interface.
     /// <summary>
     /// Defines how to instantiate and inject into objects.
     /// </summary>

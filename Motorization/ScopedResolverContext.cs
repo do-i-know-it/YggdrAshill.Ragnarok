@@ -70,7 +70,7 @@ namespace YggdrAshill.Ragnarok
         {
             var engine = engineContext.Build(descriptionList);
 
-            return new ScopedResolver(parentScopedResolver, engine, engineContext);
+            return new ScopedResolver(parentScopedResolver, engine);
         }
     }
 }

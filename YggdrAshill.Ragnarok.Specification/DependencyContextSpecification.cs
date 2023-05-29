@@ -504,22 +504,77 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotBuildWithCircularDependency()
+        public void ShouldBuildScopeWithoutCircularDependency()
+        {
+            var parentContext = new DependencyContext();
+
+            parentContext.Register<CircularDependencyClass1>(Lifetime.Temporal);
+
+            using var parentScope = parentContext.Build();
+
+            var childContext1 = parentScope.CreateContext();
+            childContext1.Register<CircularDependencyClass2>(Lifetime.Temporal);
+
+            var childContext2 = parentScope.CreateContext();
+            childContext2.Register<CircularDependencyClass3>(Lifetime.Temporal);
+
+            Assert.That(() =>
+            {
+                _ = childContext1.Build();
+
+            }, Throws.Nothing);
+
+            Assert.That(() =>
+            {
+                _ = childContext2.Build();
+
+            }, Throws.Nothing);
+        }
+
+        [Test]
+        public void CannotBuildScopeWithCircularDependencyInLocalScope()
         {
             var context = new DependencyContext();
 
             context.Register<CircularDependencyClass1>(Lifetime.Temporal);
             context.Register<CircularDependencyClass2>(Lifetime.Temporal);
-
-            using var scope = context.Build();
-
-            var childContext = scope.CreateContext();
-
-            childContext.Register<CircularDependencyClass3>(Lifetime.Temporal);
+            context.Register<CircularDependencyClass3>(Lifetime.Temporal);
 
             Assert.That(() =>
             {
-                _ = childContext.Build();
+                _ = context.Build();
+
+            }, Throws.TypeOf<Exception>());
+
+            Assert.That(() =>
+            {
+                _ = new DependencyContext().Build();
+
+            }, Throws.Nothing);
+        }
+
+        [Test]
+        public void CannotBuildScopeWithCircularDependencyInGlobalScope()
+        {
+            var parentContext = new DependencyContext();
+
+            parentContext.Register<CircularDependencyClass1>(Lifetime.Temporal);
+
+            using var parentScope = parentContext.Build();
+
+            var childContext = parentScope.CreateContext();
+
+            childContext.Register<CircularDependencyClass2>(Lifetime.Temporal);
+
+            using var childScope = childContext.Build();
+
+            var grandchildContext = childScope.CreateContext();
+
+            grandchildContext.Register<CircularDependencyClass3>(Lifetime.Temporal);
+
+            Assert.That(() =>
+            {
+                _ = grandchildContext.Build();
 
             }, Throws.TypeOf<Exception>());
 

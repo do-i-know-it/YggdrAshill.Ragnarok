@@ -9,7 +9,7 @@ namespace YggdrAshill.Ragnarok
     {
         public static Type GetImplementedType(Type elementType)
         {
-            return TypeCache.ArrayTypeOf(elementType);
+            return TypeAnalysis.ArrayTypeOf(elementType);
         }
 
         public static bool TryGetElementType(Type type, out Type elementType)
@@ -28,7 +28,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var openGenericType = TypeCache.OpenGenericTypeOf(type);
+            var openGenericType = TypeAnalysis.OpenGenericTypeOf(type);
 
             var isCollectionType
                 = openGenericType == typeof(IEnumerable<>) ||
@@ -37,7 +37,7 @@ namespace YggdrAshill.Ragnarok
 
             if (isCollectionType)
             {
-                elementType = TypeCache.GenericTypeParameterListOf(type)[0];
+                elementType = TypeAnalysis.GenericTypeParameterListOf(type)[0];
 
                 return true;
             }
@@ -58,14 +58,14 @@ namespace YggdrAshill.Ragnarok
             this.activation = activation;
             this.registrationList = registrationList;
 
-            ImplementedType = TypeCache.ArrayTypeOf(elementType);
+            ImplementedType = TypeAnalysis.ArrayTypeOf(elementType);
 
             AssignedTypeList = new List<Type>
             {
                 ImplementedType,
-                TypeCache.EnumerableOf(elementType),
-                TypeCache.ReadOnlyListOf(elementType),
-                TypeCache.ReadOnlyCollectionOf(elementType),
+                TypeAnalysis.EnumerableOf(elementType),
+                TypeAnalysis.ReadOnlyListOf(elementType),
+                TypeAnalysis.ReadOnlyCollectionOf(elementType),
             };
         }
 
@@ -96,7 +96,6 @@ namespace YggdrAshill.Ragnarok
 
         public object Instantiate(IScopedResolver resolver)
         {
-
             var totalRegistrationList = CollectAllRegistration(resolver, false);
 
             return Instantiate(resolver, totalRegistrationList.ToArray());

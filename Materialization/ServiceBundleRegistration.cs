@@ -15,7 +15,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            targetType = TypeCache.ReadOnlyListOf(elementType);
+            targetType = TypeAnalysis.ReadOnlyListOf(elementType);
 
             return true;
         }
@@ -29,14 +29,14 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var openGenericType = TypeCache.OpenGenericTypeOf(type);
+            var openGenericType = TypeAnalysis.OpenGenericTypeOf(type);
 
             if (openGenericType != typeof(IServiceBundle<>))
             {
                 return false;
             }
 
-            elementType = TypeCache.GenericTypeParameterListOf(type)[0];
+            elementType = TypeAnalysis.GenericTypeParameterListOf(type)[0];
 
             return true;
         }

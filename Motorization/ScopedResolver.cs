@@ -9,13 +9,11 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly IScopedResolver? parent;
         private readonly IEngine engine;
-        private readonly IEngineContext engineContext;
 
-        public ScopedResolver(IScopedResolver? parent, IEngine engine, IEngineContext engineContext)
+        public ScopedResolver(IScopedResolver? parent, IEngine engine)
         {
             this.parent = parent;
             this.engine = engine;
-            this.engineContext = engineContext;
         }
 
         private bool isDisposed;
@@ -180,6 +178,8 @@ namespace YggdrAshill.Ragnarok
             {
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
+
+            var engineContext = engine.CreateContext();
 
             return new ScopedResolverContext(engineContext, this);
         }

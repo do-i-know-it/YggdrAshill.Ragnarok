@@ -7,12 +7,12 @@ namespace YggdrAshill.Ragnarok
     internal sealed class Engine :
         IEngine
     {
-        private readonly IEngineBuilder builder;
+        private readonly EngineContext context;
         private readonly Dictionary<Type, IRegistration?> dictionary;
 
-        public Engine(IEngineBuilder builder, IDictionary<Type, IRegistration?> dictionary)
+        public Engine(EngineContext context, IDictionary<Type, IRegistration?> dictionary)
         {
-            this.builder = builder;
+            this.context = context;
             this.dictionary = new Dictionary<Type, IRegistration?>(dictionary);
         }
 
@@ -67,7 +67,7 @@ namespace YggdrAshill.Ragnarok
 
             registration = registrationCache.GetOrAdd(implementedType, _ =>
             {
-                var activation = builder.GetActivation(implementedType);
+                var activation = context.GetActivation(implementedType);
 
                 if (!Find(elementType, out var elementRegistration))
                 {
@@ -93,7 +93,7 @@ namespace YggdrAshill.Ragnarok
             {
                 registration = registrationCache.GetOrAdd(type, _ =>
                 {
-                    var activation = builder.GetActivation(type);
+                    var activation = context.GetActivation(type);
 
                     return new ServiceBundleRegistration(type, activation, collection);
                 });
@@ -117,6 +117,16 @@ namespace YggdrAshill.Ragnarok
         public void Bind(IDisposable disposable)
         {
             compositeDisposable.Add(disposable);
+        }
+
+        public IEngineContext CreateContext()
+        {
+            if (isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(IEngine));
+            }
+
+            return new EngineContext(context);
         }
 
         public void Dispose()

@@ -67,5 +67,16 @@ namespace YggdrAshill.Ragnarok
         /// Thrown if this <see cref="IEngine"/> is disposed.
         /// </exception>
         void Bind(IDisposable disposable);
+
+        /// <summary>
+        /// Creates a <see cref="IEngineContext"/> to create <see cref="IEngine"/>.
+        /// </summary>
+        /// <returns>
+        /// <see cref="IEngineContext"/> created.
+        /// </returns>
+        /// <exception cref="ObjectDisposedException">
+        /// Thrown if this <see cref="IEngine"/> is disposed.
+        /// </exception>
+        IEngineContext CreateContext();
     }
 }
