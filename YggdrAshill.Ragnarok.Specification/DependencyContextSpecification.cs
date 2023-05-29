@@ -507,7 +507,6 @@ namespace YggdrAshill.Ragnarok.Specification
         public void ShouldBuildScopeWithoutCircularDependency()
         {
             var parentContext = new DependencyContext();
-
             parentContext.Register<CircularDependencyClass1>(Lifetime.Temporal);
 
             using var parentScope = parentContext.Build();
@@ -532,7 +531,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [Test]
-        public void CannotBuildScopeWithCircularDependencyInLocalScope()
+        public void ShouldDetectCircularDependencyInLocalScope()
         {
             var context = new DependencyContext();
 
