@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Construction
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to declare a dependency.
@@ -19,12 +19,12 @@ namespace YggdrAshill.Ragnarok.Construction
         IReadOnlyList<Type> AssignedTypeList { get; }
 
         /// <summary>
-        /// <see cref="Construction.Lifetime"/> for <see cref="ImplementedType"/>.
+        /// <see cref="Ragnarok.Lifetime"/> for <see cref="ImplementedType"/>.
         /// </summary>
         Lifetime Lifetime { get; }
 
         /// <summary>
-        /// <see cref="Construction.Ownership"/> for <see cref="ImplementedType"/>.
+        /// <see cref="Ragnarok.Ownership"/> for <see cref="ImplementedType"/>.
         /// </summary>
         Ownership Ownership { get; }
 

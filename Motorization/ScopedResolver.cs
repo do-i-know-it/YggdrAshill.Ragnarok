@@ -1,23 +1,19 @@
-using YggdrAshill.Ragnarok.Construction;
-using YggdrAshill.Ragnarok.Hierarchization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YggdrAshill.Ragnarok.Motorization
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class ScopedResolver :
         IScopedResolver
     {
         private readonly IScopedResolver? parent;
         private readonly IEngine engine;
-        private readonly IEngineBuilder engineBuilder;
 
-        public ScopedResolver(IScopedResolver? parent, IEngine engine, IEngineBuilder engineBuilder)
+        public ScopedResolver(IScopedResolver? parent, IEngine engine)
         {
             this.parent = parent;
             this.engine = engine;
-            this.engineBuilder = engineBuilder;
         }
 
         private bool isDisposed;
@@ -183,7 +179,9 @@ namespace YggdrAshill.Ragnarok.Motorization
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            return new ScopedResolverContext(engineBuilder, this);
+            var engineContext = engine.CreateContext();
+
+            return new ScopedResolverContext(engineContext, this);
         }
 
         public void Dispose()

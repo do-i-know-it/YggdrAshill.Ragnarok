@@ -24,6 +24,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Materialization", "Material
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabrication", "Fabrication\Fabrication.csproj", "{268711F8-FFAC-46E0-910B-AF11D5690413}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reflection", "Reflection\Reflection.csproj", "{548DAA1A-2E95-42B6-BE5E-4F88C5C48E63}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Expression", "Expression\Expression.csproj", "{E4076F21-8502-45B2-BD68-70A914E328DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +66,14 @@ Global
 		{268711F8-FFAC-46E0-910B-AF11D5690413}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{268711F8-FFAC-46E0-910B-AF11D5690413}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{268711F8-FFAC-46E0-910B-AF11D5690413}.Release|Any CPU.Build.0 = Release|Any CPU
+		{548DAA1A-2E95-42B6-BE5E-4F88C5C48E63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{548DAA1A-2E95-42B6-BE5E-4F88C5C48E63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{548DAA1A-2E95-42B6-BE5E-4F88C5C48E63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{548DAA1A-2E95-42B6-BE5E-4F88C5C48E63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4076F21-8502-45B2-BD68-70A914E328DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4076F21-8502-45B2-BD68-70A914E328DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4076F21-8502-45B2-BD68-70A914E328DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4076F21-8502-45B2-BD68-70A914E328DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

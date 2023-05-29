@@ -1,5 +1,3 @@
-using YggdrAshill.Ragnarok.Construction;
-
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class InstantiateWithInjection :

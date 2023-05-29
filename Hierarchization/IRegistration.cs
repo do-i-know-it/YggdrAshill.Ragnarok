@@ -1,7 +1,6 @@
-using YggdrAshill.Ragnarok.Construction;
 using System;
 
-namespace YggdrAshill.Ragnarok.Hierarchization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to register dependencies in <see cref="IScopedResolver"/>.

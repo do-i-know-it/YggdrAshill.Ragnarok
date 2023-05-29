@@ -1,8 +1,7 @@
-using YggdrAshill.Ragnarok.Construction;
 using System;
 using System.Runtime.Serialization;
 
-namespace YggdrAshill.Ragnarok.Hierarchization
+namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
     [Serializable]

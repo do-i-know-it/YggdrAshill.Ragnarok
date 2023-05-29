@@ -1,4 +1,4 @@
-namespace YggdrAshill.Ragnarok.Fabrication
+namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
     public interface IAssignImplementedType

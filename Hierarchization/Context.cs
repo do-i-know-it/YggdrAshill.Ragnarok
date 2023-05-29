@@ -1,8 +1,8 @@
-using YggdrAshill.Ragnarok.Construction;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace YggdrAshill.Ragnarok.Hierarchization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Implementation of <see cref="IContext"/> using <see cref="IScopedResolver"/> and <see cref="IScopedResolverContext"/>.
@@ -23,6 +23,7 @@ namespace YggdrAshill.Ragnarok.Hierarchization
             this.scopedResolverContext = scopedResolverContext;
         }
 
+        private readonly List<IComposition> compositionList = new List<IComposition>();
         private readonly List<Action<IResolver>> callbacks = new List<Action<IResolver>>();
 
         /// <inheritdoc/>
@@ -52,7 +53,12 @@ namespace YggdrAshill.Ragnarok.Hierarchization
         /// <inheritdoc/>
         public void Register(IComposition composition)
         {
-            scopedResolverContext.Register(composition);
+            if (compositionList.Contains(composition))
+            {
+                return;
+            }
+
+            compositionList.Add(composition);
         }
 
         /// <summary>
@@ -72,7 +78,7 @@ namespace YggdrAshill.Ragnarok.Hierarchization
         }
 
         /// <summary>
-        /// Creates <see cref="IScopedResolver"/> from <see cref="IScopedResolverContext"/>,
+        /// Creates <see cref="IScopedResolver"/> from <see cref="IDescription"/>>s using <see cref="IScopedResolverContext"/>,
         /// then executes callbacks with <see cref="IScopedResolver"/>,
         /// and creates <see cref="IScope"/>.
         /// </summary>
@@ -81,7 +87,12 @@ namespace YggdrAshill.Ragnarok.Hierarchization
         /// </returns>
         public IScope Build()
         {
-            var resolver = scopedResolverContext.Build();
+            var descriptionList = compositionList
+                .Select(composition => composition.Compose())
+                .Append(ResolverDescription.Instance)
+                .ToArray();
+
+            var resolver = scopedResolverContext.Build(descriptionList);
 
             foreach (var callback in callbacks)
             {

@@ -1,5 +1,3 @@
-using YggdrAshill.Ragnarok.Construction;
-using YggdrAshill.Ragnarok.Fabrication;
 using System;
 using System.Collections.Generic;
 
@@ -114,16 +112,13 @@ namespace YggdrAshill.Ragnarok
 
         public IInjectIntoMethodExternally WithMethodInjected()
         {
-            methodParameterList = new List<IParameter>();
-
             return this;
         }
         IInjectIntoMethodExternally IInjectIntoMethodExternally.From(IParameter parameter)
         {
             if (methodParameterList == null)
             {
-                // TODO: throw original exception.
-                throw new InvalidOperationException();
+                methodParameterList = new List<IParameter>();
             }
 
             if (!methodParameterList.Contains(parameter))
@@ -136,16 +131,13 @@ namespace YggdrAshill.Ragnarok
 
         public IInjectIntoPropertiesExternally WithPropertiesInjected()
         {
-            propertyParameterList = new List<IParameter>();
-
             return this;
         }
         IInjectIntoPropertiesExternally IInjectIntoPropertiesExternally.From(IParameter parameter)
         {
             if (propertyParameterList == null)
             {
-                // TODO: throw original exception.
-                throw new InvalidOperationException();
+                propertyParameterList = new List<IParameter>();
             }
 
             if (!propertyParameterList.Contains(parameter))
@@ -158,16 +150,13 @@ namespace YggdrAshill.Ragnarok
 
         public IInjectIntoFieldsExternally WithFieldsInjected()
         {
-            fieldParameterList = new List<IParameter>();
-
             return this;
         }
         IInjectIntoFieldsExternally IInjectIntoFieldsExternally.From(IParameter parameter)
         {
             if (fieldParameterList == null)
             {
-                // TODO: throw original exception.
-                throw new InvalidOperationException();
+                fieldParameterList = new List<IParameter>();
             }
 
             if (!fieldParameterList.Contains(parameter))

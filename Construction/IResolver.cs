@@ -1,6 +1,6 @@
 using System;
 
-namespace YggdrAshill.Ragnarok.Construction
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to obtain objects resolved.

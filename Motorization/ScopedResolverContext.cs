@@ -1,93 +1,76 @@
-using YggdrAshill.Ragnarok.Construction;
-using YggdrAshill.Ragnarok.Hierarchization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace YggdrAshill.Ragnarok.Motorization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="IScopedResolverContext"/> using <see cref="IEngineBuilder"/>.
+    /// Implementation of <see cref="IScopedResolverContext"/> using <see cref="IEngineContext"/>.
     /// </summary>
     public sealed class ScopedResolverContext :
         IScopedResolverContext
     {
-        private readonly IEngineBuilder engineBuilder;
+        private readonly IEngineContext engineContext;
         private readonly IScopedResolver? parentScopedResolver;
 
         /// <summary>
         /// Constructor of <see cref="ScopedResolverContext"/>.
         /// </summary>
-        /// <param name="engineBuilder">
-        /// <see cref="IEngineBuilder"/> to instantiate <see cref="ScopedResolverContext"/>.
+        /// <param name="engineContext">
+        /// <see cref="IEngineContext"/> to instantiate <see cref="ScopedResolverContext"/>.
         /// </param>
         /// <param name="parentScopedResolver">
-        /// <see cref="IScopedResolver"/> to chain.
+        /// <see cref="IScopedResolver"/> to instantiate <see cref="ScopedResolverContext"/>.
         /// </param>
-        public ScopedResolverContext(IEngineBuilder engineBuilder, IScopedResolver? parentScopedResolver = null)
+        public ScopedResolverContext(IEngineContext engineContext, IScopedResolver? parentScopedResolver = null)
         {
-            this.engineBuilder = engineBuilder;
+            this.engineContext = engineContext;
             this.parentScopedResolver = parentScopedResolver;
         }
-
-        private readonly List<IComposition> compositionList = new List<IComposition>();
 
         /// <inheritdoc/>
         public IInstantiation GetInstantiation(Type type, IReadOnlyList<IParameter> parameterList)
         {
-            return engineBuilder.GetInstantiation(type, parameterList);
+            var activation = engineContext.GetActivation(type);
+
+            return new ActivateToInstantiate(activation, parameterList);
         }
 
         /// <inheritdoc/>
         public IInjection GetFieldInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
-            return engineBuilder.GetFieldInjection(type, parameterList);
+            var infusion = engineContext.GetFieldInfusion(type);
+
+            return new InfuseToInject(infusion, parameterList);
         }
 
         /// <inheritdoc/>
         public IInjection GetPropertyInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
-            return engineBuilder.GetPropertyInjection(type, parameterList);
+            var infusion = engineContext.GetPropertyInfusion(type);
+
+            return new InfuseToInject(infusion, parameterList);
         }
 
         /// <inheritdoc/>
         public IInjection GetMethodInjection(Type type, IReadOnlyList<IParameter> parameterList)
         {
-            return engineBuilder.GetMethodInjection(type, parameterList);
+            var infusion = engineContext.GetMethodInfusion(type);
+
+            return new InfuseToInject(infusion, parameterList);
         }
 
         /// <summary>
-        /// Adds <see cref="IComposition"/> to resolve dependencies.
-        /// </summary>
-        /// <param name="composition">
-        /// <see cref="IComposition"/> to resolve dependencies.
-        /// </param>
-        public void Register(IComposition composition)
-        {
-            if (compositionList.Contains(composition))
-            {
-                return;
-            }
-
-            compositionList.Add(composition);
-        }
-
-        /// <summary>
-        /// Collects <see cref="IDescription"/>s to create <see cref="IEngine"/> from <see cref="IEngineBuilder"/>,
+        /// Creates <see cref="IEngine"/> from <see cref="IDescription"/>s using <see cref="IEngineContext"/>,
         /// then creates <see cref="IScopedResolver"/>.
         /// </summary>
         /// <returns>
         /// <see cref="IScopedResolver"/> created.
         /// </returns>
-        public IScopedResolver Build()
+        public IScopedResolver Build(IReadOnlyList<IDescription> descriptionList)
         {
-            var descriptionList = compositionList
-                .Select(composition => composition.Compose())
-                .Append(ResolverDescription.Instance);
+            var engine = engineContext.Build(descriptionList);
 
-            var engine = engineBuilder.Build(descriptionList);
-
-            return new ScopedResolver(parentScopedResolver, engine, engineBuilder);
+            return new ScopedResolver(parentScopedResolver, engine);
         }
     }
 }

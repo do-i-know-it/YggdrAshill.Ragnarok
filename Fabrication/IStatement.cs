@@ -1,11 +1,9 @@
-using YggdrAshill.Ragnarok.Construction;
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Fabrication
+namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    // TODO: rename interface.
     public interface IStatement
     {
         Type ImplementedType { get; }

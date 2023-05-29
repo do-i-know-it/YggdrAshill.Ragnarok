@@ -1,7 +1,6 @@
-using YggdrAshill.Ragnarok.Hierarchization;
 using System;
 
-namespace YggdrAshill.Ragnarok.Motorization
+namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to realize features of <see cref="IScopedResolver"/>.
@@ -9,6 +8,7 @@ namespace YggdrAshill.Ragnarok.Motorization
     public interface IEngine :
         IDisposable
     {
+        // TODO: rename method.
         /// <summary>
         /// Checks if this <see cref="IEngine"/> has <see cref="IRegistration"/>.
         /// </summary>
@@ -67,5 +67,16 @@ namespace YggdrAshill.Ragnarok.Motorization
         /// Thrown if this <see cref="IEngine"/> is disposed.
         /// </exception>
         void Bind(IDisposable disposable);
+
+        /// <summary>
+        /// Creates a <see cref="IEngineContext"/> to create <see cref="IEngine"/>.
+        /// </summary>
+        /// <returns>
+        /// <see cref="IEngineContext"/> created.
+        /// </returns>
+        /// <exception cref="ObjectDisposedException">
+        /// Thrown if this <see cref="IEngine"/> is disposed.
+        /// </exception>
+        IEngineContext CreateContext();
     }
 }
