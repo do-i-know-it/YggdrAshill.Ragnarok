@@ -6,8 +6,6 @@
         {
             var context = new DependencyContext();
 
-            context.Register<ConsoleSender>(Lifetime.Global);
-
             context.Register<ISender, ConsoleSender>(Lifetime.Global)
                 .WithArgument("announcement", "Please enter a text");
             context.Register<IReceiver, ConsoleReceiver>(Lifetime.Global)
