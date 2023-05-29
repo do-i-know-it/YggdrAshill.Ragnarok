@@ -5,181 +5,186 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class TypeAnalysis
+    internal static class TypeAnalysis
     {
+        public static Type OpenGenericTypeOf(Type closedGenericType)
+        {
+            return openGenericTypeCache.GetOrAdd(closedGenericType, createOpenGenericTypeFunctionCache);
+        }
         private static readonly ConcurrentDictionary<Type, Type> openGenericTypeCache
             = new ConcurrentDictionary<Type, Type>();
-        private static readonly Func<Type, Type> createOpenGenericType = CreateOpenGenericOf;
-        private static Type CreateOpenGenericOf(Type closedGenericType)
+        private static readonly Func<Type, Type> createOpenGenericTypeFunctionCache
+            = CreateOpenGenericType;
+        private static Type CreateOpenGenericType(Type closedGenericType)
         {
             return closedGenericType.GetGenericTypeDefinition();
         }
-        public static Type OpenGenericTypeOf(Type closedGenericType)
-            => openGenericTypeCache.GetOrAdd(closedGenericType, createOpenGenericType);
 
+        public static Type[] GenericTypeParameterListOf(Type closedGenericType)
+        {
+            return genericTypeParameterListCache.GetOrAdd(closedGenericType, genericTypeParameterListFunctionCache);
+        }
         private static readonly ConcurrentDictionary<Type, Type[]> genericTypeParameterListCache
             = new ConcurrentDictionary<Type, Type[]>();
-        private static readonly Func<Type, Type[]> genericTypeParameterList = CreateGenericTypeParameterListOf;
-        private static Type[] CreateGenericTypeParameterListOf(Type closedGenericType)
+        private static readonly Func<Type, Type[]> genericTypeParameterListFunctionCache
+            = CreateGenericTypeParameterList;
+        private static Type[] CreateGenericTypeParameterList(Type closedGenericType)
         {
             return closedGenericType.GetGenericArguments();
         }
-        public static Type[] GenericTypeParameterListOf(Type closedGenericType)
-            => genericTypeParameterListCache.GetOrAdd(closedGenericType, genericTypeParameterList);
 
-        private static readonly ConcurrentDictionary<Type, Type> arrayTypeCache
-            = new ConcurrentDictionary<Type, Type>();
-        private static readonly Func<Type, Type> createArray = CreateArrayOf;
-        private static Type CreateArrayOf(Type elementType)
+        public static Type ArrayTypeOf(Type elementType)
+        {
+            return arrayTypeCache.GetOrAdd(elementType, createArrayTypeFunctionCache);
+        }
+        private static readonly ConcurrentDictionary<Type, Type> arrayTypeCache = new ConcurrentDictionary<Type, Type>();
+        private static readonly Func<Type, Type> createArrayTypeFunctionCache = CreateArrayType;
+        private static Type CreateArrayType(Type elementType)
         {
             return elementType.MakeArrayType();
         }
-        public static Type ArrayTypeOf(Type elementType)
-            => arrayTypeCache.GetOrAdd(elementType, createArray);
 
+        public static Type EnumerableOf(Type elementType)
+        {
+            return enumerableTypeCache.GetOrAdd(elementType, createEnumerableFunctionCache);
+        }
         private static readonly ConcurrentDictionary<Type, Type> enumerableTypeCache
             = new ConcurrentDictionary<Type, Type>();
-        private static readonly Func<Type, Type> createEnumerable = CreateEnumerableOf;
-        private static Type CreateEnumerableOf(Type elementType)
+        private static readonly Func<Type, Type> createEnumerableFunctionCache = CreateEnumerable;
+        private static Type CreateEnumerable(Type elementType)
         {
             return typeof(IEnumerable<>).MakeGenericType(elementType);
         }
-        public static Type EnumerableOf(Type elementType)
-            => enumerableTypeCache.GetOrAdd(elementType, createEnumerable);
 
+        public static Type ReadOnlyListOf(Type elementType)
+        {
+            return readOnlyListTypeCache.GetOrAdd(elementType, createReadOnlyListFunctionCache);
+        }
         private static readonly ConcurrentDictionary<Type, Type> readOnlyListTypeCache
             = new ConcurrentDictionary<Type, Type>();
-        private static readonly Func<Type, Type> createReadOnlyList = CreateReadOnlyListOf;
-        private static Type CreateReadOnlyListOf(Type elementType)
+        private static readonly Func<Type, Type> createReadOnlyListFunctionCache = CreateReadOnlyList;
+        private static Type CreateReadOnlyList(Type elementType)
         {
             return typeof(IReadOnlyList<>).MakeGenericType(elementType);
         }
-        public static Type ReadOnlyListOf(Type elementType)
-            => readOnlyListTypeCache.GetOrAdd(elementType, createReadOnlyList);
+
+        public static Type ReadOnlyCollectionOf(Type elementType)
+        {
+            return readOnlyCollectionTypeCache.GetOrAdd(elementType, createReadOnlyCollectionTypeFunctionCache);
+        }
 
         private static readonly ConcurrentDictionary<Type, Type> readOnlyCollectionTypeCache
             = new ConcurrentDictionary<Type, Type>();
-        private static readonly Func<Type, Type> createReadOnlyCollection = CreateReadOnlyCollectionOf;
-        private static Type CreateReadOnlyCollectionOf(Type elementType)
+        private static readonly Func<Type, Type> createReadOnlyCollectionTypeFunctionCache
+            = CreateReadOnlyCollectionType;
+        private static Type CreateReadOnlyCollectionType(Type elementType)
         {
             return typeof(IReadOnlyCollection<>).MakeGenericType(elementType);
         }
-        public static Type ReadOnlyCollectionOf(Type elementType)
-            => readOnlyCollectionTypeCache.GetOrAdd(elementType, createReadOnlyCollection);
 
-        private readonly ConcurrentDictionary<Type, IActivation> localActivationCache;
-        private readonly ConcurrentDictionary<Type, IInfusion> localFieldInfusionCache;
-        private readonly ConcurrentDictionary<Type, IInfusion> localPropertyInfusionCache;
-        private readonly ConcurrentDictionary<Type, IInfusion> localMethodInfusionCache;
-
-        public TypeAnalysis()
+        private static readonly ConcurrentDictionary<Type, IActivation> activationCache
+            = new ConcurrentDictionary<Type, IActivation>();
+        public static IActivation GetActivation(Type type, Func<Type, IActivation> creation)
         {
-            localActivationCache = new ConcurrentDictionary<Type, IActivation>();
-            localFieldInfusionCache = new ConcurrentDictionary<Type, IInfusion>();
-            localPropertyInfusionCache = new ConcurrentDictionary<Type, IInfusion>();
-            localMethodInfusionCache = new ConcurrentDictionary<Type, IInfusion>();
+            return activationCache.GetOrAdd(type, creation);
         }
 
-        public TypeAnalysis(TypeAnalysis analysis)
+        private static readonly ConcurrentDictionary<Type, IInfusion> fieldInfusionCache
+            = new ConcurrentDictionary<Type, IInfusion>();
+        public static IInfusion GetFieldInfusion(Type type, Func<Type, IInfusion> creation)
         {
-            localActivationCache = new ConcurrentDictionary<Type, IActivation>(analysis.localActivationCache);
-            localFieldInfusionCache = new ConcurrentDictionary<Type, IInfusion>(analysis.localFieldInfusionCache);
-            localPropertyInfusionCache = new ConcurrentDictionary<Type, IInfusion>(analysis.localPropertyInfusionCache);
-            localMethodInfusionCache = new ConcurrentDictionary<Type, IInfusion>(analysis.localMethodInfusionCache);
+            return fieldInfusionCache.GetOrAdd(type, creation);
         }
 
-        public IActivation GetActivation(Type type, Func<Type, IActivation> creation)
+        private static readonly ConcurrentDictionary<Type, IInfusion> propertyInfusionCache
+            = new ConcurrentDictionary<Type, IInfusion>();
+        public static IInfusion GetPropertyInfusion(Type type, Func<Type, IInfusion> creation)
         {
-            return localActivationCache.GetOrAdd(type, creation);
+            return propertyInfusionCache.GetOrAdd(type, creation);
         }
 
-        public IInfusion GetFieldInfusion(Type type, Func<Type, IInfusion> creation)
+        private static readonly ConcurrentDictionary<Type, IInfusion> methodInfusionCache
+            = new ConcurrentDictionary<Type, IInfusion>();
+        public static IInfusion GetMethodInfusion(Type type, Func<Type, IInfusion> creation)
         {
-            return localFieldInfusionCache.GetOrAdd(type, creation);
-        }
-
-        public IInfusion GetPropertyInfusion(Type type, Func<Type, IInfusion> creation)
-        {
-            return localPropertyInfusionCache.GetOrAdd(type, creation);
-        }
-
-        public IInfusion GetMethodInfusion(Type type, Func<Type, IInfusion> creation)
-        {
-            return localMethodInfusionCache.GetOrAdd(type, creation);
+            return methodInfusionCache.GetOrAdd(type, creation);
         }
 
         [ThreadStatic]
-        private static Stack<Type>? circularDependencyChecker;
-
-        public void Validate(IEnumerable<IDescription> descriptionList, IEngine engine)
+        private static Stack<Type>? typeStack;
+        private static Stack<Type> TypeStack
         {
-            // ThreadStatic
-            if (circularDependencyChecker == null)
+            get
             {
-                circularDependencyChecker = new Stack<Type>();
-            }
+                if (typeStack == null)
+                {
+                    typeStack = new Stack<Type>();
+                }
 
-            foreach (var description in descriptionList)
-            {
-                circularDependencyChecker.Clear();
-                CheckCircularDependencyRecursively(description.ImplementedType, engine, circularDependencyChecker);
+                return typeStack;
             }
         }
-        private void CheckCircularDependencyRecursively(Type current, IEngine engine, Stack<Type> stack)
+
+        public static void Validate(IEnumerable<IDescription> descriptionList, IEngine engine)
+        {
+            foreach (var description in descriptionList)
+            {
+                TypeStack.Clear();
+                CheckCircularDependencyRecursively(description.ImplementedType, engine, TypeStack);
+            }
+        }
+        private static void CheckCircularDependencyRecursively(Type current, IEngine engine, Stack<Type> stack)
         {
             foreach (var stacked in stack)
             {
                 if (current == stacked)
                 {
-                    // TODO: throw original exception.
-                    throw new Exception($"Circular dependency detected!");
+                    throw new RagnarokCircularDependencyDetectedException(current, $"Circular dependency detected in {current}.");
                 }
             }
 
             stack.Push(current);
 
-            if (localActivationCache.TryGetValue(current, out var constructorInjection))
+            if (activationCache.TryGetValue(current, out var constructorInjection))
             {
                 var dependentTypeList
                     = constructorInjection.ArgumentList.Select(argument => argument.Type).Distinct();
                 foreach (var type in dependentTypeList)
                 {
-                    if (engine.Find(type, out var registration) && registration != null)
+                    if (engine.Find(type, out var registration))
                     {
                         CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
                     }
-
-                    CheckCircularDependencyRecursively(type, engine, stack);
                 }
             }
 
-            if (localMethodInfusionCache.TryGetValue(current, out var methodInjection))
+            if (methodInfusionCache.TryGetValue(current, out var methodInjection))
             {
                 foreach (var type in methodInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (engine.Find(type, out var registration) && registration != null)
+                    if (engine.Find(type, out var registration))
                     {
                         CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
                     }
                 }
             }
 
-            if (localFieldInfusionCache.TryGetValue(current, out var fieldInjection))
+            if (fieldInfusionCache.TryGetValue(current, out var fieldInjection))
             {
                 foreach (var type in fieldInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (engine.Find(type, out var registration) && registration != null)
+                    if (engine.Find(type, out var registration))
                     {
                         CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
                     }
                 }
             }
 
-            if (localPropertyInfusionCache.TryGetValue(current, out var propertyInjection))
+            if (propertyInfusionCache.TryGetValue(current, out var propertyInjection))
             {
                 foreach (var type in propertyInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (engine.Find(type, out var registration) && registration != null)
+                    if (engine.Find(type, out var registration))
                     {
                         CheckCircularDependencyRecursively(registration.ImplementedType, engine, stack);
                     }

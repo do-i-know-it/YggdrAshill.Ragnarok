@@ -11,41 +11,27 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly ISelector selector;
         private readonly ISolver solver;
-        private readonly TypeAnalysis analysis;
 
         public EngineContext(ISelector selector, ISolver solver)
-            : this(selector, solver, new TypeAnalysis())
-        {
-
-        }
-
-        internal EngineContext(EngineContext context)
-            : this(context.selector, context.solver, new TypeAnalysis(context.analysis))
-        {
-
-        }
-
-        private EngineContext(ISelector selector, ISolver solver, TypeAnalysis analysis)
         {
             this.selector = selector;
             this.solver = solver;
-            this.analysis = analysis;
 
-            activation = CreateActivation;
-            fieldInfusion = CreateFieldInfusion;
-            propertyInfusion = CreatePropertyInfusion;
-            methodInfusion = CreateMethodInfusion;
+            createActivationFunctionCache = CreateActivation;
+            createFieldInfusionFunctionCache = CreateFieldInfusion;
+            createPropertyInfusionFunctionCache = CreatePropertyInfusion;
+            createMethodInfusionFunctionCache = CreateMethodInfusion;
         }
 
-        private readonly Func<Type, IActivation> activation;
-        private readonly Func<Type, IInfusion> fieldInfusion;
-        private readonly Func<Type, IInfusion> propertyInfusion;
-        private readonly Func<Type, IInfusion> methodInfusion;
+        private readonly Func<Type, IActivation> createActivationFunctionCache;
+        private readonly Func<Type, IInfusion> createFieldInfusionFunctionCache;
+        private readonly Func<Type, IInfusion> createPropertyInfusionFunctionCache;
+        private readonly Func<Type, IInfusion> createMethodInfusionFunctionCache;
 
         /// <inheritdoc/>
         public IActivation GetActivation(Type type)
         {
-            return analysis.GetActivation(type, activation);
+            return TypeAnalysis.GetActivation(type, createActivationFunctionCache);
         }
         private IActivation CreateActivation(Type type)
         {
@@ -67,7 +53,7 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public IInfusion GetFieldInfusion(Type type)
         {
-            return analysis.GetFieldInfusion(type, fieldInfusion);
+            return TypeAnalysis.GetFieldInfusion(type, createFieldInfusionFunctionCache);
         }
         private IInfusion CreateFieldInfusion(Type type)
         {
@@ -79,7 +65,7 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public IInfusion GetPropertyInfusion(Type type)
         {
-            return analysis.GetPropertyInfusion(type, propertyInfusion);
+            return TypeAnalysis.GetPropertyInfusion(type, createPropertyInfusionFunctionCache);
         }
         private IInfusion CreatePropertyInfusion(Type type)
         {
@@ -91,7 +77,7 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public IInfusion GetMethodInfusion(Type type)
         {
-            return analysis.GetMethodInfusion(type, methodInfusion);
+            return TypeAnalysis.GetMethodInfusion(type, createMethodInfusionFunctionCache);
         }
         private IInfusion CreateMethodInfusion(Type type)
         {
@@ -107,7 +93,7 @@ namespace YggdrAshill.Ragnarok
 
             var engine = factory.Create();
 
-            analysis.Validate(descriptionList, engine);
+            TypeAnalysis.Validate(descriptionList, engine);
 
             return engine;
         }

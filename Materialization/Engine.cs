@@ -126,7 +126,8 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IEngine));
             }
 
-            return new EngineContext(context);
+            // TODO: create context to detect circular dependency in global scope.
+            return context;
         }
 
         public void Dispose()
