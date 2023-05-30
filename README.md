@@ -1,4 +1,4 @@
-# YggdrAshill.Ragnarok: a lifecycle framework
+# YggdrAshill.Ragnarok: a lifecycle management framework
 
 ![GitHub](https://img.shields.io/github/license/do-i-know-it/YggdrAshill.Ragnarok)
 ![GitHub Release Date](https://img.shields.io/github/release-date/do-i-know-it/YggdrAshill.Ragnarok)
