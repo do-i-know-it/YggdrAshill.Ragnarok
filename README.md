@@ -50,8 +50,8 @@ interface IReceiver
 
 class Service
 {
-    private readonly ISender sender;
-    private readonly IReciever receiver;
+    readonly ISender sender;
+    readonly IReciever receiver;
 
     [Inject]
     Service(ISender sender, IReceiver receiver)
@@ -73,10 +73,10 @@ using implementations as below:
 ```cs
 class ConsoleSender : ISender
 {
-    private readonly string announcement;
+    readonly string announcement;
 
     [Inject]
-    private ConsoleSender(string announcement)
+    ConsoleSender(string announcement)
     {
         this.announcement = announcement;
     }
