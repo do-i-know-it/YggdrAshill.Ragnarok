@@ -9,10 +9,10 @@ namespace YggdrAshill.Ragnarok
         ICompilation
     {
         /// <summary>
-        /// Adds a dependency.
+        /// Adds <see cref="IComposition"/> to resolve dependencies.
         /// </summary>
         /// <param name="composition">
-        /// <see cref="IComposition"/> to define a dependency.
+        /// <see cref="IComposition"/> to resolve.
         /// </param>
         void Register(IComposition composition);
 

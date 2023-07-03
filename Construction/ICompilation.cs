@@ -37,7 +37,7 @@ namespace YggdrAshill.Ragnarok
         IInjection GetFieldInjection(Type type, IReadOnlyList<IParameter> parameterList);
 
         /// <summary>
-        /// Obtains how to inject dependencies into fields.
+        /// Obtains how to inject dependencies into properties.
         /// </summary>
         /// <param name="type">
         /// <see cref="Type"/> to inject.
@@ -51,7 +51,7 @@ namespace YggdrAshill.Ragnarok
         IInjection GetPropertyInjection(Type type, IReadOnlyList<IParameter> parameterList);
 
         /// <summary>
-        /// Obtains how to inject dependencies into fields.
+        /// Obtains how to inject dependencies into methods.
         /// </summary>
         /// <param name="type">
         /// <see cref="Type"/> to inject.
