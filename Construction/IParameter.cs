@@ -3,7 +3,7 @@ using System;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Defines parameter to inject from external.
+    /// Defines parameter to inject a dependency into.
     /// </summary>
     public interface IParameter
     {
