@@ -13,7 +13,7 @@ namespace YggdrAshill.Ragnarok
         public string Name { get; }
 
         /// <summary>
-        /// <see cref="Type"/> of <see cref="Argument"/>.
+        /// Type of <see cref="Argument"/>.
         /// </summary>
         public Type Type { get; }
 
