@@ -22,7 +22,7 @@ namespace YggdrAshill.Ragnarok
         public IObjectResolver Resolver => resolverBuilder;
 
         /// <inheritdoc/>
-        public ICompilationV2 Compilation => resolverBuilder;
+        public ICompilationV2 Compilation => resolverBuilder.Compilation;
 
         /// <inheritdoc/>
         public IRegistrationV2 Registration => resolverBuilder;
