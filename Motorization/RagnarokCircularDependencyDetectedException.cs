@@ -7,6 +7,12 @@ namespace YggdrAshill.Ragnarok
     [Serializable]
     public class RagnarokCircularDependencyDetectedException : RagnarokException
     {
+        public RagnarokCircularDependencyDetectedException(Type invalidType) :
+            base(invalidType, $"Circular dependency detected in {invalidType}.")
+        {
+
+        }
+
         public RagnarokCircularDependencyDetectedException(Type invalidType, string message)
             : base(invalidType, message)
         {
