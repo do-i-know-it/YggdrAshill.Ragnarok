@@ -2,15 +2,16 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal static class ObjectResolverExtension
+    // TODO: add document comments.
+    public static class ObjectResolverExtension
     {
         public static object Resolve(this IObjectResolver resolver, IEnumerable<IParameter> parameterList, Argument argument)
         {
             foreach (var parameter in parameterList)
             {
-                if (parameter.Type == argument.Type && parameter.Name == argument.Name)
+                if (parameter.CanResolve(argument, out var instance))
                 {
-                    return parameter.Instance;
+                    return instance;
                 }
             }
 
