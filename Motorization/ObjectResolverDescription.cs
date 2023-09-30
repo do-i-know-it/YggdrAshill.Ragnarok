@@ -12,7 +12,7 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public Type ImplementedType { get; } = typeof(IResolver);
+        public Type ImplementedType { get; } = typeof(IObjectResolver);
         public IReadOnlyList<Type> AssignedTypeList { get; } = Array.Empty<Type>();
         public Lifetime Lifetime => Lifetime.Temporal;
         public Ownership Ownership => Ownership.External;
