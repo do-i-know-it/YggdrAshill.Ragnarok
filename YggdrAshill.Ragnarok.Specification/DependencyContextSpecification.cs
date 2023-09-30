@@ -522,6 +522,45 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(SolverList))]
+        public void ShouldRegisterResolvedInstallation(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            context.Register<NoDependencyClassInstallation>();
+
+            using var scope = context.CreateScope();
+
+            Assert.That(() =>
+            {
+                scope.Resolver.Resolve<NoDependencyClass>();
+            }, Throws.Nothing);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveFromSubContainer(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            context.RegisterFromSubContainer<MultipleDependencyService>(container =>
+            {
+                container.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsSelf();
+                container.Register<MultipleDependencyService>(Lifetime.Global);
+            });
+
+            using var scope = context.CreateScope();
+
+            Assert.That(() =>
+            {
+                scope.Resolver.Resolve<MultipleDependencyService>();
+            }, Throws.Nothing);
+
+            Assert.That(() =>
+            {
+                scope.Resolver.Resolve<MultipleInterfaceClass>();
+            }, Throws.TypeOf<RagnarokNotRegisteredException>());
+        }
+
+        [TestCaseSource(nameof(SolverList))]
         public void ShouldCreateScopeWithoutCircularDependency(ISolver solver)
         {
             var parentContext = new DependencyContext(solver);

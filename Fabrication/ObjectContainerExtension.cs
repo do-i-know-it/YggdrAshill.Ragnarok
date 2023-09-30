@@ -88,6 +88,28 @@ namespace YggdrAshill.Ragnarok
             container.Register(installation);
         }
 
+        public static void RegisterFromSubContainer<T>(this IObjectContainer container, params IInstallation[] installationList)
+            where T : notnull
+        {
+            var statement = new SubContainerStatement(typeof(T), container, installationList);
+            container.Registration.Register(statement);
+        }
+
+        public static void RegisterFromSubContainer<T>(this IObjectContainer container, Action<IObjectContainer> installation)
+            where T : notnull
+        {
+            container.RegisterFromSubContainer<T>(new Installation(installation));
+        }
+
+        public static void RegisterFromSubContainer<TInstance, TInstallation>(this IObjectContainer container)
+            where TInstance : notnull
+            where TInstallation : IInstallation
+        {
+            var installation = container.Resolver.Resolve<TInstallation>();
+
+            container.RegisterFromSubContainer<TInstance>(installation);
+        }
+
         public static IObjectScope CreateScope(this IObjectContainer container, params IInstallation[] installationList)
         {
             return container.CreateContext().Install(installationList).CreateScope();
@@ -96,6 +118,14 @@ namespace YggdrAshill.Ragnarok
         public static IObjectScope CreateScope(this IObjectContainer container, Action<IObjectContainer> installation)
         {
             return container.CreateScope(new Installation(installation));
+        }
+
+        public static IObjectScope CreateScope<TInstallation>(this IObjectContainer container)
+            where TInstallation : IInstallation
+        {
+            var installation = container.Resolver.Resolve<TInstallation>();
+
+            return container.CreateScope(installation);
         }
 
         public static void Register(this IObjectContainer container, Action<IObjectResolver> operation)
