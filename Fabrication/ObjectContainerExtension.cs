@@ -128,6 +128,11 @@ namespace YggdrAshill.Ragnarok
             return container.CreateScope(installation);
         }
 
+        public static bool IsRegistered(this IObjectContainer container,Func<IStatement, bool> condition)
+        {
+            return container.Registration.Count(new StatementSelection(condition)) > 0;
+        }
+
         public static void Register(this IObjectContainer container, Action<IObjectResolver> operation)
         {
             container.Registration.Register(new Operation(operation));

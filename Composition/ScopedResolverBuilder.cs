@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace YggdrAshill.Ragnarok.Composition
 {
@@ -81,6 +82,15 @@ namespace YggdrAshill.Ragnarok.Composition
             }
 
             return activation.Activate(instanceList);
+        }
+
+        /// <inheritdoc/>
+        public int StatementCount => statementList.Count;
+
+        /// <inheritdoc/>
+        public int Count(IStatementSelection selection)
+        {
+            return statementList.Where(selection.IsSatisfied).Count();
         }
 
         /// <inheritdoc/>
