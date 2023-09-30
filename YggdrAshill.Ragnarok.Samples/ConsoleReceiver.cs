@@ -2,8 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Samples
 {
-    internal sealed class ConsoleReceiver :
-        IReceiver
+    internal sealed class ConsoleReceiver : IReceiver
     {
         [InjectField] private string? header;
 

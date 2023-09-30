@@ -2,8 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Samples
 {
-    internal sealed class Service :
-        IService
+    internal sealed class Service : IService
     {
         private readonly ISender sender;
         private readonly IFormatter formatter;
