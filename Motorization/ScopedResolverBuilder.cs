@@ -11,10 +11,34 @@ namespace YggdrAshill.Ragnarok
         private readonly Compilation compilation;
         private readonly IScopedResolverV2? parent;
 
+        /// <summary>
+        /// Creates <see cref="ScopedResolverBuilder"/> for child <see cref="IScopedResolverV2"/>.
+        /// </summary>
+        /// <param name="compilation">
+        /// <see cref="Compilation"/> for <see cref="ScopedResolverBuilder"/>.
+        /// </param>
+        /// <param name="parent">
+        /// <see cref="IScopedResolverV2"/> for <see cref="ScopedResolverBuilder"/>.
+        /// </param>
         public ScopedResolverBuilder(Compilation compilation, IScopedResolverV2? parent)
         {
             this.compilation = compilation;
             this.parent = parent;
+        }
+
+        /// <summary>
+        /// Creates <see cref="ScopedResolverBuilder"/> for root <see cref="IScopedResolverV2"/>.
+        /// </summary>
+        /// <param name="selector">
+        /// <see cref="ISelector"/> for <see cref="ScopedResolverBuilder"/>.
+        /// </param>
+        /// <param name="solver">
+        /// <see cref="ISolver"/> for <see cref="ScopedResolverBuilder"/>.
+        /// </param>
+        public ScopedResolverBuilder(ISelector selector, ISolver solver)
+            : this(new Compilation(selector, solver), null)
+        {
+
         }
 
         private readonly List<IDescriptionV2> descriptionList = new List<IDescriptionV2>()
@@ -25,6 +49,7 @@ namespace YggdrAshill.Ragnarok
         private readonly List<IOperation> operationList = new List<IOperation>();
         private readonly List<IDisposable> disposableList = new List<IDisposable>();
 
+        /// <inheritdoc/>
         public ICompilationV2 Compilation => compilation;
 
         /// <inheritdoc/>
@@ -90,7 +115,6 @@ namespace YggdrAshill.Ragnarok
 
             disposableList.Add(disposable);
         }
-
 
         /// <inheritdoc/>
         public IScopedResolverBuilder CreateBuilder()
