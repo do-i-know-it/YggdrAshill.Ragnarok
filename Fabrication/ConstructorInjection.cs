@@ -4,15 +4,15 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Fabrication
 {
     // TODO: add document comments.
-    public sealed class ConstructorDependencyInjection : IConstructorDependencyInjection
+    public sealed class ConstructorInjection : IConstructorInjection
     {
         private readonly ICompilation compilation;
-        private readonly InstanceDependencyInjection injection;
+        private readonly InstanceInjection injection;
 
-        public ConstructorDependencyInjection(ICompilation compilation, Type implementedType)
+        public ConstructorInjection(ICompilation compilation, Type implementedType)
         {
             this.compilation = compilation;
-            injection = new InstanceDependencyInjection(compilation, implementedType);
+            injection = new InstanceInjection(compilation, implementedType);
         }
 
         private List<IParameter>? parameterList = new List<IParameter>();
@@ -51,22 +51,37 @@ namespace YggdrAshill.Ragnarok.Fabrication
             return injection.AsImplementedInterfaces();
         }
 
-        public IMethodDependencyInjection WithMethodArgument(IParameter parameter)
+        public IMethodInjection WithMethodArgument(IParameter parameter)
         {
             return injection.WithMethodArgument(parameter);
         }
 
-        public IPropertyDependencyInjection WithProperty(IParameter parameter)
+        public IMethodInjection WithMethodInjection()
+        {
+            return injection.WithMethodInjection();
+        }
+
+        public IPropertyInjection WithProperty(IParameter parameter)
         {
             return injection.WithProperty(parameter);
         }
 
-        public IInstanceDependencyInjection WithField(IParameter parameter)
+        public IPropertyInjection WithPropertyInjection()
+        {
+            return injection.WithPropertyInjection();
+        }
+
+        public IFieldInjection WithField(IParameter parameter)
         {
             return injection.WithField(parameter);
         }
 
-        public IConstructorDependencyInjection WithArgument(IParameter parameter)
+        public IFieldInjection WithFieldInjection()
+        {
+            return injection.WithFieldInjection();
+        }
+
+        public IConstructorInjection WithArgument(IParameter parameter)
         {
             if (parameterList == null)
             {

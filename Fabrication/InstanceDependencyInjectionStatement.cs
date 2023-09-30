@@ -6,7 +6,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
     // TODO: add document comments.
     public sealed class InstanceDependencyInjectionStatement : IStatement
     {
-        private readonly InstanceDependencyInjection injection;
+        private readonly InstanceInjection injection;
         private readonly IInstantiation instantiation;
 
         public Lifetime Lifetime { get; }
@@ -16,13 +16,13 @@ namespace YggdrAshill.Ragnarok.Fabrication
             ICompilation compilation,
             Type implementedType, Lifetime lifetime, Ownership ownership, IInstantiation instantiation)
         {
-            injection = new InstanceDependencyInjection(compilation, implementedType);
+            injection = new InstanceInjection(compilation, implementedType);
             Lifetime = lifetime;
             Ownership = ownership;
             this.instantiation = instantiation;
         }
 
-        public IInstanceDependencyInjection Injection => injection;
+        public IInstanceInjection Injection => injection;
         public Type ImplementedType => injection.ImplementedType;
         public IReadOnlyList<Type> AssignedTypeList => injection.AssignedTypeList;
         public IInstantiation Instantiation

@@ -3,9 +3,9 @@ using System;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public static class MethodDependencyInjectionExtension
+    public static class MethodInjectionExtension
     {
-        public static IMethodDependencyInjection WithMethodArgument<T>(this IMethodDependencyInjection injection, string name, T instance)
+        public static IMethodInjection WithMethodArgument<T>(this IMethodInjection injection, string name, T instance)
             where T : notnull
         {
             var parameter = new Parameter<T>(name, instance);
@@ -13,7 +13,7 @@ namespace YggdrAshill.Ragnarok
             return injection.WithMethodArgument(parameter);
         }
 
-        public static IMethodDependencyInjection WithMethodArgument<T>(this IMethodDependencyInjection injection, string name, Func<T> instantiation)
+        public static IMethodInjection WithMethodArgument<T>(this IMethodInjection injection, string name, Func<T> instantiation)
             where T : notnull
         {
             var parameter = new Parameter<T>(name, instantiation);

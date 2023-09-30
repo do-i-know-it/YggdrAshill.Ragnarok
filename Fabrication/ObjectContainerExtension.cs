@@ -6,12 +6,7 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public static class ObjectContainerExtension
     {
-        public static void Register(this IObjectContainer container, Action<IObjectResolver> operation)
-        {
-            container.Registration.Register(new Operation(operation));
-        }
-
-        public static IConstructorDependencyInjection Register<T>(this IObjectContainer container, Lifetime lifetime)
+        public static IConstructorInjection Register<T>(this IObjectContainer container, Lifetime lifetime)
             where T : notnull
         {
             var implementedType = typeof(T);
@@ -21,14 +16,14 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentException($"{implementedType} is not instantiatable.");
             }
 
-            var statement = new ConstructorDependencyInjectionStatement(container.Compilation, implementedType, lifetime);
+            var statement = new ConstructorInjectionStatement(container.Compilation, implementedType, lifetime);
 
             container.Registration.Register(statement);
 
             return statement.Injection;
         }
 
-        public static IConstructorDependencyInjection Register<TInterface, TImplementation>(this IObjectContainer container, Lifetime lifetime)
+        public static IConstructorInjection Register<TInterface, TImplementation>(this IObjectContainer container, Lifetime lifetime)
             where TInterface : notnull
             where TImplementation : TInterface
         {
@@ -51,7 +46,7 @@ namespace YggdrAshill.Ragnarok
             return statement.Assignment;
         }
 
-        public static IInstanceDependencyInjection Register<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
+        public static IInstanceInjection Register<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
             where T : notnull
         {
             var statement
@@ -62,7 +57,7 @@ namespace YggdrAshill.Ragnarok
             return statement.Injection;
         }
 
-        public static IInstanceDependencyInjection Register<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
+        public static IInstanceInjection Register<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
             where TInterface : notnull
             where TImplementation : TInterface
         {
@@ -71,6 +66,41 @@ namespace YggdrAshill.Ragnarok
             instanceInjection.As<TInterface>();
 
             return instanceInjection;
+        }
+
+        public static void Register(this IObjectContainer container, params IInstallation[] installationList)
+        {
+            foreach (var installation in installationList)
+            {
+                installation.Install(container);
+            }
+        }
+
+        public static void Register(this IObjectContainer container, Action<IObjectContainer> installation)
+        {
+            container.Register(new Installation(installation));
+        }
+
+        public static void Register<TInstallation>(this IObjectContainer container)
+            where TInstallation : IInstallation
+        {
+            var installation = container.Resolver.Resolve<TInstallation>();
+            container.Register(installation);
+        }
+
+        public static IObjectScope CreateScope(this IObjectContainer container, params IInstallation[] installationList)
+        {
+            return container.CreateContext().Install(installationList).CreateScope();
+        }
+
+        public static IObjectScope CreateScope(this IObjectContainer container, Action<IObjectContainer> installation)
+        {
+            return container.CreateScope(new Installation(installation));
+        }
+
+        public static void Register(this IObjectContainer container, Action<IObjectResolver> operation)
+        {
+            container.Registration.Register(new Operation(operation));
         }
     }
 }

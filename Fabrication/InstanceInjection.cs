@@ -4,12 +4,12 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Fabrication
 {
     // TODO: add document comments.
-    public sealed class InstanceDependencyInjection : IInstanceDependencyInjection
+    public sealed class InstanceInjection : IInstanceInjection
     {
         private readonly ICompilation compilation;
         private readonly TypeAssignment typeAssignment;
 
-        public InstanceDependencyInjection(ICompilation compilation, Type implementedType)
+        public InstanceInjection(ICompilation compilation, Type implementedType)
         {
             this.compilation = compilation;
             typeAssignment = new TypeAssignment(implementedType);
@@ -112,7 +112,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
             return typeAssignment.AsImplementedInterfaces();
         }
 
-        public IMethodDependencyInjection WithMethodArgument(IParameter parameter)
+        public IMethodInjection WithMethodArgument(IParameter parameter)
         {
             if (methodParameterList == null)
             {
@@ -126,7 +126,18 @@ namespace YggdrAshill.Ragnarok.Fabrication
 
             return this;
         }
-        public IPropertyDependencyInjection WithProperty(IParameter parameter)
+
+        public IMethodInjection WithMethodInjection()
+        {
+            if (methodParameterList == null)
+            {
+                methodParameterList = new List<IParameter>();
+            }
+
+            return this;
+        }
+
+        public IPropertyInjection WithProperty(IParameter parameter)
         {
             if (propertyParameterList == null)
             {
@@ -140,7 +151,18 @@ namespace YggdrAshill.Ragnarok.Fabrication
 
             return this;
         }
-        public IInstanceDependencyInjection WithField(IParameter parameter)
+
+        public IPropertyInjection WithPropertyInjection()
+        {
+            if (propertyParameterList == null)
+            {
+                propertyParameterList = new List<IParameter>();
+            }
+
+            return this;
+        }
+
+        public IFieldInjection WithField(IParameter parameter)
         {
             if (fieldParameterList == null)
             {
@@ -150,6 +172,16 @@ namespace YggdrAshill.Ragnarok.Fabrication
             if (!fieldParameterList.Contains(parameter))
             {
                 fieldParameterList.Add(parameter);
+            }
+
+            return this;
+        }
+
+        public IFieldInjection WithFieldInjection()
+        {
+            if (fieldParameterList == null)
+            {
+                fieldParameterList = new List<IParameter>();
             }
 
             return this;
