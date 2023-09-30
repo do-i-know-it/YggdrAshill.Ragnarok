@@ -5,13 +5,12 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Implementation <see cref="ISolver"/> with Reflection.
     /// </summary>
-    public sealed class ReflectionSolver :
-        ISolver
+    public sealed class ReflectionSolver : ISolver
     {
         /// <summary>
         /// Singleton instance of <see cref="ReflectionSolver"/>.
         /// </summary>
-        public static ReflectionSolver Instance { get; } = new ReflectionSolver();
+        public static ReflectionSolver Instance { get; } = new();
 
         private ReflectionSolver()
         {

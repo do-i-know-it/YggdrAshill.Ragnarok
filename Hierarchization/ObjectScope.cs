@@ -1,6 +1,6 @@
 using System;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Hierarchization
 {
     internal sealed class ObjectScope : IObjectScope
     {

@@ -1,3 +1,5 @@
+using YggdrAshill.Ragnarok.Hierarchization;
+
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>

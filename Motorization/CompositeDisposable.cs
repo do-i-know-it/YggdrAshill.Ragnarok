@@ -5,7 +5,7 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class CompositeDisposable : IDisposable
     {
-        private readonly Stack<IDisposable> disposableStack = new Stack<IDisposable>();
+        private readonly Stack<IDisposable> disposableStack = new();
 
         public void Dispose()
         {

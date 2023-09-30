@@ -3,8 +3,7 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ReflectionActivation :
-        IActivation
+    internal sealed class ReflectionActivation : IActivation
     {
         private readonly ConstructorInjection injection;
 

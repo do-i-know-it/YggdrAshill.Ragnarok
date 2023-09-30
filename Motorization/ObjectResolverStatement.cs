@@ -5,7 +5,7 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class ObjectResolverStatement : IStatement, IInstantiation
     {
-        public static ObjectResolverStatement Instance { get; } = new ObjectResolverStatement();
+        public static ObjectResolverStatement Instance { get; } = new();
 
         private ObjectResolverStatement()
         {

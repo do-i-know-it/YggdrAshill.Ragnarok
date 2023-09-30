@@ -5,15 +5,14 @@ using System.Linq.Expressions;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="ISolver"/> with expression.
+    /// Implementation of <see cref="ISolver"/> with <see cref="Expression"/>.
     /// </summary>
-    public sealed class ExpressionSolver :
-        ISolver
+    public sealed class ExpressionSolver : ISolver
     {
         /// <summary>
         /// Singleton instance of <see cref="ExpressionSolver"/>.
         /// </summary>
-        public static ExpressionSolver Instance { get; } = new ExpressionSolver();
+        public static ExpressionSolver Instance { get; } = new();
 
         private ExpressionSolver()
         {

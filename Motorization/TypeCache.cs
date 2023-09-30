@@ -10,7 +10,7 @@ namespace YggdrAshill.Ragnarok
         {
             return openGenericTypeCache.GetOrAdd(closedGenericType, createOpenGenericType);
         }
-        private static readonly ConcurrentDictionary<Type, Type> openGenericTypeCache = new ConcurrentDictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> openGenericTypeCache = new();
         private static readonly Func<Type, Type> createOpenGenericType = CreateOpenGenericType;
         private static Type CreateOpenGenericType(Type closedGenericType)
         {
@@ -21,8 +21,7 @@ namespace YggdrAshill.Ragnarok
         {
             return genericTypeParameterListCache.GetOrAdd(closedGenericType, createGenericTypeParameterList);
         }
-        private static readonly ConcurrentDictionary<Type, Type[]> genericTypeParameterListCache
-            = new ConcurrentDictionary<Type, Type[]>();
+        private static readonly ConcurrentDictionary<Type, Type[]> genericTypeParameterListCache = new();
         private static readonly Func<Type, Type[]> createGenericTypeParameterList = CreateGenericTypeParameterList;
         private static Type[] CreateGenericTypeParameterList(Type closedGenericType)
         {
@@ -33,7 +32,7 @@ namespace YggdrAshill.Ragnarok
         {
             return arrayTypeCache.GetOrAdd(elementType, createArrayType);
         }
-        private static readonly ConcurrentDictionary<Type, Type> arrayTypeCache = new ConcurrentDictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> arrayTypeCache = new();
         private static readonly Func<Type, Type> createArrayType = CreateArrayType;
         private static Type CreateArrayType(Type elementType)
         {
@@ -44,7 +43,7 @@ namespace YggdrAshill.Ragnarok
         {
             return enumerableTypeCache.GetOrAdd(elementType, createEnumerable);
         }
-        private static readonly ConcurrentDictionary<Type, Type> enumerableTypeCache = new ConcurrentDictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> enumerableTypeCache = new();
         private static readonly Func<Type, Type> createEnumerable = CreateEnumerable;
         private static Type CreateEnumerable(Type elementType)
         {
@@ -55,7 +54,7 @@ namespace YggdrAshill.Ragnarok
         {
             return readOnlyListTypeCache.GetOrAdd(elementType, createReadOnlyListFunctionCache);
         }
-        private static readonly ConcurrentDictionary<Type, Type> readOnlyListTypeCache = new ConcurrentDictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> readOnlyListTypeCache = new();
         private static readonly Func<Type, Type> createReadOnlyListFunctionCache = CreateReadOnlyList;
         private static Type CreateReadOnlyList(Type elementType)
         {
@@ -66,7 +65,7 @@ namespace YggdrAshill.Ragnarok
         {
             return readOnlyCollectionTypeCache.GetOrAdd(elementType, createReadOnlyCollectionType);
         }
-        private static readonly ConcurrentDictionary<Type, Type> readOnlyCollectionTypeCache = new ConcurrentDictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> readOnlyCollectionTypeCache = new();
         private static readonly Func<Type, Type> createReadOnlyCollectionType = CreateReadOnlyCollectionType;
         private static Type CreateReadOnlyCollectionType(Type elementType)
         {

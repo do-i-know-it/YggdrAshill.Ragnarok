@@ -1,5 +1,5 @@
-using System;
 using YggdrAshill.Ragnarok.Fabrication;
+using System;
 
 namespace YggdrAshill.Ragnarok
 {

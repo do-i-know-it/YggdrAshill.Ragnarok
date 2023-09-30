@@ -7,25 +7,23 @@ using System.Reflection;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="ISelector"/> with annotation.
+    /// Implementation of <see cref="ISelector"/> finding annotation.
     /// </summary>
-    public sealed class AnnotationSelector :
-        ISelector
+    public sealed class AnnotationSelector : ISelector
     {
         /// <summary>
         /// Singleton of <see cref="AnnotationSelector"/>.
         /// </summary>
-        public static AnnotationSelector Instance { get; } = new AnnotationSelector();
+        public static AnnotationSelector Instance { get; } = new();
 
         private AnnotationSelector()
         {
             createServiceBundleType = CreateServiceBundleTypeOf;
         }
 
-        private readonly ConcurrentDictionary<Type, Type> serviceBundleTypeCache
-            = new ConcurrentDictionary<Type, Type>();
+        private readonly ConcurrentDictionary<Type, Type> serviceBundleTypeCache = new();
         private readonly Func<Type, Type> createServiceBundleType;
-        private Type CreateServiceBundleTypeOf(Type elementType)
+        private static Type CreateServiceBundleTypeOf(Type elementType)
         {
             return typeof(ServiceBundle<>).MakeGenericType(elementType);
         }

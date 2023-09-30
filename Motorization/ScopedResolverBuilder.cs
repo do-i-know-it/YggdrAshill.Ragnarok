@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="IScopedResolverContext"/>.
+    /// Implementation of <see cref="IScopedResolverBuilder"/>.
     /// </summary>
     public sealed class ScopedResolverBuilder : IScopedResolverBuilder
     {
@@ -41,13 +41,13 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        private readonly List<IStatement> statementList = new List<IStatement>()
+        private readonly List<IStatement> statementList = new()
         {
             ObjectResolverStatement.Instance
         };
 
-        private readonly List<IOperation> operationList = new List<IOperation>();
-        private readonly List<IDisposable> disposableList = new List<IDisposable>();
+        private readonly List<IOperation> operationList = new();
+        private readonly List<IDisposable> disposableList = new();
 
         /// <inheritdoc/>
         public ICompilation Compilation => compilation;

@@ -3,8 +3,7 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ReflectionFieldInfusion :
-        IInfusion
+    internal sealed class ReflectionFieldInfusion : IInfusion
     {
         private readonly FieldInjection injection;
 

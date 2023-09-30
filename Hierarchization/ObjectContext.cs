@@ -1,4 +1,4 @@
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Hierarchization
 {
     /// <summary>
     /// Implementation of <see cref="IObjectContext"/> using <see cref="IScopedResolver"/> and <see cref="IScopedResolverBuilder"/>.

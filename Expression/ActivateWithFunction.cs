@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ActivateWithFunction :
-        IActivation
+    internal sealed class ActivateWithFunction : IActivation
     {
         private readonly Func<object[], object> onActivated;
 

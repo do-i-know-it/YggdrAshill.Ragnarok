@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InfuseWithAction :
-        IInfusion
+    internal sealed class InfuseWithAction : IInfusion
     {
         private readonly Action<object, object[]> onInfused;
         public IReadOnlyList<Argument> ArgumentList { get; }

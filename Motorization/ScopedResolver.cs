@@ -18,11 +18,9 @@ namespace YggdrAshill.Ragnarok
             this.parent = parent;
         }
 
-        private readonly ConcurrentDictionary<Type, IDescription> registrationCache
-            = new ConcurrentDictionary<Type, IDescription>();
-        private readonly ConcurrentDictionary<IDescription, object> instanceCache
-            = new ConcurrentDictionary<IDescription, object>();
-        private readonly CompositeDisposable compositeDisposable = new CompositeDisposable();
+        private readonly ConcurrentDictionary<Type, IDescription> registrationCache = new();
+        private readonly ConcurrentDictionary<IDescription, object> instanceCache = new();
+        private readonly CompositeDisposable compositeDisposable = new();
 
         private bool isDisposed;
 

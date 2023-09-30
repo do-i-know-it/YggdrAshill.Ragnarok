@@ -7,29 +7,25 @@ namespace YggdrAshill.Ragnarok
 {
     internal static class TypeAnalysis
     {
-        private static readonly ConcurrentDictionary<Type, IActivation> activationCache
-            = new ConcurrentDictionary<Type, IActivation>();
+        private static readonly ConcurrentDictionary<Type, IActivation> activationCache = new();
         public static IActivation GetActivation(Type type, Func<Type, IActivation> creation)
         {
             return activationCache.GetOrAdd(type, creation);
         }
 
-        private static readonly ConcurrentDictionary<Type, IInfusion> fieldInfusionCache
-            = new ConcurrentDictionary<Type, IInfusion>();
+        private static readonly ConcurrentDictionary<Type, IInfusion> fieldInfusionCache = new();
         public static IInfusion GetFieldInfusion(Type type, Func<Type, IInfusion> creation)
         {
             return fieldInfusionCache.GetOrAdd(type, creation);
         }
 
-        private static readonly ConcurrentDictionary<Type, IInfusion> propertyInfusionCache
-            = new ConcurrentDictionary<Type, IInfusion>();
+        private static readonly ConcurrentDictionary<Type, IInfusion> propertyInfusionCache = new();
         public static IInfusion GetPropertyInfusion(Type type, Func<Type, IInfusion> creation)
         {
             return propertyInfusionCache.GetOrAdd(type, creation);
         }
 
-        private static readonly ConcurrentDictionary<Type, IInfusion> methodInfusionCache
-            = new ConcurrentDictionary<Type, IInfusion>();
+        private static readonly ConcurrentDictionary<Type, IInfusion> methodInfusionCache = new();
         public static IInfusion GetMethodInfusion(Type type, Func<Type, IInfusion> creation)
         {
             return methodInfusionCache.GetOrAdd(type, creation);
