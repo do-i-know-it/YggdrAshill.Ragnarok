@@ -11,7 +11,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Construction\Construction.csproj" />
       <ProjectReference Include="..\Fabrication\Fabrication.csproj" />
-      <ProjectReference Include="..\Motorization\Motorization.csproj" />
+      <ProjectReference Include="..\Composition\Composition.csproj" />
     </ItemGroup>
 
 </Project>

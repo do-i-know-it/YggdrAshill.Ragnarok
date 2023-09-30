@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
-        <AssemblyName>YggdrAshill.Ragnarok.Motorization</AssemblyName>
+        <AssemblyName>YggdrAshill.Ragnarok.Composition</AssemblyName>
         <RootNamespace>YggdrAshill.Ragnarok</RootNamespace>
         <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
