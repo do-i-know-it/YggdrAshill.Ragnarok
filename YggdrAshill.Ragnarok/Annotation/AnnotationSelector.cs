@@ -56,7 +56,7 @@ namespace YggdrAshill.Ragnarok
                 {
                     if (injectedConstructor != null)
                     {
-                        throw new RagnarokMultipleAnnotationFoundException(type, $"Multiple injectable constructors of {type} found.");
+                        throw new RagnarokAlreadyAnnotatedException(type, $"Multiple injectable constructors of {type} found.");
                     }
 
                     injectedConstructor = constructorInfo;
@@ -86,7 +86,7 @@ namespace YggdrAshill.Ragnarok
                 return new ConstructorInjection(type, constructorHavingMaxParameterCount);
             }
 
-            throw new RagnarokAnnotationNotFoundException(type, $"Injectable constructor of {type} not found.");
+            throw new RagnarokNotAnnotatedException(type, $"Injectable constructor of {type} not found.");
         }
 
         /// <inheritdoc/>
@@ -151,7 +151,7 @@ namespace YggdrAshill.Ragnarok
 
                 if (injectedMethod != null)
                 {
-                    throw new RagnarokMultipleAnnotationFoundException(type, $"Multiple injectable methods of {type} found.");
+                    throw new RagnarokAlreadyAnnotatedException(type, $"Multiple injectable methods of {type} found.");
                 }
 
                 injectedMethod = methodInfo;
@@ -159,7 +159,7 @@ namespace YggdrAshill.Ragnarok
 
             if (injectedMethod == null)
             {
-                throw new RagnarokAnnotationNotFoundException(type, $"Injectable method of {type} not found.");
+                throw new RagnarokNotAnnotatedException(type, $"Injectable method of {type} not found.");
             }
 
             return new MethodInjection(type, injectedMethod);

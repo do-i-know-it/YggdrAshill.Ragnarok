@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
+    // TODO: rename exception.
     [Serializable]
     public class RagnarokNotInstantiatableException : RagnarokException
     {

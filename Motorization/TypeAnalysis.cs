@@ -64,7 +64,7 @@ namespace YggdrAshill.Ragnarok
             {
                 if (current == stacked)
                 {
-                    throw new RagnarokCircularDependencyDetectedException(current);
+                    throw new RagnarokCircularDependencyException(current);
                 }
             }
 

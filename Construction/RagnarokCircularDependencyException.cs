@@ -5,21 +5,21 @@ namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
     [Serializable]
-    public class RagnarokCircularDependencyDetectedException : RagnarokException
+    public class RagnarokCircularDependencyException : RagnarokException
     {
-        public RagnarokCircularDependencyDetectedException(Type invalidType) :
+        public RagnarokCircularDependencyException(Type invalidType) :
             base(invalidType, $"Circular dependency detected in {invalidType}.")
         {
 
         }
 
-        public RagnarokCircularDependencyDetectedException(Type invalidType, string message)
+        public RagnarokCircularDependencyException(Type invalidType, string message)
             : base(invalidType, message)
         {
 
         }
 
-        protected RagnarokCircularDependencyDetectedException(SerializationInfo info, StreamingContext context)
+        protected RagnarokCircularDependencyException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
 

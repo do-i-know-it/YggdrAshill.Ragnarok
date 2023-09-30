@@ -527,7 +527,7 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 _ = context.CreateScope();
 
-            }, Throws.TypeOf<RagnarokCircularDependencyDetectedException>());
+            }, Throws.TypeOf<RagnarokCircularDependencyException>());
 
             Assert.That(() =>
             {
@@ -559,7 +559,7 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 _ = grandchildContext.CreateScope();
 
-            }, Throws.TypeOf<RagnarokCircularDependencyDetectedException>());
+            }, Throws.TypeOf<RagnarokCircularDependencyException>());
         }
     }
 }
