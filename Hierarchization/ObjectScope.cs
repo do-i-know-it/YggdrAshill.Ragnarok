@@ -19,7 +19,7 @@ namespace YggdrAshill.Ragnarok
             {
                 if (isDisposed)
                 {
-                    throw new ObjectDisposedException(nameof(IScope));
+                    throw new ObjectDisposedException(nameof(IObjectScope));
                 }
 
                 return resolver;
@@ -30,7 +30,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (isDisposed)
             {
-                throw new ObjectDisposedException(nameof(IScope));
+                throw new ObjectDisposedException(nameof(IObjectScope));
             }
 
             var resolverBuilder = resolver.CreateBuilder();
@@ -42,7 +42,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (isDisposed)
             {
-                throw new ObjectDisposedException(nameof(IScope));
+                throw new ObjectDisposedException(nameof(IObjectScope));
             }
 
             resolver.Dispose();

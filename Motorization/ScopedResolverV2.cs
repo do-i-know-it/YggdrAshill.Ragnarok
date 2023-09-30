@@ -35,7 +35,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (isDisposed)
             {
-                throw new ObjectDisposedException(nameof(IScopedResolver));
+                throw new ObjectDisposedException(nameof(IScopedResolverV2));
             }
 
             IScopedResolverV2 resolver = this;
@@ -97,7 +97,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (isDisposed)
             {
-                throw new ObjectDisposedException(nameof(IScopedResolver));
+                throw new ObjectDisposedException(nameof(IScopedResolverV2));
             }
 
             resolver = parent!;
@@ -109,7 +109,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (isDisposed)
             {
-                throw new ObjectDisposedException(nameof(IScopedResolver));
+                throw new ObjectDisposedException(nameof(IScopedResolverV2));
             }
 
             depiction = default!;
@@ -178,7 +178,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (isDisposed)
             {
-                throw new ObjectDisposedException(nameof(IScopedResolver));
+                throw new ObjectDisposedException(nameof(IScopedResolverV2));
             }
 
             var lifetime = depiction.Lifetime;
@@ -207,7 +207,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (isDisposed)
             {
-                throw new ObjectDisposedException(nameof(IScopedResolver));
+                throw new ObjectDisposedException(nameof(IScopedResolverV2));
             }
 
             compositeDisposable.Add(disposable);
@@ -217,7 +217,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (isDisposed)
             {
-                throw new ObjectDisposedException(nameof(IScopedResolver));
+                throw new ObjectDisposedException(nameof(IScopedResolverV2));
             }
 
             return new ScopedResolverBuilder(compilation, this);
@@ -227,7 +227,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (isDisposed)
             {
-                throw new ObjectDisposedException(nameof(IScopedResolver));
+                throw new ObjectDisposedException(nameof(IScopedResolverV2));
             }
 
             compositeDisposable.Dispose();

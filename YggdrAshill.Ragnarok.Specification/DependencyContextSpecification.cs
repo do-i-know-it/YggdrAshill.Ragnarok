@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
-    [TestFixture(TestOf = typeof(DependencyContext))]
+    [TestFixture(TestOf = typeof(DependencyContextV2))]
     internal sealed class DependencyContextSpecification
     {
         private const int MinMultipleInjectionCount = 0;
