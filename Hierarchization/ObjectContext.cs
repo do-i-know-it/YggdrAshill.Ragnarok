@@ -1,7 +1,7 @@
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="IObjectContext"/> using <see cref="IScopedResolverV2"/> and <see cref="IScopedResolverBuilder"/>.
+    /// Implementation of <see cref="IObjectContext"/> using <see cref="IScopedResolver"/> and <see cref="IScopedResolverBuilder"/>.
     /// </summary>
     public sealed class ObjectContext : IObjectContext
     {
@@ -22,10 +22,10 @@ namespace YggdrAshill.Ragnarok
         public IObjectResolver Resolver => resolverBuilder;
 
         /// <inheritdoc/>
-        public ICompilationV2 Compilation => resolverBuilder.Compilation;
+        public ICompilation Compilation => resolverBuilder.Compilation;
 
         /// <inheritdoc/>
-        public IRegistrationV2 Registration => resolverBuilder;
+        public IRegistration Registration => resolverBuilder;
 
         /// <inheritdoc/>
         public IObjectContext CreateContext()

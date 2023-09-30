@@ -6,10 +6,10 @@ namespace YggdrAshill.Ragnarok.Fabrication
     // TODO: add document comments.
     public sealed class InstanceDependencyInjection : IInstanceDependencyInjection
     {
-        private readonly ICompilationV2 compilation;
+        private readonly ICompilation compilation;
         private readonly TypeAssignment typeAssignment;
 
-        public InstanceDependencyInjection(ICompilationV2 compilation, Type implementedType)
+        public InstanceDependencyInjection(ICompilation compilation, Type implementedType)
         {
             this.compilation = compilation;
             typeAssignment = new TypeAssignment(implementedType);
@@ -22,7 +22,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
         public Type ImplementedType => typeAssignment.ImplementedType;
         public IReadOnlyList<Type> AssignedTypeList => typeAssignment.AssignedTypeList;
 
-        public IInjectionV2? GetInjection()
+        public IInjection? GetInjection()
         {
             var fieldInjection = GetFieldInjection();
             var propertyInjection = GetPropertyInjection();
@@ -65,7 +65,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
 
             return new InjectWithThreeInjection(fieldInjection, propertyInjection, methodInjection);
         }
-        private IInjectionV2? GetFieldInjection()
+        private IInjection? GetFieldInjection()
         {
             if (fieldParameterList == null)
             {
@@ -76,7 +76,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
 
             return new InfuseToInject(infusion, fieldParameterList);
         }
-        private IInjectionV2? GetPropertyInjection()
+        private IInjection? GetPropertyInjection()
         {
             if (propertyParameterList == null)
             {
@@ -87,7 +87,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
 
             return new InfuseToInject(infusion, propertyParameterList);
         }
-        private IInjectionV2? GetMethodInjection()
+        private IInjection? GetMethodInjection()
         {
             if (methodParameterList == null)
             {

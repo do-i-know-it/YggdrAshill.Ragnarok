@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InfuseToInject : IInjectionV2
+    internal sealed class InfuseToInject : IInjection
     {
         private readonly IInfusion infusion;
         private readonly IReadOnlyList<IParameter> parameterList;

@@ -2,7 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InstantiateInstance<T> : IInstantiationV2
+    internal sealed class InstantiateInstance<T> : IInstantiation
         where T : notnull
     {
         private readonly Func<T> onInstantiated;

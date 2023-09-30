@@ -1,16 +1,22 @@
 using System;
+using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Defines how to register dependencies in <see cref="IScopedResolver"/>.
+    /// Defines how to declare a dependency.
     /// </summary>
-    public interface IDepiction
+    public interface IStatement
     {
         /// <summary>
         /// <see cref="Type"/> to instantiate.
         /// </summary>
         Type ImplementedType { get; }
+
+        /// <summary>
+        /// <see cref="Type"/>s to resolve.
+        /// </summary>
+        IReadOnlyList<Type> AssignedTypeList { get; }
 
         /// <summary>
         /// How to manage lifetime for <see cref="ImplementedType"/>.
@@ -23,14 +29,8 @@ namespace YggdrAshill.Ragnarok
         Ownership Ownership { get; }
 
         /// <summary>
-        /// Creates instance with <paramref name="resolver"/>.
+        /// How to instantiate <see cref="ImplementedType"/>.
         /// </summary>
-        /// <param name="resolver">
-        /// <see cref="IScopedResolverV2"/> to instantiate.
-        /// </param>
-        /// <returns>
-        /// <see cref="object"/> instantiated.
-        /// </returns>
-        object Instantiate(IScopedResolverV2 resolver);
+        IInstantiation Instantiation { get; }
     }
 }

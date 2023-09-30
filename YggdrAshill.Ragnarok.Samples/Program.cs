@@ -4,7 +4,7 @@
     {
         private static void Main(string[] arguments)
         {
-            var context = new DependencyContextV2();
+            var context = new DependencyContext();
 
             context.Register<ISender, ConsoleSender>(Lifetime.Global)
                 .WithArgument("announcement", "Please enter a text");

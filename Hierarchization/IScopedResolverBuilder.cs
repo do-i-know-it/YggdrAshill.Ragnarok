@@ -1,14 +1,14 @@
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Defines how to build <see cref="IScopedResolverV2"/>.
+    /// Defines how to build <see cref="IScopedResolver"/>.
     /// </summary>
-    public interface IScopedResolverBuilder : IRegistrationV2, IObjectResolver
+    public interface IScopedResolverBuilder : IRegistration, IObjectResolver
     {
         /// <summary>
-        /// <see cref="ICompilationV2"/> to resolve dependency.
+        /// <see cref="ICompilation"/> to resolve dependency.
         /// </summary>
-        ICompilationV2 Compilation { get; }
+        ICompilation Compilation { get; }
 
         /// <summary>
         /// Creates a <see cref="IScopedResolverBuilder"/>.
@@ -19,11 +19,11 @@ namespace YggdrAshill.Ragnarok
         IScopedResolverBuilder CreateBuilder();
 
         /// <summary>
-        /// Creates a <see cref="IScopedResolverV2"/>.
+        /// Creates a <see cref="IScopedResolver"/>.
         /// </summary>
         /// <returns>
-        /// <see cref="IScopedResolverV2"/> created.
+        /// <see cref="IScopedResolver"/> created.
         /// </returns>
-        IScopedResolverV2 Build();
+        IScopedResolver Build();
     }
 }

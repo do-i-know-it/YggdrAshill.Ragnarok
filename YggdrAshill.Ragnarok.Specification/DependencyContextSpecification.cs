@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok.Specification
 {
-    [TestFixture(TestOf = typeof(DependencyContextV2))]
+    [TestFixture(TestOf = typeof(DependencyContext))]
     internal sealed class DependencyContextSpecification
     {
         private const int MinMultipleInjectionCount = 0;
@@ -20,7 +20,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveResolver(ISolver solver)
         {
-            using var scope = new DependencyContextV2(solver).CreateScope();
+            using var scope = new DependencyContext(solver).CreateScope();
 
             var resolver = scope.Resolver.Resolve<IObjectResolver>();
 
@@ -30,7 +30,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldInstantiateTemporalObjectPerRequest(ISolver solver)
         {
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             parentContext.Register<NoDependencyClass>(Lifetime.Temporal);
 
@@ -52,7 +52,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldInstantiateLocalObjectPerLocalScope(ISolver solver)
         {
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             parentContext.Register<NoDependencyClass>(Lifetime.Local);
 
@@ -74,7 +74,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldInstantiateGlobalObjectPerGlobalScope(ISolver solver)
         {
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             parentContext.Register<NoDependencyClass>(Lifetime.Global);
 
@@ -96,7 +96,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveDependenciesFromParentScope(ISolver solver)
         {
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             parentContext.Register<DualInterface1>(Lifetime.Global).AsImplementedInterfaces();
 
@@ -122,7 +122,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldInjectDependenciesIntoInstanceAfterEnabled(ISolver solver)
         {
-            var context = new DependencyContextV2(solver);
+            var context = new DependencyContext(solver);
 
             var fieldInjected = new NoDependencyClass();
             var propertyInjected = new NoDependencyClass();
@@ -147,7 +147,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveInstanceInstantiatedExternally(ISolver solver)
         {
-            var context = new DependencyContextV2(solver);
+            var context = new DependencyContext(solver);
 
             var instance = new NoDependencyService();
 
@@ -167,7 +167,7 @@ namespace YggdrAshill.Ragnarok.Specification
             var propertyInjected = new NoDependencyClass();
             var methodInjected = new NoDependencyClass();
 
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             parentContext.Register(() => new DependencyIntoInstance(), Lifetime.Temporal)
                 .WithField("fieldInjected", fieldInjected)
@@ -198,7 +198,7 @@ namespace YggdrAshill.Ragnarok.Specification
             var propertyInjected = new NoDependencyClass();
             var methodInjected = new NoDependencyClass();
 
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             parentContext.Register(() => new DependencyIntoInstance(), Lifetime.Local)
                 .WithField("fieldInjected", fieldInjected)
@@ -229,7 +229,7 @@ namespace YggdrAshill.Ragnarok.Specification
             var propertyInjected = new NoDependencyClass();
             var methodInjected = new NoDependencyClass();
 
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             parentContext.Register(() => new DependencyIntoInstance(), Lifetime.Global)
                 .WithField("fieldInjected", fieldInjected)
@@ -256,7 +256,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveAsAssignedInterface(ISolver solver)
         {
-            var context = new DependencyContextV2(solver);
+            var context = new DependencyContext(solver);
 
             context.Register<MultipleInterfaceClass>(Lifetime.Global)
                 .As<IInterfaceA>()
@@ -287,7 +287,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveAsImplementedInterfaces(ISolver solver)
         {
-            var context = new DependencyContextV2(solver);
+            var context = new DependencyContext(solver);
 
             context.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces();
 
@@ -312,7 +312,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveAsAssignedInterfaceAndSelf(ISolver solver)
         {
-            var context = new DependencyContextV2(solver);
+            var context = new DependencyContext(solver);
 
             context.Register<MultipleInterfaceClass>(Lifetime.Global)
                 .As<IInterfaceA>()
@@ -344,7 +344,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveAsImplementedInterfacesAndSelf(ISolver solver)
         {
-            var context = new DependencyContextV2(solver);
+            var context = new DependencyContext(solver);
 
             context.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsSelf();
 
@@ -371,7 +371,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             for (var count = 0; count < parentInjectionCount; count++)
             {
@@ -445,7 +445,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var injectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             for (var count = 0; count < injectionCount; count++)
             {
@@ -490,7 +490,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldCreateScopeWithoutCircularDependency(ISolver solver)
         {
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
             parentContext.Register<CircularDependencyClass1>(Lifetime.Temporal);
 
             using var parentScope = parentContext.CreateScope();
@@ -517,7 +517,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldDetectCircularDependencyInLocalScope(ISolver solver)
         {
-            var context = new DependencyContextV2(solver);
+            var context = new DependencyContext(solver);
 
             context.Register<CircularDependencyClass1>(Lifetime.Temporal);
             context.Register<CircularDependencyClass2>(Lifetime.Temporal);
@@ -531,7 +531,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             Assert.That(() =>
             {
-                _ = new DependencyContextV2(solver).CreateScope();
+                _ = new DependencyContext(solver).CreateScope();
 
             }, Throws.Nothing);
         }
@@ -539,7 +539,7 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldDetectCircularDependencyInGlobalScope(ISolver solver)
         {
-            var parentContext = new DependencyContextV2(solver);
+            var parentContext = new DependencyContext(solver);
 
             parentContext.Register<CircularDependencyClass1>(Lifetime.Temporal);
 

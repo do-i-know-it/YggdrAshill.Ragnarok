@@ -3,7 +3,7 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Defines how to instantiate instance resolved dependency.
     /// </summary>
-    public interface IInstantiationV2
+    public interface IInstantiation
     {
         /// <summary>
         /// Creates instance with <paramref name="resolver"/>.

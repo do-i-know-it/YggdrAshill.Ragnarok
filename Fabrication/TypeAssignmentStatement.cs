@@ -4,13 +4,13 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Fabrication
 {
     // TODO: add document comments.
-    public sealed class TypeAssignmentDescription : IDescriptionV2
+    public sealed class TypeAssignmentStatement : IStatement
     {
         private readonly TypeAssignment assignment;
 
-        public IInstantiationV2 Instantiation { get; }
+        public IInstantiation Instantiation { get; }
 
-        public TypeAssignmentDescription(object instance)
+        public TypeAssignmentStatement(object instance)
         {
             assignment = new TypeAssignment(instance.GetType());
             Instantiation = new InstantiateToReturnInstance(instance);

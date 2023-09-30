@@ -4,9 +4,9 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class ObjectScope : IObjectScope
     {
-        private readonly IScopedResolverV2 resolver;
+        private readonly IScopedResolver resolver;
 
-        public ObjectScope(IScopedResolverV2 resolver)
+        public ObjectScope(IScopedResolver resolver)
         {
             this.resolver = resolver;
         }

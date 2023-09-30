@@ -4,13 +4,13 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Fabrication
 {
     // TODO: add document comments.
-    public sealed class ConstructorDependencyInjectionDescription : IDescriptionV2
+    public sealed class ConstructorDependencyInjectionStatement : IStatement
     {
         private readonly ConstructorDependencyInjection injection;
 
         public Lifetime Lifetime { get; }
 
-        public ConstructorDependencyInjectionDescription(ICompilationV2 compilation, Type implementedType, Lifetime lifetime)
+        public ConstructorDependencyInjectionStatement(ICompilation compilation, Type implementedType, Lifetime lifetime)
         {
             injection = new ConstructorDependencyInjection(compilation, implementedType);
             Lifetime = lifetime;
@@ -20,6 +20,6 @@ namespace YggdrAshill.Ragnarok.Fabrication
         public Type ImplementedType => injection.ImplementedType;
         public IReadOnlyList<Type> AssignedTypeList => injection.AssignedTypeList;
         public Ownership Ownership => Ownership.Internal;
-        public IInstantiationV2 Instantiation => injection.GetInstantiation();
+        public IInstantiation Instantiation => injection.GetInstantiation();
     }
 }

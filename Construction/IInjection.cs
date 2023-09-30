@@ -3,7 +3,7 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Defines how to inject dependencies into instance to resolve.
     /// </summary>
-    public interface IInjectionV2
+    public interface IInjection
     {
         /// <summary>
         /// Injects dependencies into <paramref name="instance"/> with <paramref name="resolver"/>.

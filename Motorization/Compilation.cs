@@ -2,7 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
-    public sealed class Compilation : ICompilationV2
+    public sealed class Compilation : ICompilation
     {
         private readonly ISelector selector;
         private readonly ISolver solver;
@@ -35,7 +35,7 @@ namespace YggdrAshill.Ragnarok
                 return solver.CreateCollectionActivation(type.GetElementType()!);
             }
 
-            if (ServiceBundleDepiction.TryGetElementType(type, out var elementType))
+            if (ServiceBundleDescription.TryGetElementType(type, out var elementType))
             {
                 return GetActivation(selector.GetServiceBundleType(elementType));
             }

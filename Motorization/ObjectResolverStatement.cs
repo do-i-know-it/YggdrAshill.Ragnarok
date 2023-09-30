@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ObjectResolverDescription : IDescriptionV2, IInstantiationV2
+    internal sealed class ObjectResolverStatement : IStatement, IInstantiation
     {
-        public static ObjectResolverDescription Instance { get; } = new ObjectResolverDescription();
+        public static ObjectResolverStatement Instance { get; } = new ObjectResolverStatement();
 
-        private ObjectResolverDescription()
+        private ObjectResolverStatement()
         {
 
         }
@@ -16,7 +16,7 @@ namespace YggdrAshill.Ragnarok
         public IReadOnlyList<Type> AssignedTypeList { get; } = Array.Empty<Type>();
         public Lifetime Lifetime => Lifetime.Temporal;
         public Ownership Ownership => Ownership.External;
-        public IInstantiationV2 Instantiation => this;
+        public IInstantiation Instantiation => this;
 
         public object Instantiate(IObjectResolver resolver)
         {

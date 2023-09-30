@@ -11,14 +11,14 @@ namespace YggdrAshill.Ragnarok
         IObjectResolver Resolver { get; }
 
         /// <summary>
-        /// <see cref="ICompilationV2"/> to resolve dependency.
+        /// <see cref="ICompilation"/> to resolve dependency.
         /// </summary>
-        ICompilationV2 Compilation { get; }
+        ICompilation Compilation { get; }
 
         /// <summary>
-        /// <see cref="IRegistrationV2"/> to resolve dependency.
+        /// <see cref="IRegistration"/> to resolve dependency.
         /// </summary>
-        IRegistrationV2 Registration { get; }
+        IRegistration Registration { get; }
 
         /// <summary>
         /// Creates <see cref="IObjectContext"/> to resolve dependency.

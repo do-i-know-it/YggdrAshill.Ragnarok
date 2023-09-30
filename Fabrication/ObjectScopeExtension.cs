@@ -5,7 +5,7 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public static class ObjectScopeExtension
     {
-        public static IObjectScope CreateScope(this IObjectScope scope, params IInstallationV2[] installationList)
+        public static IObjectScope CreateScope(this IObjectScope scope, params IInstallation[] installationList)
         {
             return scope.CreateContext().Install(installationList).CreateScope();
         }

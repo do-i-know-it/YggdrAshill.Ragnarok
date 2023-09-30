@@ -1,6 +1,6 @@
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InstantiateToReturnInstance : IInstantiationV2
+    internal sealed class InstantiateToReturnInstance : IInstantiation
     {
         private readonly object instance;
 

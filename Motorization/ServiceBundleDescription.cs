@@ -2,7 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ServiceBundleDepiction : IDepiction
+    internal sealed class ServiceBundleDescription : IDescription
     {
         public static bool TryToGetTargetType(Type type, out Type targetType)
         {
@@ -40,13 +40,13 @@ namespace YggdrAshill.Ragnarok
         }
 
         private readonly IActivation activation;
-        private readonly CollectionDepiction collection;
+        private readonly CollectionDescription collection;
 
         public Type ImplementedType { get; }
         public Lifetime Lifetime => Lifetime.Local;
         public Ownership Ownership => Ownership.Internal;
 
-        public ServiceBundleDepiction(Type implementedType, IActivation activation, CollectionDepiction collection)
+        public ServiceBundleDescription(Type implementedType, IActivation activation, CollectionDescription collection)
         {
             ImplementedType = implementedType;
 
@@ -54,11 +54,11 @@ namespace YggdrAshill.Ragnarok
             this.collection = collection;
         }
 
-        public object Instantiate(IScopedResolverV2 resolver)
+        public object Instantiate(IScopedResolver resolver)
         {
-            var depictionList = collection.CollectDepictionList(resolver, true);
+            var totalList = collection.Collect(resolver, true);
 
-            var instance = collection.Instantiate(resolver, depictionList);
+            var instance = collection.Instantiate(resolver, totalList);
 
             return activation.Activate(new []{ instance });
         }

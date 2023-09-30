@@ -1,7 +1,7 @@
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public interface IInstallationV2
+    public interface IInstallation
     {
         void Install(IObjectContainer container);
     }

@@ -9,25 +9,25 @@ namespace YggdrAshill.Ragnarok
     public sealed class ScopedResolverBuilder : IScopedResolverBuilder
     {
         private readonly Compilation compilation;
-        private readonly IScopedResolverV2? parent;
+        private readonly IScopedResolver? parent;
 
         /// <summary>
-        /// Creates <see cref="ScopedResolverBuilder"/> for child <see cref="IScopedResolverV2"/>.
+        /// Creates <see cref="ScopedResolverBuilder"/> for child <see cref="IScopedResolver"/>.
         /// </summary>
         /// <param name="compilation">
         /// <see cref="Compilation"/> for <see cref="ScopedResolverBuilder"/>.
         /// </param>
         /// <param name="parent">
-        /// <see cref="IScopedResolverV2"/> for <see cref="ScopedResolverBuilder"/>.
+        /// <see cref="IScopedResolver"/> for <see cref="ScopedResolverBuilder"/>.
         /// </param>
-        public ScopedResolverBuilder(Compilation compilation, IScopedResolverV2? parent)
+        public ScopedResolverBuilder(Compilation compilation, IScopedResolver? parent)
         {
             this.compilation = compilation;
             this.parent = parent;
         }
 
         /// <summary>
-        /// Creates <see cref="ScopedResolverBuilder"/> for root <see cref="IScopedResolverV2"/>.
+        /// Creates <see cref="ScopedResolverBuilder"/> for root <see cref="IScopedResolver"/>.
         /// </summary>
         /// <param name="selector">
         /// <see cref="ISelector"/> for <see cref="ScopedResolverBuilder"/>.
@@ -41,16 +41,16 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        private readonly List<IDescriptionV2> descriptionList = new List<IDescriptionV2>()
+        private readonly List<IStatement> statementList = new List<IStatement>()
         {
-            ObjectResolverDescription.Instance
+            ObjectResolverStatement.Instance
         };
 
         private readonly List<IOperation> operationList = new List<IOperation>();
         private readonly List<IDisposable> disposableList = new List<IDisposable>();
 
         /// <inheritdoc/>
-        public ICompilationV2 Compilation => compilation;
+        public ICompilation Compilation => compilation;
 
         /// <inheritdoc/>
         public T Resolve<T>()
@@ -84,14 +84,14 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public void Register(IDescriptionV2 description)
+        public void Register(IStatement statement)
         {
-            if (descriptionList.Contains(description))
+            if (statementList.Contains(statement))
             {
                 return;
             }
 
-            descriptionList.Add(description);
+            statementList.Add(statement);
         }
 
         /// <inheritdoc/>
@@ -123,15 +123,15 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IScopedResolverV2 Build()
+        public IScopedResolver Build()
         {
             using var factory = new DictionaryFactory(compilation);
 
-            var content = factory.CreateContent(descriptionList);
+            var content = factory.CreateContent(statementList);
 
-            var resolver = new ScopedResolverV2(content, compilation, parent);
+            var resolver = new ScopedResolver(content, compilation, parent);
 
-            TypeAnalysis.Validate(descriptionList, resolver);
+            TypeAnalysis.Validate(statementList, resolver);
 
             foreach (var disposable in disposableList)
             {

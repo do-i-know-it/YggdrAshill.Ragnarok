@@ -21,11 +21,11 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentException($"{implementedType} is not instantiatable.");
             }
 
-            var description = new ConstructorDependencyInjectionDescription(container.Compilation, implementedType, lifetime);
+            var statement = new ConstructorDependencyInjectionStatement(container.Compilation, implementedType, lifetime);
 
-            container.Registration.Register(description);
+            container.Registration.Register(statement);
 
-            return description.Injection;
+            return statement.Injection;
         }
 
         public static IConstructorDependencyInjection Register<TInterface, TImplementation>(this IObjectContainer container, Lifetime lifetime)
@@ -42,24 +42,24 @@ namespace YggdrAshill.Ragnarok
         public static ITypeAssignment RegisterInstance<T>(this IObjectContainer container, T instance)
             where T : notnull
         {
-            var description = new TypeAssignmentDescription(instance);
+            var statement = new TypeAssignmentStatement(instance);
 
-            container.Registration.Register(description);
+            container.Registration.Register(statement);
 
-            description.Assignment.As<T>();
+            statement.Assignment.As<T>();
 
-            return description.Assignment;
+            return statement.Assignment;
         }
 
         public static IInstanceDependencyInjection Register<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
             where T : notnull
         {
-            var description
-                = new InstanceDependencyInjectionDescription(container.Compilation, typeof(T), lifetime, ownership, new InstantiateInstance<T>(instantiation));
+            var statement
+                = new InstanceDependencyInjectionStatement(container.Compilation, typeof(T), lifetime, ownership, new InstantiateInstance<T>(instantiation));
 
-            container.Registration.Register(description);
+            container.Registration.Register(statement);
 
-            return description.Injection;
+            return statement.Injection;
         }
 
         public static IInstanceDependencyInjection Register<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)

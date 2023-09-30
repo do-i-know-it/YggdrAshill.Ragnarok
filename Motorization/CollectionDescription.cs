@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class CollectionDepiction : IDepiction
+    internal sealed class CollectionDescription : IDescription
     {
         public static Type GetImplementedType(Type elementType)
         {
@@ -45,17 +45,17 @@ namespace YggdrAshill.Ragnarok
         }
 
         private readonly IActivation activation;
-        private readonly IDepiction[] depictionList;
+        private readonly IDescription[] descriptionList;
 
         public Type ImplementedType { get; }
         public Lifetime Lifetime => Lifetime.Temporal;
         public Ownership Ownership => Ownership.External;
         public IReadOnlyList<Type> AssignedTypeList { get; }
 
-        public CollectionDepiction(Type elementType, IActivation activation, IDepiction[] depictionList)
+        public CollectionDescription(Type elementType, IActivation activation, IDescription[] descriptionList)
         {
             this.activation = activation;
-            this.depictionList = depictionList;
+            this.descriptionList = descriptionList;
 
             ImplementedType = TypeCache.ArrayTypeOf(elementType);
 
@@ -68,16 +68,16 @@ namespace YggdrAshill.Ragnarok
             };
         }
 
-        internal IEnumerable<IDepiction> CollectDepictionList(IScopedResolverV2 resolver, bool localOnly)
+        internal IEnumerable<IDescription> Collect(IScopedResolver resolver, bool localOnly)
         {
             // TODO: object pooling.
-            var buffer = new List<IDepiction>();
+            var buffer = new List<IDescription>();
 
             while (true)
             {
-                if (resolver.CanResolve(ImplementedType, out var depiction))
+                if (resolver.CanResolve(ImplementedType, out var description))
                 {
-                    buffer.Add(depiction);
+                    buffer.Add(description);
                 }
 
                 if (!resolver.CanEscalate(out resolver))
@@ -86,31 +86,31 @@ namespace YggdrAshill.Ragnarok
                 }
             }
 
-            var totalDepictionList = buffer.Where(candidate => candidate is CollectionDepiction)
-                .SelectMany(candidate => ((CollectionDepiction)candidate).depictionList);
+            var totalList = buffer.Where(candidate => candidate is CollectionDescription)
+                .SelectMany(candidate => ((CollectionDescription)candidate).descriptionList);
 
             if (!localOnly)
             {
-                return totalDepictionList;
+                return totalList;
             }
 
-            return totalDepictionList.Where(registration => registration.Lifetime != Lifetime.Global)
-                .Union(depictionList);
+            return totalList.Where(candidate => candidate.Lifetime != Lifetime.Global)
+                .Union(descriptionList);
         }
 
-        internal object Instantiate(IScopedResolverV2 resolver, IEnumerable<IDepiction> totalDepictionList)
+        internal object Instantiate(IScopedResolver resolver, IEnumerable<IDescription> totalList)
         {
             // TODO: object pooling.
-            var parameterList = totalDepictionList.Select(resolver.Resolve).ToArray();
+            var parameterList = totalList.Select(resolver.Resolve).ToArray();
 
             return activation.Activate(parameterList);
         }
 
-        public object Instantiate(IScopedResolverV2 resolver)
+        public object Instantiate(IScopedResolver resolver)
         {
-            var totalDepictionList = CollectDepictionList(resolver, false);
+            var totalList = Collect(resolver, false);
 
-            return Instantiate(resolver, totalDepictionList);
+            return Instantiate(resolver, totalList);
         }
     }
 }

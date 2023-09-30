@@ -5,116 +5,116 @@ namespace YggdrAshill.Ragnarok
 {
     internal readonly struct DictionaryFactory : IDisposable
     {
-        private readonly ICompilationV2 compilation;
-        private readonly Dictionary<Type, IDepiction?> typeToDepiction;
-        private readonly Dictionary<Type, List<IDepiction>> typeToRegistrationList;
+        private readonly ICompilation compilation;
+        private readonly Dictionary<Type, IDescription?> tableOfTypeToDescription;
+        private readonly Dictionary<Type, List<IDescription>> tableOfTypeToDescriptionList;
 
-        public DictionaryFactory(ICompilationV2 compilation)
+        public DictionaryFactory(ICompilation compilation)
         {
             this.compilation = compilation;
 
             // TODO: object pooling.
             const int BufferSize = 128;
-            typeToDepiction = new Dictionary<Type, IDepiction?>(BufferSize);
-            typeToRegistrationList = new Dictionary<Type, List<IDepiction>>(BufferSize);
+            tableOfTypeToDescription = new Dictionary<Type, IDescription?>(BufferSize);
+            tableOfTypeToDescriptionList = new Dictionary<Type, List<IDescription>>(BufferSize);
         }
 
-        public IDictionary<Type, IDepiction?> CreateContent(IEnumerable<IDescriptionV2> descriptionList)
+        public IDictionary<Type, IDescription?> CreateContent(IEnumerable<IStatement> statementList)
         {
-            foreach (var description in descriptionList)
+            foreach (var statement in statementList)
             {
-                var assignedTypeList = description.AssignedTypeList;
-                var depiction = new Depiction(description);
+                var assignedTypeList = statement.AssignedTypeList;
+                var description = new Description(statement);
 
                 if (assignedTypeList.Count != 0)
                 {
-                    foreach (var assignedType in description.AssignedTypeList)
+                    foreach (var assignedType in statement.AssignedTypeList)
                     {
-                        AddRegistration(assignedType, depiction);
+                        AddDescription(assignedType, description);
                     }
 
-                    if (!typeToDepiction.ContainsKey(depiction.ImplementedType))
+                    if (!tableOfTypeToDescription.ContainsKey(description.ImplementedType))
                     {
-                        typeToDepiction.Add(depiction.ImplementedType, null);
+                        tableOfTypeToDescription.Add(description.ImplementedType, null);
                     }
                 }
                 else
                 {
-                    var implementedType = description.ImplementedType;
-                    AddRegistration(implementedType, depiction);
+                    var implementedType = statement.ImplementedType;
+                    AddDescription(implementedType, description);
                 }
             }
 
             AddCollection();
 
-            return typeToDepiction;
+            return tableOfTypeToDescription;
         }
-        private void AddRegistration(Type assignedType, IDepiction depiction)
+        private void AddDescription(Type assignedType, IDescription description)
         {
-            if (typeToDepiction.TryGetValue(assignedType, out var found))
+            if (tableOfTypeToDescription.TryGetValue(assignedType, out var found))
             {
-                if (typeToRegistrationList.TryGetValue(assignedType, out var collection))
+                if (tableOfTypeToDescriptionList.TryGetValue(assignedType, out var collection))
                 {
                     foreach (var registered in collection)
                     {
                         var lifetime = registered.Lifetime;
                         var implementedType = registered.ImplementedType;
 
-                        if (lifetime == Lifetime.Global && implementedType == depiction.ImplementedType)
+                        if (lifetime == Lifetime.Global && implementedType == description.ImplementedType)
                         {
                             throw new RagnarokAlreadyRegisteredException(implementedType);
                         }
                     }
 
-                    collection.Add(depiction);
+                    collection.Add(description);
                 }
                 else
                 {
-                    collection = new List<IDepiction>()
+                    collection = new List<IDescription>()
                     {
                         found!,
-                        depiction,
+                        description,
                     };
 
-                    typeToRegistrationList.Add(assignedType, collection);
+                    tableOfTypeToDescriptionList.Add(assignedType, collection);
                 }
 
-                typeToDepiction[assignedType] = depiction;
+                tableOfTypeToDescription[assignedType] = description;
             }
             else
             {
-                typeToDepiction.Add(assignedType, depiction);
+                tableOfTypeToDescription.Add(assignedType, description);
             }
         }
         private void AddCollection()
         {
-            foreach (var pair in typeToRegistrationList)
+            foreach (var pair in tableOfTypeToDescriptionList)
             {
                 var elementType = pair.Key;
                 var registrationList = pair.Value;
 
-                var implementedType = CollectionDepiction.GetImplementedType(elementType);
+                var implementedType = CollectionDescription.GetImplementedType(elementType);
 
                 var activation = compilation.GetActivation(implementedType);
 
-                var collection = new CollectionDepiction(elementType, activation, registrationList.ToArray());
+                var collection = new CollectionDescription(elementType, activation, registrationList.ToArray());
 
                 foreach (var assignedType in collection.AssignedTypeList)
                 {
-                    if (typeToDepiction.TryGetValue(assignedType, out _))
+                    if (tableOfTypeToDescription.TryGetValue(assignedType, out _))
                     {
                         throw new RagnarokAlreadyRegisteredException(assignedType);
                     }
 
-                    typeToDepiction.Add(assignedType, collection);
+                    tableOfTypeToDescription.Add(assignedType, collection);
                 }
             }
         }
 
         public void Dispose()
         {
-            typeToDepiction.Clear();
-            typeToRegistrationList.Clear();
+            tableOfTypeToDescription.Clear();
+            tableOfTypeToDescriptionList.Clear();
         }
     }
 }

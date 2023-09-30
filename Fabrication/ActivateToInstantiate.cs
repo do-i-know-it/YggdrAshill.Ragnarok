@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ActivateToInstantiate : IInstantiationV2
+    internal sealed class ActivateToInstantiate : IInstantiation
     {
         private readonly IActivation activation;
         private readonly IReadOnlyList<IParameter> parameterList;

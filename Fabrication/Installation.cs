@@ -4,13 +4,13 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="IInstallationV2"/>.
+    /// Implementation of <see cref="IInstallation"/>.
     /// </summary>
-    public sealed class InstallationV2 : IInstallationV2
+    public sealed class Installation : IInstallation
     {
         private readonly Action<IObjectContainer> onInstalled;
 
-        public InstallationV2(IEnumerable<IInstallationV2> installationList)
+        public Installation(IEnumerable<IInstallation> installationList)
         {
             onInstalled = container =>
             {
@@ -22,12 +22,12 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <summary>
-        /// Creates <see cref="InstallationV2"/>.
+        /// Creates <see cref="Installation"/>.
         /// </summary>
         /// <param name="onInstalled">
         /// <see cref="Action{T}"/> to install <see cref="IObjectContainer"/>.
         /// </param>
-        public InstallationV2(Action<IObjectContainer> onInstalled)
+        public Installation(Action<IObjectContainer> onInstalled)
         {
             this.onInstalled = onInstalled;
         }

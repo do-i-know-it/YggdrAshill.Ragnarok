@@ -50,15 +50,15 @@ namespace YggdrAshill.Ragnarok
             }
         }
 
-        public static void Validate(IEnumerable<IDescriptionV2> descriptionList, IScopedResolverV2 resolver)
+        public static void Validate(IEnumerable<IStatement> statementList, IScopedResolver resolver)
         {
-            foreach (var description in descriptionList)
+            foreach (var statement in statementList)
             {
                 TypeStack.Clear();
-                CheckCircularDependencyRecursively(description.ImplementedType, resolver, TypeStack);
+                CheckCircularDependencyRecursively(statement.ImplementedType, resolver, TypeStack);
             }
         }
-        private static void CheckCircularDependencyRecursively(Type current, IScopedResolverV2 resolver, Stack<Type> stack)
+        private static void CheckCircularDependencyRecursively(Type current, IScopedResolver resolver, Stack<Type> stack)
         {
             foreach (var stacked in stack)
             {
@@ -76,9 +76,9 @@ namespace YggdrAshill.Ragnarok
                     = constructorInjection.ArgumentList.Select(argument => argument.Type).Distinct();
                 foreach (var type in dependentTypeList)
                 {
-                    if (CanResolve(resolver, type, out var depiction))
+                    if (CanResolve(resolver, type, out var description))
                     {
-                        CheckCircularDependencyRecursively(depiction.ImplementedType, resolver, stack);
+                        CheckCircularDependencyRecursively(description.ImplementedType, resolver, stack);
                     }
                 }
             }
@@ -87,9 +87,9 @@ namespace YggdrAshill.Ragnarok
             {
                 foreach (var type in methodInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (CanResolve(resolver, type, out var depiction))
+                    if (CanResolve(resolver, type, out var description))
                     {
-                        CheckCircularDependencyRecursively(depiction.ImplementedType, resolver, stack);
+                        CheckCircularDependencyRecursively(description.ImplementedType, resolver, stack);
                     }
                 }
             }
@@ -98,9 +98,9 @@ namespace YggdrAshill.Ragnarok
             {
                 foreach (var type in fieldInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (CanResolve(resolver, type, out var depiction))
+                    if (CanResolve(resolver, type, out var description))
                     {
-                        CheckCircularDependencyRecursively(depiction.ImplementedType, resolver, stack);
+                        CheckCircularDependencyRecursively(description.ImplementedType, resolver, stack);
                     }
                 }
             }
@@ -109,9 +109,9 @@ namespace YggdrAshill.Ragnarok
             {
                 foreach (var type in propertyInjection.ArgumentList.Select(argument => argument.Type).Distinct())
                 {
-                    if (CanResolve(resolver, type, out var depiction))
+                    if (CanResolve(resolver, type, out var description))
                     {
-                        CheckCircularDependencyRecursively(depiction.ImplementedType, resolver, stack);
+                        CheckCircularDependencyRecursively(description.ImplementedType, resolver, stack);
                     }
                 }
             }
@@ -119,11 +119,11 @@ namespace YggdrAshill.Ragnarok
             stack.Pop();
         }
 
-        private static bool CanResolve(IScopedResolverV2 resolver, Type type, out IDepiction depiction)
+        private static bool CanResolve(IScopedResolver resolver, Type type, out IDescription description)
         {
             while (true)
             {
-                if (resolver.CanResolve(type, out depiction))
+                if (resolver.CanResolve(type, out description))
                 {
                     return true;
                 }

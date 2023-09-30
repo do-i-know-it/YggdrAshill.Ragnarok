@@ -6,10 +6,10 @@ namespace YggdrAshill.Ragnarok.Fabrication
     // TODO: add document comments.
     public sealed class ConstructorDependencyInjection : IConstructorDependencyInjection
     {
-        private readonly ICompilationV2 compilation;
+        private readonly ICompilation compilation;
         private readonly InstanceDependencyInjection injection;
 
-        public ConstructorDependencyInjection(ICompilationV2 compilation, Type implementedType)
+        public ConstructorDependencyInjection(ICompilation compilation, Type implementedType)
         {
             this.compilation = compilation;
             injection = new InstanceDependencyInjection(compilation, implementedType);
@@ -20,7 +20,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
         public Type ImplementedType => injection.ImplementedType;
         public IReadOnlyList<Type> AssignedTypeList => injection.AssignedTypeList;
 
-        public IInstantiationV2 GetInstantiation()
+        public IInstantiation GetInstantiation()
         {
             var activation = compilation.GetActivation(injection.ImplementedType);
 

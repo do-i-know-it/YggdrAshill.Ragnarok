@@ -4,17 +4,17 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Fabrication
 {
     // TODO: add document comments.
-    public sealed class InstanceDependencyInjectionDescription : IDescriptionV2
+    public sealed class InstanceDependencyInjectionStatement : IStatement
     {
         private readonly InstanceDependencyInjection injection;
-        private readonly IInstantiationV2 instantiation;
+        private readonly IInstantiation instantiation;
 
         public Lifetime Lifetime { get; }
         public Ownership Ownership { get; }
 
-        public InstanceDependencyInjectionDescription(
-            ICompilationV2 compilation,
-            Type implementedType, Lifetime lifetime, Ownership ownership, IInstantiationV2 instantiation)
+        public InstanceDependencyInjectionStatement(
+            ICompilation compilation,
+            Type implementedType, Lifetime lifetime, Ownership ownership, IInstantiation instantiation)
         {
             injection = new InstanceDependencyInjection(compilation, implementedType);
             Lifetime = lifetime;
@@ -25,7 +25,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
         public IInstanceDependencyInjection Injection => injection;
         public Type ImplementedType => injection.ImplementedType;
         public IReadOnlyList<Type> AssignedTypeList => injection.AssignedTypeList;
-        public IInstantiationV2 Instantiation
+        public IInstantiation Instantiation
         {
             get
             {
