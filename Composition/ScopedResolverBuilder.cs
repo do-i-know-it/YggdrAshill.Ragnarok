@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Composition
 {
     /// <summary>
     /// Implementation of <see cref="IScopedResolverBuilder"/>.

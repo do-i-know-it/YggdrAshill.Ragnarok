@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Composition
 {
     internal sealed class ScopedResolver : IScopedResolver
     {

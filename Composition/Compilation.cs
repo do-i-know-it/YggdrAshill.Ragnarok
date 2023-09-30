@@ -1,6 +1,6 @@
 using System;
 
-namespace YggdrAshill.Ragnarok
+namespace YggdrAshill.Ragnarok.Composition
 {
     /// <summary>
     /// Implementation of <see cref="ICompilation"/> with <see cref="ISelector"/> and <see cref="ISolver"/>.
