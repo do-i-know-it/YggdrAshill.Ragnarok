@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>YggdrAshill.Ragnarok.Annotation</AssemblyName>
+        <RootNamespace>YggdrAshill.Ragnarok</RootNamespace>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <Nullable>enable</Nullable>
+        <LangVersion>9</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Construction\Construction.csproj" />
+      <ProjectReference Include="..\Fabrication\Fabrication.csproj" />
+      <ProjectReference Include="..\Motorization\Motorization.csproj" />
+    </ItemGroup>
+
+</Project>

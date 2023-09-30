@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Annotation\Annotation.csproj" />
     <ProjectReference Include="..\YggdrAshill.Ragnarok\YggdrAshill.Ragnarok.csproj" />
   </ItemGroup>
 
