@@ -118,23 +118,20 @@ context.Register<ConsoleSender>(Lifetime.Local)
     .As<ISender>();
 // Register ConsoleReceiver as IReceiver to instantiate per global scope.
 context.Register<ConsoleReceiver>(Lifetime.Global)
-    .WithFieldsInjected() // Enable field injection.
-    .From("header", "Recieved") // Add parameter to inject into fields.
+    .WithField("header", "Recieved") // Add parameter to inject into fields.
     .As<IReceiver>();
 // Register Service to instantiate per request.
 context.Register<Service>(Lifetime.Temporal);
 
-using (var scope = context.Build())
-{
-    var service = scope.Resolver.Resolve<Service>();
+using var scope = context.CreateScope();
 
-    service.Run();
-    // "Enter any text: This is a test."
-    // "Recieved: This is a test."
-}
+// The result is like:
+// "Enter any text: This is a test."
+// "Recieved: This is a test."
+scope.Resolver.Resolve<Service>().Run();
 ```
 
-### Collection registrataion
+### __Instantiating collection__
 
 In our framework, you can resolve collection as bellow:
 ```cs
@@ -161,19 +158,41 @@ var context = new DependencyInjectionContext();
 context.Register<ILogger, ConsoleLogger>(Lifetime.Global); // Same as Register<ConsoleLogger>(Lifetime.Global).As<ILogger>();
 context.Register<ILogger, FileLogger>(Lifetime.Global);
 
-using (var scope = context.Build())
-{
-    // you can resolve collection like:
-    var array = scope.Resolver.Resolve<ILogger[]>();
-    // or
-    var readOnlyList = scope.Resolver.Resolve<IReadOnlyList<ILogger>>();
-    // or
-    var readOnlyCollection = scope.Resolver.Resolve<IReadOnlyCollection<ILogger>>();
-    // or
-    var enumerable = scope.Resolver.Resolve<IEnumerable<ILogger>>();
-}
+using var scope = context.CreateScope();
 
+// you can resolve collection like:
+var array = scope.Resolver.Resolve<ILogger[]>();
+// or
+var readOnlyList = scope.Resolver.Resolve<IReadOnlyList<ILogger>>();
+// or
+var readOnlyCollection = scope.Resolver.Resolve<IReadOnlyCollection<ILogger>>();
+// or
+var enumerable = scope.Resolver.Resolve<IEnumerable<ILogger>>();
 ```
+
+### __Resolving dependency from sub containers__
+
+You can resolve instance using sub containers like:
+
+```cs
+var context = new DependencyInjectionContext();
+
+context.RegisterFromSubContainer<Service>(subContainer =>
+{
+    subContainer.Register<ISender, ConsoleSender>(Lifetime.Global).WithArgument("announcement", "Enter any text");
+    subContainer.Register<IReceiver, ConsoleReceiver>(Lifetime.Global).WithField("header", "Recieved");
+    subContainer.Register<Service>(Lifetime.Temporal);
+});
+
+using var scope = context.CreateScope();
+
+// You can resolve an instance of Service.
+var service = scope.Resolver.Resolve<Service>();
+// but you can't resolve an instance of ISender.
+var sender = scope.Resolver.Resolve<ISender>(); // RagnarokNotRegisteredException.
+```
+
+Sub containers (inspired by [Zenject/Extenject/UniDi](https://github.com/UniDi/UniDi)) help you making dependency scopes more smaller.
 
 ## Architecture
 
@@ -188,7 +207,6 @@ Please see [GitHub Issues](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/
 Please see [GitHub Projects](https://github.com/do-i-know-it/YggdrAshill.Ragnarok/projects/1).
 
 - Implementations using IL emission or Source Generator.
-- Sub containers (inspired by [Zenject/Extenject/UniDi](https://github.com/UniDi/UniDi))
 - Decolation/Interception (inspired by [Autofac](https://autofac.org/))
 - Configuration (inspired by [Microsoft.Extensions.Configuration](https://www.nuget.org/packages/Microsoft.Extensions.Configuration/) and [Microsoft.Extensions.Hosting](https://www.nuget.org/packages/Microsoft.Extensions.Hosting/))
 
