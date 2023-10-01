@@ -1,4 +1,4 @@
-using YggdrAshill.Ragnarok.Fabrication;
+using YggdrAshill.Ragnarok.Composition;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -37,11 +37,6 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public ConstructorInjection CreateConstructorInjection(Type type)
         {
-            if (!ValidateType.IsInstantiatable(type))
-            {
-                throw new RagnarokNotInstantiatableException(type);
-            }
-
             const BindingFlags BindingFlags
                 = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 

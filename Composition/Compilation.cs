@@ -52,6 +52,11 @@ namespace YggdrAshill.Ragnarok.Composition
                 return GetActivation(selector.GetServiceBundleType(elementType));
             }
 
+            if (!TypeValidation.CanInstantiate(type))
+            {
+                throw new RagnarokException(type, $"Cannot instantiate {type}.");
+            }
+
             var injection = selector.CreateConstructorInjection(type);
 
             return solver.CreateActivation(injection);

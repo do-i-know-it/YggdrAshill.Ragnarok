@@ -1,3 +1,4 @@
+using YggdrAshill.Ragnarok.Composition;
 using YggdrAshill.Ragnarok.Fabrication;
 using System;
 
@@ -11,7 +12,7 @@ namespace YggdrAshill.Ragnarok
         {
             var implementedType = typeof(T);
 
-            if (!ValidateType.IsInstantiatable(implementedType))
+            if (!TypeValidation.CanInstantiate(implementedType))
             {
                 throw new ArgumentException($"{implementedType} is not instantiatable.");
             }

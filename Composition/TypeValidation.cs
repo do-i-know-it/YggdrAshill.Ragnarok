@@ -1,11 +1,11 @@
 using System;
 
-namespace YggdrAshill.Ragnarok.Fabrication
+namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public static class ValidateType
+    public static class TypeValidation
     {
-        public static bool IsInstantiatable(Type type)
+        public static bool CanInstantiate(Type type)
         {
             return !IsStatic(type) && !IsPrimitive(type) && !type.IsInterface && !type.IsAbstract && (type.IsClass || type.IsValueType);
         }
