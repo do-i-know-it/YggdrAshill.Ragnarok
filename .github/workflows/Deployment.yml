@@ -10,7 +10,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       
       - name: Add MSBuild to Path
         uses: microsoft/setup-msbuild@v1.0.2
@@ -32,7 +32,7 @@ jobs:
       CONFIGURATION: Release
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       
       - name: Add MSBuild to Path
         uses: microsoft/setup-msbuild@v1.0.2
@@ -56,7 +56,7 @@ jobs:
     needs: construction
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Configure information
         shell: bash
