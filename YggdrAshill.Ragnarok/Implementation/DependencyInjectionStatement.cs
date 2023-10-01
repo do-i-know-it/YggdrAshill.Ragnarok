@@ -19,7 +19,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
 
         private IInstantiation CreateInstantiation()
         {
-            var activation = compilation.GetActivation(ImplementedType);
+            var activation = compilation.CreateActivation(ImplementedType);
 
             return parameterList == null
                 ? new ActivateToInstantiateWithoutParameterList(activation)

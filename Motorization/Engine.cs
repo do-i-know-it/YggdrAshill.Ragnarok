@@ -24,7 +24,7 @@ namespace YggdrAshill.Ragnarok
 
         public IObjectResolver Resolver => resolver;
 
-        public IActivation GetActivation(Type type)
+        public IActivation CreateActivation(Type type)
         {
             return TypeAnalysis.GetActivation(type, createActivation);
         }

@@ -133,7 +133,7 @@ namespace YggdrAshill.Ragnarok
 
             description = registrationCache.GetOrAdd(type, _ =>
             {
-                var activation = engine.GetActivation(type);
+                var activation = engine.CreateActivation(type);
 
                 if (!CanResolve(elementType, out var elementDescription))
                 {
@@ -161,7 +161,7 @@ namespace YggdrAshill.Ragnarok
             {
                 description = registrationCache.GetOrAdd(type, _ =>
                 {
-                    var activation = engine.GetActivation(type);
+                    var activation = engine.CreateActivation(type);
 
                     return new ServiceBundleDescription(type, activation, collection);
                 });
