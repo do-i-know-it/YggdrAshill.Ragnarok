@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Composition
+namespace YggdrAshill.Ragnarok
 {
     internal sealed class Engine : ICompilation
     {

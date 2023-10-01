@@ -1,6 +1,3 @@
-using YggdrAshill.Ragnarok.Hierarchization;
-using YggdrAshill.Ragnarok.Composition;
-
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
