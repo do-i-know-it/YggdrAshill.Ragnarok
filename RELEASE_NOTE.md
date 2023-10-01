@@ -1,5 +1,3 @@
-# Release notes for version 0.10.0
+# Release notes for version 0.10.1
 
-- Refactored all definitions in this framework.
-- Added feature to resolve from sub container.
-- Modified specification to detect circular dependency in global scope.
+- Modified project settings.
