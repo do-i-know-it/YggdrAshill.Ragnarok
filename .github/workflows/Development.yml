@@ -19,10 +19,12 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Add MSBuild to Path
         uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 3.1.x
       
       - name: Restore solution
         shell: cmd
@@ -41,10 +43,12 @@ jobs:
       CONFIGURATION: Debug
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Add MSBuild to Path
         uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 3.1.x
 
       - name: Configure information
         shell: cmd
