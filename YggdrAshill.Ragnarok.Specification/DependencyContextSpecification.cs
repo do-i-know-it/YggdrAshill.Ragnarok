@@ -20,9 +20,9 @@ namespace YggdrAshill.Ragnarok.Specification
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveResolver(ISolver solver)
         {
-            using var scope = new DependencyContext(solver).Build();
+            using var scope = new DependencyContext(solver).CreateScope();
 
-            var resolver = scope.Resolver.Resolve<IResolver>();
+            var resolver = scope.Resolver.Resolve<IObjectResolver>();
 
             Assert.That(resolver, Is.EqualTo(scope.Resolver));
         }
@@ -32,18 +32,18 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentContext = new DependencyContext(solver);
 
-            parentContext.Register<NoDependencyClass>(Lifetime.Temporal);
+            parentContext.Register<NoDependencyService>(Lifetime.Temporal);
 
-            using var parentScope = parentContext.Build();
+            using var parentScope = parentContext.CreateScope();
 
-            var instance1 = parentScope.Resolver.Resolve<NoDependencyClass>();
-            var instance2 = parentScope.Resolver.Resolve<NoDependencyClass>();
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyService>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.Not.EqualTo(instance2));
 
             using var childScope = parentScope.CreateChildScope();
 
-            var instance3 = childScope.Resolver.Resolve<NoDependencyClass>();
+            var instance3 = childScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.Not.EqualTo(instance3));
             Assert.That(instance2, Is.Not.EqualTo(instance3));
@@ -54,18 +54,18 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentContext = new DependencyContext(solver);
 
-            parentContext.Register<NoDependencyClass>(Lifetime.Local);
+            parentContext.Register<NoDependencyService>(Lifetime.Local);
 
-            using var parentScope = parentContext.Build();
+            using var parentScope = parentContext.CreateScope();
 
-            var instance1 = parentScope.Resolver.Resolve<NoDependencyClass>();
-            var instance2 = parentScope.Resolver.Resolve<NoDependencyClass>();
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyService>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.EqualTo(instance2));
 
             using var childScope = parentScope.CreateChildScope();
 
-            var instance3 = childScope.Resolver.Resolve<NoDependencyClass>();
+            var instance3 = childScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.Not.EqualTo(instance3));
             Assert.That(instance2, Is.Not.EqualTo(instance3));
@@ -76,310 +76,258 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentContext = new DependencyContext(solver);
 
-            parentContext.Register<NoDependencyClass>(Lifetime.Global);
+            parentContext.Register<NoDependencyService>(Lifetime.Global);
 
-            using var parentScope = parentContext.Build();
+            using var parentScope = parentContext.CreateScope();
 
-            var instance1 = parentScope.Resolver.Resolve<NoDependencyClass>();
-            var instance2 = parentScope.Resolver.Resolve<NoDependencyClass>();
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyService>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.EqualTo(instance2));
 
             using var childScope = parentScope.CreateChildScope();
 
-            var instance3 = childScope.Resolver.Resolve<NoDependencyClass>();
+            var instance3 = childScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.EqualTo(instance3));
             Assert.That(instance2, Is.EqualTo(instance3));
         }
 
         [TestCaseSource(nameof(SolverList))]
-        public void ShouldResolveDependenciesFromParentScope(ISolver solver)
-        {
-            var parentContext = new DependencyContext(solver);
-
-            parentContext.Register<DualInterface1>(Lifetime.Global).AsImplementedInterfaces();
-
-            using var parentScope = parentContext.Build();
-
-            var childContext = parentScope.CreateContext();
-
-            childContext.Register<DualInterface2>(Lifetime.Global).AsImplementedInterfaces();
-            childContext.Register<IService, MultipleDependencyService>(Lifetime.Global);
-
-            using var childScope = childContext.Build();
-
-            Assert.That(() =>
-            {
-                _ = childScope.Resolver.Resolve<IService>();
-            }, Throws.Nothing);
-
-            var package = childScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
-
-            Assert.That(package.Count, Is.EqualTo(1));
-        }
-
-        [TestCaseSource(nameof(SolverList))]
-        public void ShouldInjectDependenciesIntoInstanceAfterEnabled(ISolver solver)
+        public void ShouldResolveInstanceAlreadyCreated(ISolver solver)
         {
             var context = new DependencyContext(solver);
 
-            var fieldInjected = new NoDependencyClass();
-            var propertyInjected = new NoDependencyClass();
-            var methodInjected = new NoDependencyClass();
-
-            context.Register<DependencyIntoInstance>(Lifetime.Global)
-                .WithFieldsInjected()
-                .From("fieldInjected", fieldInjected)
-                .WithPropertiesInjected()
-                .From("PropertyInjected", propertyInjected)
-                .WithMethodInjected()
-                .From("methodInjected", methodInjected)
-                .AsImplementedInterfaces()
-                .AsSelf();
-
-            using var scope = context.Build();
-
-            var resolved = scope.Resolver.Resolve<DependencyIntoInstance>();
-
-            Assert.That(resolved.FieldInjected, Is.EqualTo(fieldInjected));
-            Assert.That(resolved.PropertyInjected, Is.EqualTo(propertyInjected));
-            Assert.That(resolved.MethodInjected, Is.EqualTo(methodInjected));
-        }
-
-        [Test]
-        public void ShouldResolveInstanceInstantiatedExternally()
-        {
-            var context = new DependencyContext();
-
             var instance = new NoDependencyService();
 
-            context.RegisterInstance<IService>(instance);
+            context.RegisterInstance(instance);
 
-            using var scope = context.Build();
+            using var parentScope = context.CreateScope();
 
-            var resolved = scope.Resolver.Resolve<IService>();
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyService>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyService>();
 
-            Assert.That(resolved, Is.EqualTo(instance));
+            Assert.That(instance1, Is.EqualTo(instance));
+            Assert.That(instance2, Is.EqualTo(instance));
+
+            using var childScope = parentScope.CreateChildScope();
+
+            var instance3 = childScope.Resolver.Resolve<NoDependencyService>();
+
+            Assert.That(instance3, Is.EqualTo(instance));
         }
 
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveTemporalInstancePerRequest(ISolver solver)
         {
-            var fieldInjected = new NoDependencyClass();
-            var propertyInjected = new NoDependencyClass();
-            var methodInjected = new NoDependencyClass();
-
             var parentContext = new DependencyContext(solver);
 
-            parentContext.Register(() => new DependencyIntoInstance(), Lifetime.Temporal)
-                .WithFieldsInjected()
-                .From("fieldInjected", fieldInjected)
-                .WithPropertiesInjected()
-                .From("PropertyInjected", propertyInjected)
-                .WithMethodInjected()
-                .From("methodInjected", methodInjected)
-                .AsImplementedInterfaces()
-                .AsSelf();
+            parentContext.RegisterInstance(() => new NoDependencyService(), Lifetime.Temporal);
 
-            using var parentScope = parentContext.Build();
+            var parentScope = parentContext.CreateScope();
 
-            var instance1 = parentScope.Resolver.Resolve<DependencyIntoInstance>();
-            var instance2 = parentScope.Resolver.Resolve<DependencyIntoInstance>();
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyService>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.Not.EqualTo(instance2));
 
-            using var childScope = parentScope.CreateChildScope();
+            var childScope = parentScope.CreateChildScope();
 
-            var instance3 = childScope.Resolver.Resolve<DependencyIntoInstance>();
+            var instance3 = childScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.Not.EqualTo(instance3));
             Assert.That(instance2, Is.Not.EqualTo(instance3));
+
+            childScope.Dispose();
+            parentScope.Dispose();
+
+            Assert.That(instance3.IsDisposed, Is.False);
         }
 
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveLocalInstancePerLocalScope(ISolver solver)
         {
-            var fieldInjected = new NoDependencyClass();
-            var propertyInjected = new NoDependencyClass();
-            var methodInjected = new NoDependencyClass();
-
             var parentContext = new DependencyContext(solver);
 
-            parentContext.Register(() => new DependencyIntoInstance(), Lifetime.Local)
-                .WithFieldsInjected()
-                .From("fieldInjected", fieldInjected)
-                .WithPropertiesInjected()
-                .From("PropertyInjected", propertyInjected)
-                .WithMethodInjected()
-                .From("methodInjected", methodInjected)
-                .AsImplementedInterfaces()
-                .AsSelf();
+            parentContext.RegisterInstance(() => new NoDependencyService(), Lifetime.Local);
+            var parentScope = parentContext.CreateScope();
 
-            using var parentScope = parentContext.Build();
-
-            var instance1 = parentScope.Resolver.Resolve<DependencyIntoInstance>();
-            var instance2 = parentScope.Resolver.Resolve<DependencyIntoInstance>();
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyService>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.EqualTo(instance2));
 
-            using var childScope = parentScope.CreateChildScope();
+            var childScope = parentScope.CreateChildScope();
 
-            var instance3 = childScope.Resolver.Resolve<DependencyIntoInstance>();
+            var instance3 = childScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.Not.EqualTo(instance3));
             Assert.That(instance2, Is.Not.EqualTo(instance3));
+
+            childScope.Dispose();
+            parentScope.Dispose();
+
+            Assert.That(instance3.IsDisposed, Is.False);
         }
 
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveGlobalInstancePerGlobalScope(ISolver solver)
         {
-            var fieldInjected = new NoDependencyClass();
-            var propertyInjected = new NoDependencyClass();
-            var methodInjected = new NoDependencyClass();
-
             var parentContext = new DependencyContext(solver);
 
-            parentContext.Register(() => new DependencyIntoInstance(), Lifetime.Global)
-                .WithFieldsInjected()
-                .From("fieldInjected", fieldInjected)
-                .WithPropertiesInjected()
-                .From("PropertyInjected", propertyInjected)
-                .WithMethodInjected()
-                .From("methodInjected", methodInjected)
-                .AsImplementedInterfaces()
-                .AsSelf();
+            parentContext.RegisterInstance(() => new NoDependencyService(), Lifetime.Global);
 
-            using var parentScope = parentContext.Build();
+            var parentScope = parentContext.CreateScope();
 
-            var instance1 = parentScope.Resolver.Resolve<DependencyIntoInstance>();
-            var instance2 = parentScope.Resolver.Resolve<DependencyIntoInstance>();
+            var instance1 = parentScope.Resolver.Resolve<NoDependencyService>();
+            var instance2 = parentScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.EqualTo(instance2));
 
-            using var childScope = parentScope.CreateChildScope();
+            var childScope = parentScope.CreateChildScope();
 
-            var instance3 = childScope.Resolver.Resolve<DependencyIntoInstance>();
+            var instance3 = childScope.Resolver.Resolve<NoDependencyService>();
 
             Assert.That(instance1, Is.EqualTo(instance3));
             Assert.That(instance2, Is.EqualTo(instance3));
+
+            childScope.Dispose();
+            parentScope.Dispose();
+
+            Assert.That(instance3.IsDisposed, Is.False);
         }
 
-        // TODO: Rename method.
-        [Test]
-        public void ShouldInstantiateRegisteredAsInterface()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveObjectAsInheritedType(ISolver solver)
         {
-            var context = new DependencyContext();
+            var context = new DependencyContext(solver);
 
-            context.Register<MultipleInterfaceClass>(Lifetime.Global)
-                .As<IInterfaceA>()
-                .As<IInterfaceB>()
-                .As<IInterfaceC>();
+            context.Register<NoDependencyService>(Lifetime.Global).As<IService>();
 
-            using var scope = context.Build();
+            using var scope = context.CreateScope();
 
             Assert.That(() =>
             {
-                _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
+                _ = scope.Resolver.Resolve<NoDependencyService>();
             }, Throws.TypeOf<RagnarokNotRegisteredException>());
 
             Assert.That(() =>
             {
-                _ = scope.Resolver.Resolve<IInterfaceD>();
+                _ = scope.Resolver.Resolve<IDisposable>();
             }, Throws.TypeOf<RagnarokNotRegisteredException>());
 
-            var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
-            var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
-            var interfaceC = scope.Resolver.Resolve<IInterfaceC>();
+            var service = scope.Resolver.Resolve<IService>();
 
-            Assert.That(interfaceA is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceB is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceC is MultipleInterfaceClass, Is.True);
+            Assert.That(service is NoDependencyService, Is.True);
         }
 
-        // TODO: Rename method.
-        [Test]
-        public void ShouldInstantiateRegisteredAsImplementedInterfaces()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveObjectAsImplementedInterfaces(ISolver solver)
         {
-            var context = new DependencyContext();
+            var context = new DependencyContext(solver);
 
-            context.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces();
+            context.Register<NoDependencyService>(Lifetime.Global).AsImplementedInterfaces();
 
-            using var scope = context.Build();
+            using var scope = context.CreateScope();
 
             Assert.That(() =>
             {
-                _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
+                _ = scope.Resolver.Resolve<NoDependencyService>();
             }, Throws.TypeOf<RagnarokNotRegisteredException>());
 
-            var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
-            var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
-            var interfaceC = scope.Resolver.Resolve<IInterfaceC>();
-            var interfaceD = scope.Resolver.Resolve<IInterfaceD>();
+            var service = scope.Resolver.Resolve<IService>();
+            var disposable = scope.Resolver.Resolve<IDisposable>();
 
-            Assert.That(interfaceA is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceB is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceC is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceD is MultipleInterfaceClass, Is.True);
+            Assert.That(service is NoDependencyService, Is.True);
+            Assert.That(disposable is NoDependencyService, Is.True);
         }
 
-        // TODO: Rename method.
-        [Test]
-        public void ShouldInstantiateRegisteredAsInterfaceAndSelf()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveObjectAsInheritedAndOwnType(ISolver solver)
         {
-            var context = new DependencyContext();
+            var context = new DependencyContext(solver);
 
-            context.Register<MultipleInterfaceClass>(Lifetime.Global)
-                .As<IInterfaceA>()
-                .As<IInterfaceB>()
-                .As<IInterfaceC>()
-                .AsSelf();
+            context.Register<NoDependencyService>(Lifetime.Global).As<IService>().AsOwnSelf();
 
-            using var scope = context.Build();
+            using var scope = context.CreateScope();
 
             Assert.That(() =>
             {
-                _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
+                _ = scope.Resolver.Resolve<NoDependencyService>();
             }, Throws.Nothing);
 
             Assert.That(() =>
             {
-                _ = scope.Resolver.Resolve<IInterfaceD>();
+                _ = scope.Resolver.Resolve<IDisposable>();
             }, Throws.TypeOf<RagnarokNotRegisteredException>());
 
-            var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
-            var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
-            var interfaceC = scope.Resolver.Resolve<IInterfaceC>();
+            var service = scope.Resolver.Resolve<IService>();
 
-            Assert.That(interfaceA is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceB is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceC is MultipleInterfaceClass, Is.True);
+            Assert.That(service is NoDependencyService, Is.True);
         }
 
-        // TODO: Rename method.
-        [Test]
-        public void ShouldInstantiateRegisteredAsImplementedInterfacesAndSelf()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveObjectAsImplementedInterfacesAndOwnType(ISolver solver)
         {
-            var context = new DependencyContext();
+            var context = new DependencyContext(solver);
 
-            context.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsSelf();
+            context.Register<NoDependencyService>(Lifetime.Global).AsImplementedInterfaces().AsOwnSelf();
 
-            using var scope = context.Build();
+            using var scope = context.CreateScope();
 
             Assert.That(() =>
             {
-                _ = scope.Resolver.Resolve<MultipleInterfaceClass>();
+                _ = scope.Resolver.Resolve<NoDependencyService>();
             }, Throws.Nothing);
 
-            var interfaceA = scope.Resolver.Resolve<IInterfaceA>();
-            var interfaceB = scope.Resolver.Resolve<IInterfaceB>();
-            var interfaceC = scope.Resolver.Resolve<IInterfaceC>();
-            var interfaceD = scope.Resolver.Resolve<IInterfaceD>();
+            var service = scope.Resolver.Resolve<IService>();
+            var disposable = scope.Resolver.Resolve<IDisposable>();
 
-            Assert.That(interfaceA is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceB is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceC is MultipleInterfaceClass, Is.True);
-            Assert.That(interfaceD is MultipleInterfaceClass, Is.True);
+            Assert.That(service is NoDependencyService, Is.True);
+            Assert.That(disposable is NoDependencyService, Is.True);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldDisposeResolvedObjectWhenDisposed(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            context.Register<NoDependencyService>(Lifetime.Global).As<IDisposable>().AsOwnSelf();
+
+            var scope = context.CreateScope();
+
+            var service = scope.Resolver.Resolve<NoDependencyService>();
+
+            scope.Dispose();
+
+            Assert.That(service.IsDisposed, Is.True);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveDependencyFromGlobalScope(ISolver solver)
+        {
+            var parentContext = new DependencyContext(solver);
+
+            parentContext.Register<DualInterface1>(Lifetime.Temporal).AsImplementedInterfaces();
+
+            using var parentScope = parentContext.CreateScope();
+
+            var childContext = parentScope.CreateContext();
+
+            childContext.Register<DualInterface2>(Lifetime.Temporal).AsImplementedInterfaces();
+
+            using var childScope = childContext.CreateScope();
+
+            var grandChildContext = childScope.CreateContext();
+
+            grandChildContext.Register<MultipleDependencyService>(Lifetime.Temporal);
+
+            using var grandChildScope = grandChildContext.CreateScope();
+
+            Assert.That(() =>
+            {
+                grandChildScope.Resolver.Resolve<MultipleDependencyService>();
+            }, Throws.Nothing);
         }
 
         [TestCaseSource(nameof(SolverList))]
@@ -401,23 +349,22 @@ namespace YggdrAshill.Ragnarok.Specification
                 }
             }
 
-            parentContext.Register<DualInterface1>(Lifetime.Global).AsImplementedInterfaces();
+            parentContext.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces();
+            parentContext.Register<IService, MultipleDependencyService>(Lifetime.Global);
 
-            using var parentScope = parentContext.Build();
+            using var parentScope = parentContext.CreateScope();
+
+            var totalParentInjectionAmount = parentInjectionCount + 1;
 
             var parentArray = parentScope.Resolver.Resolve<IService[]>();
             var parentReadOnlyList = parentScope.Resolver.Resolve<IReadOnlyList<IService>>();
             var parentReadOnlyCollection = parentScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
             var parentEnumerable = parentScope.Resolver.Resolve<IEnumerable<IService>>();
 
-            Assert.That(parentArray.Length, Is.EqualTo(parentInjectionCount));
-            Assert.That(parentReadOnlyList.Count, Is.EqualTo(parentInjectionCount));
-            Assert.That(parentReadOnlyCollection.Count, Is.EqualTo(parentInjectionCount));
-            Assert.That(parentEnumerable.Count(), Is.EqualTo(parentInjectionCount));
-            foreach (var service in parentArray)
-            {
-                Assert.That(service, Is.Not.Null);
-            }
+            Assert.That(parentArray.Length, Is.EqualTo(totalParentInjectionAmount));
+            Assert.That(parentReadOnlyList.Count, Is.EqualTo(totalParentInjectionAmount));
+            Assert.That(parentReadOnlyCollection.Count, Is.EqualTo(totalParentInjectionAmount));
+            Assert.That(parentEnumerable.Count(), Is.EqualTo(totalParentInjectionAmount));
 
             var childInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
@@ -435,35 +382,28 @@ namespace YggdrAshill.Ragnarok.Specification
                 }
             }
 
-            childContext.Register<DualInterface2>(Lifetime.Global).AsImplementedInterfaces();
-            childContext.Register<IService, MultipleDependencyService>(Lifetime.Global);
-
-            using var childScope = childContext.Build();
+            using var childScope = childContext.CreateScope();
 
             var childArray = childScope.Resolver.Resolve<IService[]>();
             var childReadOnlyList = childScope.Resolver.Resolve<IReadOnlyList<IService>>();
             var childReadOnlyCollection = childScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
             var childEnumerable = childScope.Resolver.Resolve<IEnumerable<IService>>();
 
-            var totalInjectionAmount = parentInjectionCount + childInjectionCount + 1;
-            Assert.That(childArray.Length, Is.EqualTo(totalInjectionAmount));
-            Assert.That(childReadOnlyList.Count, Is.EqualTo(totalInjectionAmount));
-            Assert.That(childReadOnlyCollection.Count, Is.EqualTo(totalInjectionAmount));
-            Assert.That(childEnumerable.Count(), Is.EqualTo(totalInjectionAmount));
-            foreach (var service in parentArray)
-            {
-                Assert.That(service, Is.Not.Null);
-            }
+            var totalChildInjectionAmount = parentInjectionCount + childInjectionCount + 1;
+            Assert.That(childArray.Length, Is.EqualTo(totalChildInjectionAmount));
+            Assert.That(childReadOnlyList.Count, Is.EqualTo(totalChildInjectionAmount));
+            Assert.That(childReadOnlyCollection.Count, Is.EqualTo(totalChildInjectionAmount));
+            Assert.That(childEnumerable.Count(), Is.EqualTo(totalChildInjectionAmount));
         }
 
         [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveServiceBundle(ISolver solver)
         {
-            var injectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
+            var parentInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
             var parentContext = new DependencyContext(solver);
 
-            for (var count = 0; count < injectionCount; count++)
+            for (var count = 0; count < parentInjectionCount; count++)
             {
                 if (count % 2 == 0)
                 {
@@ -475,41 +415,201 @@ namespace YggdrAshill.Ragnarok.Specification
                 }
             }
 
-            parentContext.Register<IService, MultipleDependencyService>(Lifetime.Global);
             parentContext.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces();
+            parentContext.Register<IService, MultipleDependencyService>(Lifetime.Global);
 
-            using var parentScope = parentContext.Build();
+            using var parentScope = parentContext.CreateScope();
 
             var parentPackage = parentScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
+            var totalParentInjectionAmount = parentInjectionCount + 1;
+            Assert.That(parentPackage.Count, Is.EqualTo(totalParentInjectionAmount));
 
-            Assert.That(parentPackage.Count, Is.EqualTo(injectionCount + 1));
-            foreach (var service in parentPackage)
-            {
-                Assert.That(service, Is.Not.Null);
-            }
+            var childInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
             var childContext = parentScope.CreateContext();
 
-            childContext.Register<IService, NoDependencyService>(Lifetime.Global);
+            for (var count = 0; count < childInjectionCount; count++)
+            {
+                if (count % 2 == 0)
+                {
+                    childContext.Register<IService, NoDependencyService>(Lifetime.Local);
+                }
+                else
+                {
+                    childContext.Register<IService, NoDependencyService>(Lifetime.Temporal);
+                }
+            }
 
-            using var childScope = childContext.Build();
+            using var childScope = childContext.CreateScope();
 
             var childPackage = childScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
-
-            Assert.That(childPackage.Count, Is.EqualTo(injectionCount + 1));
-            foreach (var service in childPackage)
-            {
-                Assert.That(service, Is.Not.Null);
-            }
+            var totalChildInjectionAmount = parentInjectionCount + childInjectionCount;
+            Assert.That(childPackage.Count, Is.EqualTo(totalChildInjectionAmount));
         }
 
-        [Test]
-        public void ShouldBuildScopeWithoutCircularDependency()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInjectDependencyIntoField(ISolver solver)
         {
-            var parentContext = new DependencyContext();
+            var context = new DependencyContext(solver);
+
+            context.Register<NoDependencyClass>(Lifetime.Global);
+            context.Register<FieldInjectable>(Lifetime.Global).WithFieldInjection();
+
+            using var scope = context.CreateScope();
+
+            var resolved = scope.Resolver.Resolve<FieldInjectable>();
+
+            Assert.That(resolved.Instance, Is.Not.Null);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInjectDependencyIntoProperty(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            context.Register<NoDependencyClass>(Lifetime.Global);
+            context.Register<PropertyInjectable>(Lifetime.Global).WithPropertyInjection();
+
+            using var scope = context.CreateScope();
+
+            var resolved = scope.Resolver.Resolve<PropertyInjectable>();
+
+            Assert.That(resolved.Instance, Is.Not.Null);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInjectDependencyIntoMethod(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            context.Register<NoDependencyClass>(Lifetime.Global);
+            context.Register<MethodInjectable>(Lifetime.Global).WithMethodInjection();
+
+            using var scope = context.CreateScope();
+
+            var resolved = scope.Resolver.Resolve<MethodInjectable>();
+
+            Assert.That(resolved.Instance, Is.Not.Null);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInjectInstance(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            var instance = new NoDependencyClass();
+
+            context.Register<ConstructorInjectable>(Lifetime.Global).WithArgument(instance);
+
+            using var scope = context.CreateScope();
+
+            var resolved = scope.Resolver.Resolve<ConstructorInjectable>();
+
+            Assert.That(resolved.Instance, Is.EqualTo(instance));
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInjectInstanceIntoField(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            var instance = new NoDependencyClass();
+
+            context.Register<FieldInjectable>(Lifetime.Global).WithField(instance);
+
+            using var scope = context.CreateScope();
+
+            var resolved = scope.Resolver.Resolve<FieldInjectable>();
+
+            Assert.That(resolved.Instance, Is.EqualTo(instance));
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInjectInstanceIntoProperty(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            var instance = new NoDependencyClass();
+
+            context.Register<PropertyInjectable>(Lifetime.Global).WithProperty(instance);
+
+            using var scope = context.CreateScope();
+
+            var resolved = scope.Resolver.Resolve<PropertyInjectable>();
+
+            Assert.That(resolved.Instance, Is.EqualTo(instance));
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldInjectInstanceIntoMethod(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            var instance = new NoDependencyClass();
+
+            context.Register<MethodInjectable>(Lifetime.Global).WithMethodArgument(instance);
+
+            using var scope = context.CreateScope();
+
+            var resolved = scope.Resolver.Resolve<MethodInjectable>();
+
+            Assert.That(resolved.Instance, Is.EqualTo(instance));
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldRegisterInstallation(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            context.Install<NoDependencyClassInstallation>();
+
+            using var scope = context.CreateScope();
+
+            Assert.That(() =>
+            {
+                scope.Resolver.Resolve<NoDependencyClass>();
+            }, Throws.Nothing);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveFromSubContainer(ISolver solver)
+        {
+            var context = new DependencyContext(solver);
+
+            var service = default(NoDependencyService);
+
+            context.RegisterFromSubContainer<MultipleDependencyService>(container =>
+            {
+                container.Register<NoDependencyService>(Lifetime.Global);
+                container.Register(resolver => service = resolver.Resolve<NoDependencyService>());
+                container.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsOwnSelf();
+                container.Register<MultipleDependencyService>(Lifetime.Global);
+            });
+
+            var scope = context.CreateScope();
+
+            Assert.That(() =>
+            {
+                scope.Resolver.Resolve<MultipleDependencyService>();
+            }, Throws.Nothing);
+
+            Assert.That(() =>
+            {
+                scope.Resolver.Resolve<MultipleInterfaceClass>();
+            }, Throws.TypeOf<RagnarokNotRegisteredException>());
+
+            scope.Dispose();
+
+            Assert.That(service!.IsDisposed, Is.True);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldCreateScopeWithoutCircularDependency(ISolver solver)
+        {
+            var parentContext = new DependencyContext(solver);
             parentContext.Register<CircularDependencyClass1>(Lifetime.Temporal);
 
-            using var parentScope = parentContext.Build();
+            using var parentScope = parentContext.CreateScope();
 
             var childContext1 = parentScope.CreateContext();
             childContext1.Register<CircularDependencyClass2>(Lifetime.Temporal);
@@ -519,21 +619,21 @@ namespace YggdrAshill.Ragnarok.Specification
 
             Assert.That(() =>
             {
-                _ = childContext1.Build();
+                _ = childContext1.CreateScope();
 
             }, Throws.Nothing);
 
             Assert.That(() =>
             {
-                _ = childContext2.Build();
+                _ = childContext2.CreateScope();
 
             }, Throws.Nothing);
         }
 
-        [Test]
-        public void ShouldDetectCircularDependencyInLocalScope()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldDetectCircularDependencyInLocalScope(ISolver solver)
         {
-            var context = new DependencyContext();
+            var context = new DependencyContext(solver);
 
             context.Register<CircularDependencyClass1>(Lifetime.Temporal);
             context.Register<CircularDependencyClass2>(Lifetime.Temporal);
@@ -541,32 +641,31 @@ namespace YggdrAshill.Ragnarok.Specification
 
             Assert.That(() =>
             {
-                _ = context.Build();
+                _ = context.CreateScope();
 
-            }, Throws.TypeOf<RagnarokCircularDependencyDetectedException>());
+            }, Throws.TypeOf<RagnarokCircularDependencyException>());
 
             Assert.That(() =>
             {
-                _ = new DependencyContext().Build();
+                _ = new DependencyContext(solver).CreateScope();
 
             }, Throws.Nothing);
         }
 
-        // TODO: refactor to detect circular dependency in global scope.
-        [Test]
-        public void CannotDetectCircularDependencyInGlobalScope()
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldDetectCircularDependencyInGlobalScope(ISolver solver)
         {
-            var parentContext = new DependencyContext();
+            var parentContext = new DependencyContext(solver);
 
             parentContext.Register<CircularDependencyClass1>(Lifetime.Temporal);
 
-            using var parentScope = parentContext.Build();
+            using var parentScope = parentContext.CreateScope();
 
             var childContext = parentScope.CreateContext();
 
             childContext.Register<CircularDependencyClass2>(Lifetime.Temporal);
 
-            using var childScope = childContext.Build();
+            using var childScope = childContext.CreateScope();
 
             var grandchildContext = childScope.CreateContext();
 
@@ -574,12 +673,9 @@ namespace YggdrAshill.Ragnarok.Specification
 
             Assert.That(() =>
             {
-                _ = grandchildContext.Build();
+                _ = grandchildContext.CreateScope();
 
-            }, Throws.Nothing);
-
-            // StackOverflowException
-            // grandchildContext.Build().Resolver.Resolve<CircularDependencyClass1>();
+            }, Throws.TypeOf<RagnarokCircularDependencyException>());
         }
     }
 }

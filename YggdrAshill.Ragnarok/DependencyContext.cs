@@ -1,87 +1,98 @@
-using System;
-using System.Collections.Generic;
-
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
     /// <summary>
-    /// Default implementation of <see cref="IContext"/>.
+    /// Default implementation of <see cref="IObjectContext"/>.
     /// </summary>
-    public sealed class DependencyContext :
-        IContext
+    public sealed class DependencyContext : IObjectContext
     {
-        private readonly IContext context;
+        private readonly IObjectContext context;
 
-        public DependencyContext(IContext context)
+        /// <summary>
+        /// Creates <see cref="DependencyContext"/>.
+        /// </summary>
+        /// <param name="context">
+        /// <see cref="IObjectContext"/> for <see cref="DependencyContext"/>.
+        /// </param>
+        public DependencyContext(IObjectContext context)
         {
             this.context = context;
         }
 
-        public DependencyContext(IScopedResolverContext context) : this(new Context(context))
+        /// <summary>
+        /// Creates <see cref="DependencyContext"/>.
+        /// </summary>
+        /// <param name="resolverBuilder">
+        /// <see cref="IScopedResolverBuilder"/> for <see cref="DependencyContext"/>.
+        /// </param>
+        public DependencyContext(IScopedResolverBuilder resolverBuilder) : this(new ObjectContext(resolverBuilder))
         {
 
         }
 
-        public DependencyContext(IEngineContext context) : this(new ScopedResolverContext(context))
+        public DependencyContext(IRootResolver resolver) : this(new ScopedResolverBuilder(resolver))
         {
 
         }
 
-        public DependencyContext(ISelector selector, ISolver solver) : this(new EngineContext(selector, solver))
+        /// <summary>
+        /// Creates <see cref="DependencyContext"/>.
+        /// </summary>
+        /// <param name="selector">
+        /// <see cref="ISelector"/> for <see cref="DependencyContext"/>.
+        /// </param>
+        /// /// <param name="solver">
+        /// <see cref="ISolver"/> for <see cref="DependencyContext"/>.
+        /// </param>
+        public DependencyContext(ISelector selector, ISolver solver) : this(new RootResolver(selector, solver))
         {
 
         }
 
+        /// <summary>
+        /// Creates <see cref="DependencyContext"/>.
+        /// </summary>
+        /// <param name="solver">
+        /// <see cref="ISolver"/> for <see cref="DependencyContext"/>.
+        /// </param>
+        /// <remarks>
+        /// <see cref="ISelector"/> is <see cref="AnnotationSelector"/>.
+        /// </remarks>
         public DependencyContext(ISolver solver) : this(AnnotationSelector.Instance, solver)
         {
 
         }
 
+        /// <summary>
+        /// Creates <see cref="DependencyContext"/>.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="ISelector"/> is <see cref="AnnotationSelector"/>, and
+        /// <see cref="ISolver"/> is <see cref="ExpressionSolver"/>.
+        /// </remarks>
         public DependencyContext() : this(AnnotationSelector.Instance, ExpressionSolver.Instance)
         {
 
         }
 
         /// <inheritdoc/>
-        public void Register(IComposition composition)
+        public IObjectResolver Resolver => context.Resolver;
+
+        /// <inheritdoc/>
+        public ICompilation Compilation => context.Compilation;
+
+        /// <inheritdoc/>
+        public IRegistration Registration => context.Registration;
+
+        /// <inheritdoc/>
+        public IObjectContext CreateContext()
         {
-            context.Register(composition);
+            return context.CreateContext();
         }
 
         /// <inheritdoc/>
-        public void Register(Action<IResolver> callback)
+        public IObjectScope CreateScope()
         {
-            context.Register(callback);
-        }
-
-        /// <inheritdoc/>
-        public IScope Build()
-        {
-            return context.Build();
-        }
-
-        /// <inheritdoc/>
-        public IInstantiation GetInstantiation(Type type, IReadOnlyList<IParameter> parameterList)
-        {
-            return context.GetInstantiation(type, parameterList);
-        }
-
-        /// <inheritdoc/>
-        public IInjection GetFieldInjection(Type type, IReadOnlyList<IParameter> parameterList)
-        {
-            return context.GetFieldInjection(type, parameterList);
-        }
-
-        /// <inheritdoc/>
-        public IInjection GetPropertyInjection(Type type, IReadOnlyList<IParameter> parameterList)
-        {
-            return context.GetPropertyInjection(type, parameterList);
-        }
-
-        /// <inheritdoc/>
-        public IInjection GetMethodInjection(Type type, IReadOnlyList<IParameter> parameterList)
-        {
-            return context.GetMethodInjection(type, parameterList);
+            return context.CreateScope();
         }
     }
 }

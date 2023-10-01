@@ -4,37 +4,68 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class TypeAssignmentStatement :
-        ITypeAssignment,
-        IStatement
+    public sealed class TypeAssignmentStatement : ITypeAssignment, IStatement
     {
-        private readonly TypeAssignment assignment;
+        private readonly Func<IInstantiation> createInstantiation;
 
-        public IInstantiation Instantiation { get; }
+        public Type ImplementedType { get; }
+        public Lifetime Lifetime { get; }
+        public Ownership Ownership { get; }
 
-        public TypeAssignmentStatement(Type implementedType, IInstantiation instantiation)
+        public TypeAssignmentStatement(Type type, Lifetime lifetime, Ownership ownership, Func<IInstantiation> createInstantiation)
         {
-            assignment = new TypeAssignment(implementedType);
-            Instantiation = instantiation;
+            this.createInstantiation = createInstantiation;
+            ImplementedType = type;
+            Lifetime = lifetime;
+            Ownership = ownership;
         }
 
-        public void AsSelf()
+        public TypeAssignmentStatement(object instance)
+            : this(instance.GetType(), Lifetime.Global, Ownership.External, () => new InstantiateToReturnInstance(instance))
         {
-            assignment.AsSelf();
+
         }
 
-        public IAssignImplementedInterface As(Type implementedInterface)
+        private readonly List<Type> assignedTypeList = new();
+        public IReadOnlyList<Type> AssignedTypeList => assignedTypeList;
+
+        public IInstantiation Instantiation => createInstantiation.Invoke();
+
+        public void AsOwnSelf()
         {
-            return assignment.As(implementedInterface);
+            AddToAssignedTypeList(ImplementedType);
         }
 
-        public IAssignImplementedType AsImplementedInterfaces()
+        public IInheritedTypeAssignment As(Type inheritedType)
         {
-            return assignment.AsImplementedInterfaces();
+            if (!inheritedType.IsAssignableFrom(ImplementedType))
+            {
+                throw new ArgumentException($"{ImplementedType} is not assignable from {inheritedType}.");
+            }
+
+            AddToAssignedTypeList(inheritedType);
+
+            return this;
         }
 
-        public Type ImplementedType => assignment.ImplementedType;
+        public IOwnTypeAssignment AsImplementedInterfaces()
+        {
+            foreach (var interfaceType in ImplementedType.GetInterfaces())
+            {
+                AddToAssignedTypeList(interfaceType);
+            }
 
-        public IReadOnlyList<Type> AssignedTypeList => assignment.AssignedTypeList;
+            return this;
+        }
+
+        private void AddToAssignedTypeList(Type type)
+        {
+            if (assignedTypeList.Contains(type))
+            {
+                return;
+            }
+
+            assignedTypeList.Add(type);
+        }
     }
 }

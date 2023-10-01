@@ -1,22 +1,33 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ScopedResolver :
-        IScopedResolver
+    internal sealed class ScopedResolver : IScopedResolver
     {
+        private readonly Engine engine;
         private readonly IScopedResolver? parent;
-        private readonly IEngine engine;
 
-        public ScopedResolver(IScopedResolver? parent, IEngine engine)
+        private readonly Dictionary<Type, IDescription?> dictionary;
+
+        public ScopedResolver(IDictionary<Type, IDescription?> content, Engine engine, IScopedResolver? parent)
         {
-            this.parent = parent;
+            dictionary = new Dictionary<Type, IDescription?>(content);
             this.engine = engine;
+            this.parent = parent;
         }
 
+        private readonly ConcurrentDictionary<Type, IDescription> registrationCache = new();
+        private readonly ConcurrentDictionary<IDescription, object> instanceCache = new();
+        private readonly CompositeDisposable compositeDisposable = new();
+
         private bool isDisposed;
+
+        public T Resolve<T>()
+        {
+            return (T)Resolve(typeof(T));
+        }
 
         public object Resolve(Type type)
         {
@@ -25,163 +36,189 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            if (engine.Find(type, out var registration))
+            IScopedResolver resolver = this;
+
+            while (true)
             {
-                return ResolveInternally(registration);
-            }
+                if (resolver.CanResolve(type, out var description))
+                {
+                    var lifetime = description.Lifetime;
 
-            if (parent != null)
-            {
-                return parent.Resolve(type, this);
-            }
+                    switch (lifetime)
+                    {
+                        case Lifetime.Global:
+                            return resolver.Resolve(description);
+                        case Lifetime.Local:
+                            return ResolveLocally(description);
+                        case Lifetime.Temporal:
+                            return ResolveTemporally(description);
+                        default:
+                            throw new NotSupportedException($"{lifetime} is invalid.");
+                    }
+                }
 
-            throw new RagnarokNotRegisteredException(type);
-        }
-
-        private object ResolveInternally(IRegistration registration)
-        {
-            if (isDisposed)
-            {
-                throw new ObjectDisposedException(nameof(IEngine));
-            }
-
-            var lifetime = registration.Lifetime;
-
-            switch (lifetime)
-            {
-                case Lifetime.Global:
-                case Lifetime.Local:
-                    return engine.GetInstance(registration, Instantiate);
-                case Lifetime.Temporal:
-                    return Instantiate(registration);
-                default:
-                    throw new NotSupportedException($"{lifetime} is invalid.");
+                if (!resolver.CanEscalate(out resolver))
+                {
+                    throw new RagnarokNotRegisteredException(type);
+                }
             }
         }
 
-        private object Instantiate(IRegistration registration)
+        private object ResolveLocally(IDescription description)
         {
-            var ownership = registration.Ownership;
+            return instanceCache.GetOrAdd(description, ResolveTemporally);
+        }
+
+        private object ResolveTemporally(IDescription description)
+        {
+            var instance = description.Instantiate(this);
+            var ownership = description.Ownership;
 
             switch (ownership)
             {
                 case Ownership.Internal:
-                    var instance = registration.Instantiate(this);
-
                     if (instance is IDisposable disposable)
                     {
-                        engine.Bind(disposable);
+                        Bind(disposable);
                     }
-
-                    return instance;
+                    break;
                 case Ownership.External:
-                    return registration.Instantiate(this);
+                    break;
                 default:
                     throw new NotSupportedException($"{ownership} is invalid.");
             }
+
+            return instance;
         }
 
-        public object Resolve(Type type, IScopedResolver child)
+        public bool CanEscalate(out IScopedResolver resolver)
         {
             if (isDisposed)
             {
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            if (engine.Find(type, out var registration))
-            {
-                var lifetime = registration.Lifetime;
+            resolver = parent!;
 
-                switch (lifetime)
+            return parent != null;
+        }
+
+        public bool CanResolve(Type type, out IDescription description)
+        {
+            if (isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(IScopedResolver));
+            }
+
+            description = default!;
+
+            if (dictionary.TryGetValue(type, out var found) && found != null)
+            {
+                description = found;
+
+                return true;
+            }
+
+            return CanResolveCollection(type, out description) || CanResolveServiceBundle(type, out description);
+        }
+
+        private bool CanResolveCollection(Type type, out IDescription description)
+        {
+            description = default!;
+
+            if (!CollectionDescription.CanResolve(type, out var elementType))
+            {
+                return false;
+            }
+
+            description = registrationCache.GetOrAdd(type, _ =>
+            {
+                var activation = engine.CreateActivation(type);
+
+                if (!CanResolve(elementType, out var elementDescription))
                 {
-                    case Lifetime.Global:
-                        return ResolveInternally(registration);
-                    case Lifetime.Local:
-                    case Lifetime.Temporal:
-                        return child.Resolve(registration);
-                    default:
-                        throw new NotSupportedException($"{lifetime} is invalid.");
+                    return new CollectionDescription(elementType, activation, Array.Empty<IDescription>());
                 }
-            }
 
-            if (parent != null)
-            {
-                return parent.Resolve(type, child);
-            }
+                return new CollectionDescription(elementType, activation, new[] { elementDescription! });
+            });
 
-            throw new RagnarokNotRegisteredException(type);
+            return true;
         }
 
-        public object Resolve(IRegistration registration)
+        private bool CanResolveServiceBundle(Type type, out IDescription description)
+        {
+            description = default!;
+
+            if (!ServiceBundleDescription.CanResolve(type, out var elementType))
+            {
+                return false;
+            }
+
+            var targetType = TypeCache.ReadOnlyListOf(elementType);
+
+            if (CanResolve(targetType, out var found) && found is CollectionDescription collection)
+            {
+                description = registrationCache.GetOrAdd(type, _ =>
+                {
+                    var activation = engine.CreateActivation(type);
+
+                    return new ServiceBundleDescription(type, activation, collection);
+                });
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public object Resolve(IDescription description)
         {
             if (isDisposed)
             {
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            if (parent == null)
-            {
-                return ResolveInternally(registration);
-            }
-
-            var lifetime = registration.Lifetime;
+            var lifetime = description.Lifetime;
 
             switch (lifetime)
             {
                 case Lifetime.Global:
                 {
-                    if (engine.Have(registration))
+                    if (parent == null || dictionary.ContainsKey(description.ImplementedType))
                     {
-                        return ResolveInternally(registration);
+                        return ResolveLocally(description);
                     }
 
-                    return parent.Resolve(registration);
+                    return parent.Resolve(description);
                 }
                 case Lifetime.Local:
+                    return ResolveLocally(description);
                 case Lifetime.Temporal:
-                    return ResolveInternally(registration);
+                    return ResolveTemporally(description);
                 default:
                     throw new NotSupportedException($"{lifetime} is invalid.");
             }
         }
 
-        public IEnumerable<IRegistration> ResolveAll(Type type)
+        public void Bind(IDisposable disposable)
         {
             if (isDisposed)
             {
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            if (parent == null)
-            {
-                if (!engine.Find(type, out var registration))
-                {
-                    return Array.Empty<IRegistration>();
-                }
-
-                return new[] { registration };
-            }
-            else
-            {
-                if (!engine.Find(type, out var registration))
-                {
-                    return parent.ResolveAll(type);
-                }
-
-                return parent.ResolveAll(type).Append(registration);
-            }
+            compositeDisposable.Add(disposable);
         }
 
-        public IScopedResolverContext CreateContext()
+        public IScopedResolverBuilder CreateBuilder()
         {
             if (isDisposed)
             {
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            var engineContext = engine.CreateContext();
-
-            return new ScopedResolverContext(engineContext, this);
+            return new ScopedResolverBuilder(engine, this);
         }
 
         public void Dispose()
@@ -191,7 +228,13 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            engine.Dispose();
+            compositeDisposable.Dispose();
+
+            registrationCache.Clear();
+
+            instanceCache.Clear();
+
+            dictionary.Clear();
 
             isDisposed = false;
         }

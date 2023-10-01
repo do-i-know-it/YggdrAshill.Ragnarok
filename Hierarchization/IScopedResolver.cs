@@ -1,23 +1,23 @@
 using System;
-using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Defines <see cref="IResolver"/> chained hierarchically.
+    /// Defines <see cref="IObjectResolver"/> chained hierarchically.
     /// </summary>
-    public interface IScopedResolver :
-        IResolver,
-        IDisposable
+    public interface IScopedResolver : IObjectResolver, IDisposable
     {
+        // TODO: add document comments.
+        bool CanEscalate(out IScopedResolver resolver);
+
+        // TODO: add document comments.
+        bool CanResolve(Type type, out IDescription description);
+
         /// <summary>
-        /// Resolves dependencies with this or child <see cref="IScopedResolver"/> to instantiate.
+        /// Resolves instance with <paramref name="description"/>.
         /// </summary>
-        /// <param name="type">
-        /// <see cref="Type"/> to resolve.
-        /// </param>
-        /// <param name="child">
-        /// Child <see cref="IScopedResolver"/> to resolve.
+        /// <param name="description">
+        /// <see cref="IDescription"/> to resolve.
         /// </param>
         /// <returns>
         /// <see cref="object"/> resolved.
@@ -25,48 +25,20 @@ namespace YggdrAshill.Ragnarok
         /// <exception cref="ObjectDisposedException">
         /// Thrown if this <see cref="IScopedResolver"/> is disposed.
         /// </exception>
-        /// <exception cref="RagnarokNotRegisteredException">
-        /// Thrown if this <see cref="IScopedResolver"/> finds no <see cref="IRegistration"/>s.
-        /// </exception>
-        object Resolve(Type type, IScopedResolver child);
+        object Resolve(IDescription description);
+
+        // TODO: add document comments.
+        void Bind(IDisposable disposable);
 
         /// <summary>
-        /// Resolves dependencies with <see cref="IRegistration"/> from outer.
+        /// Creates a <see cref="IScopedResolverBuilder"/> to create new <see cref="IScopedResolver"/>.
         /// </summary>
-        /// <param name="registration">
-        /// <see cref="IRegistration"/> to resolve.
-        /// </param>
         /// <returns>
-        /// <see cref="object"/> resolved.
+        /// <see cref="IScopedResolverBuilder"/> created.
         /// </returns>
         /// <exception cref="ObjectDisposedException">
         /// Thrown if this <see cref="IScopedResolver"/> is disposed.
         /// </exception>
-        object Resolve(IRegistration registration);
-
-        /// <summary>
-        /// Resolves all <see cref="IRegistration"/>s for <see cref="Type"/> from all scopes.
-        /// </summary>
-        /// <param name="type">
-        /// <see cref="Type"/> to resolve.
-        /// </param>
-        /// <returns>
-        /// <see cref="IRegistration"/>s resolved.
-        /// </returns>
-        /// <exception cref="ObjectDisposedException">
-        /// Thrown if this <see cref="IScopedResolver"/> is disposed.
-        /// </exception>
-        IEnumerable<IRegistration> ResolveAll(Type type);
-
-        /// <summary>
-        /// Creates a <see cref="IScopedResolverContext"/> to create a new child <see cref="IScopedResolver"/>.
-        /// </summary>
-        /// <returns>
-        /// <see cref="IScopedResolverContext"/> created.
-        /// </returns>
-        /// <exception cref="ObjectDisposedException">
-        /// Thrown if this <see cref="IScopedResolver"/> is disposed.
-        /// </exception>
-        IScopedResolverContext CreateContext();
+        IScopedResolverBuilder CreateBuilder();
     }
 }

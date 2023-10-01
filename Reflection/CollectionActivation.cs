@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class CollectionActivation :
-        IActivation
+    internal sealed class CollectionActivation : IActivation
     {
         private readonly Type elementType;
 

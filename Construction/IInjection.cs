@@ -6,14 +6,14 @@ namespace YggdrAshill.Ragnarok
     public interface IInjection
     {
         /// <summary>
-        /// Add dependencies into <paramref name="instance"/> with <paramref name="resolver"/>.
+        /// Injects dependencies into <paramref name="instance"/> with <paramref name="resolver"/>.
         /// </summary>
         /// <param name="resolver">
-        /// <see cref="IResolver"/> to inject.
+        /// <see cref="IObjectResolver"/> to inject.
         /// </param>
         /// <param name="instance">
-        /// <see cref="object"/> injected.
+        /// <see cref="object"/> to inject.
         /// </param>
-        void Inject(IResolver resolver, object instance);
+        void Inject(IObjectResolver resolver, object instance);
     }
 }

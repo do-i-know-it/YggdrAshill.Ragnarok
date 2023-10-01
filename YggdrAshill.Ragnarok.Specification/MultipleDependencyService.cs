@@ -1,7 +1,6 @@
 namespace YggdrAshill.Ragnarok.Specification
 {
-    internal sealed class MultipleDependencyService :
-        IService
+    internal sealed class MultipleDependencyService : IService
     {
         private readonly IInterfaceA interfaceA;
         private readonly IInterfaceB interfaceB;

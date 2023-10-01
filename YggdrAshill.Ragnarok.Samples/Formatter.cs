@@ -2,8 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Samples
 {
-    internal sealed class Formatter :
-        IFormatter
+    internal sealed class Formatter : IFormatter
     {
         public static Formatter AllCharactersToUpper { get; } = new Formatter();
 

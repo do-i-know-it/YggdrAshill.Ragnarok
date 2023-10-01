@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <AssemblyName>YggdrAshill.Ragnarok.Motorization</AssemblyName>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <AssemblyName>YggdrAshill.Ragnarok.Composition</AssemblyName>
         <RootNamespace>YggdrAshill.Ragnarok</RootNamespace>
-        <LangVersion>8</LangVersion>
+        <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 

@@ -5,15 +5,14 @@ using System.Linq.Expressions;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="ISolver"/> with expression.
+    /// Implementation of <see cref="ISolver"/> with <see cref="Expression"/>.
     /// </summary>
-    public sealed class ExpressionSolver :
-        ISolver
+    public sealed class ExpressionSolver : ISolver
     {
         /// <summary>
         /// Singleton instance of <see cref="ExpressionSolver"/>.
         /// </summary>
-        public static ExpressionSolver Instance { get; } = new ExpressionSolver();
+        public static ExpressionSolver Instance { get; } = new();
 
         private ExpressionSolver()
         {
@@ -21,10 +20,10 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IActivation CreateActivation(ConstructorInjection injection)
+        public IActivation CreateActivation(DependencyInjectionRequest request)
         {
-            var constructor = injection.Constructor;
-            var argumentList = injection.ParameterList;
+            var constructor = request.Constructor;
+            var argumentList = request.ParameterList;
 
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
             var convertedParameterList = argumentList.Select((argument, index) =>
@@ -42,10 +41,10 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IInfusion CreateFieldInfusion(FieldInjection injection)
+        public IInfusion CreateFieldInfusion(FieldInjectionRequest request)
         {
-            var implementedType = injection.ImplementedType;
-            var fieldList = injection.FieldList;
+            var implementedType = request.ImplementedType;
+            var fieldList = request.FieldList;
 
             var instance = Expression.Parameter(typeof(object), "instance");
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
@@ -68,10 +67,10 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IInfusion CreatePropertyInfusion(PropertyInjection injection)
+        public IInfusion CreatePropertyInfusion(PropertyInjectionRequest request)
         {
-            var implementedType = injection.ImplementedType;
-            var propertyList = injection.PropertyList;
+            var implementedType = request.ImplementedType;
+            var propertyList = request.PropertyList;
 
             var instance = Expression.Parameter(typeof(object), "instance");
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
@@ -95,11 +94,11 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IInfusion CreateMethodInfusion(MethodInjection injection)
+        public IInfusion CreateMethodInfusion(MethodInjectionRequest request)
         {
-            var implementedType = injection.ImplementedType;
-            var method = injection.Method;
-            var argumentList = injection.ParameterList;
+            var implementedType = request.ImplementedType;
+            var method = request.Method;
+            var argumentList = request.ParameterList;
 
             var instance = Expression.Parameter(typeof(object), "instance");
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");

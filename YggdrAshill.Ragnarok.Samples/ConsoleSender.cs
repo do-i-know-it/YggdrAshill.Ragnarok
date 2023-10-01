@@ -2,8 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok.Samples
 {
-    internal sealed class ConsoleSender :
-        ISender
+    internal sealed class ConsoleSender : ISender
     {
         private readonly string announcement;
 
