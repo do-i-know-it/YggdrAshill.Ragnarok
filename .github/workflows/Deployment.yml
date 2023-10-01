@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Add MSBuild to Path
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1.1
       
       - name: Restore solution
         shell: cmd
@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Add MSBuild to Path
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1.1
 
       - name: Build artifacts
         shell: cmd
@@ -46,7 +46,7 @@ jobs:
           ;Configuration=%CONFIGURATION%^
             
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           path: ${{ github.workspace }}/${{ env.ARTIFACT_DIRECTORY }}
           name: ${{ github.workflow }}
@@ -68,7 +68,7 @@ jobs:
           echo TAG_NAME=$TAG_NAME >> $GITHUB_ENV
           echo ASSET_DIRECTORY=$ASSET_DIRECTORY >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           path: ./${{ env.ASSET_DIRECTORY }}
           name: ${{ github.workflow }}
