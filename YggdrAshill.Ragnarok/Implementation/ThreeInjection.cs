@@ -1,12 +1,12 @@
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InjectWithThreeInjection : IInjection
+    internal sealed class ThreeInjection : IInjection
     {
         private readonly IInjection first;
         private readonly IInjection second;
         private readonly IInjection third;
 
-        public InjectWithThreeInjection(IInjection first, IInjection second, IInjection third)
+        public ThreeInjection(IInjection first, IInjection second, IInjection third)
         {
             this.first = first;
             this.second = second;

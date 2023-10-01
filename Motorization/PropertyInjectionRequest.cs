@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
@@ -9,13 +8,12 @@ namespace YggdrAshill.Ragnarok
     {
         public Type ImplementedType { get; }
 
-        private readonly PropertyInfo[] propertyList;
-        public PropertyInfo[] PropertyList => propertyList.ToArray();
+        public PropertyInfo[] PropertyList { get; }
 
         public PropertyInjectionRequest(Type implementedType, PropertyInfo[] propertyList)
         {
             ImplementedType = implementedType;
-            this.propertyList = propertyList;
+            PropertyList = propertyList;
         }
     }
 }

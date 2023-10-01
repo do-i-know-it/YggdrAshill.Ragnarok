@@ -50,7 +50,7 @@ namespace YggdrAshill.Ragnarok
         {
             var request = resolver.Selector.RequestFieldInjection(type);
 
-            return resolver.Solver.CreateFieldInfusion(request);
+            return request.FieldList.Length == 0 ? InfuseNothing.Instance : resolver.Solver.CreateFieldInfusion(request);
         }
 
         public IInfusion GetPropertyInfusion(Type type)
@@ -61,7 +61,7 @@ namespace YggdrAshill.Ragnarok
         {
             var request = resolver.Selector.RequestPropertyInjection(type);
 
-            return resolver.Solver.CreatePropertyInfusion(request);
+            return request.PropertyList.Length == 0 ? InfuseNothing.Instance : resolver.Solver.CreatePropertyInfusion(request);
         }
 
         public IInfusion GetMethodInfusion(Type type)

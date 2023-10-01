@@ -1,7 +1,9 @@
 ﻿namespace YggdrAshill.Ragnarok
 {
-    public interface IFieldInjection : IPropertyInjectable
+    public interface IFieldInjection : IPropertyInjection
     {
+        IPropertyInjection WithPropertyInjection();
+
         IFieldInjection WithField(IParameter parameter);
     }
 }

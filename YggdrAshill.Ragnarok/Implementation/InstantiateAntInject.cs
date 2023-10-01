@@ -1,11 +1,11 @@
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InstantiateWithInjection : IInstantiation
+    internal sealed class InstantiateAntInject : IInstantiation
     {
         private readonly IInstantiation instantiation;
         private readonly IInjection injection;
 
-        public InstantiateWithInjection(IInstantiation instantiation, IInjection injection)
+        public InstantiateAntInject(IInstantiation instantiation, IInjection injection)
         {
             this.instantiation = instantiation;
             this.injection = injection;

@@ -37,86 +37,137 @@ namespace YggdrAshill.Ragnarok.Fabrication
         {
             var instantiation = createInstantiation.Invoke();
 
-            var candidate = GetInjection();
+            if (!CanInjectIntoInstance(out var injection))
+            {
+                return instantiation;
+            }
 
-            return candidate == null ? instantiation : new InstantiateWithInjection(instantiation, candidate);
+            return new InstantiateAntInject(instantiation, injection);
         }
 
-        private IInjection? GetInjection()
+        private bool CanInjectIntoInstance(out IInjection injection)
         {
-            var fieldInjection = GetFieldInjection();
-            var propertyInjection = GetPropertyInjection();
-            var methodInjection = GetMethodInjection();
-
-            if (fieldInjection == null)
+            if (CanInjectIntoField(out injection))
             {
-                if (propertyInjection == null)
+                // found field injection.
+                var fieldInjection = injection;
+
+                if (CanInjectIntoProperty(out injection))
                 {
-                    if (methodInjection == null)
+                    // found property injection.
+                    var propertyInjection = injection;
+
+                    if (CanInjectIntoMethod(out injection))
                     {
-                        return null;
+                        // found method injection.
+                        injection = new ThreeInjection(fieldInjection, propertyInjection, injection);
                     }
-
-                    return methodInjection;
+                    else
+                    {
+                        injection = new TwoInjection(fieldInjection, propertyInjection);
+                    }
                 }
-
-                if (methodInjection == null)
+                else if (CanInjectIntoMethod(out injection))
                 {
-                    return propertyInjection;
+                    // found method injection.
+                    injection = new TwoInjection(fieldInjection, injection);
                 }
-
-                return new InjectWithTwoInjection(propertyInjection, methodInjection);
-            }
-
-            if (propertyInjection == null)
-            {
-                if (methodInjection == null)
+                else
                 {
-                    return fieldInjection;
+                    injection = fieldInjection;
                 }
 
-                return new InjectWithTwoInjection(fieldInjection, methodInjection);
+                return true;
             }
 
-            if (methodInjection == null)
+            if (CanInjectIntoProperty(out injection))
             {
-                return new InjectWithTwoInjection(fieldInjection, propertyInjection);
+                // found property injection.
+                var propertyInjection = injection;
+
+                if (CanInjectIntoMethod(out injection))
+                {
+                    // found method injection.
+                    injection = new TwoInjection(propertyInjection, injection);
+                }
+                else
+                {
+                    injection = propertyInjection;
+                }
+
+                return true;
             }
 
-            return new InjectWithThreeInjection(fieldInjection, propertyInjection, methodInjection);
+            return CanInjectIntoMethod(out injection);
         }
-        private IInjection? GetFieldInjection()
+
+        private bool CanInjectIntoField(out IInjection injection)
         {
+            injection = default!;
+
             if (fieldParameterList == null)
             {
-                return null;
+                return false;
             }
 
             var infusion = compilation.GetFieldInfusion(typeAssignment.ImplementedType);
 
-            return new InfuseToInject(infusion, fieldParameterList);
+            if (fieldParameterList.Count == 0)
+            {
+                injection = new InfuseToInjectWithoutParameterList(infusion);
+            }
+            else
+            {
+                injection = new InfuseToInjectWithParameterList(infusion, fieldParameterList);
+            }
+
+            return true;
         }
-        private IInjection? GetPropertyInjection()
+
+        private bool CanInjectIntoProperty(out IInjection injection)
         {
+            injection = default!;
+
             if (propertyParameterList == null)
             {
-                return null;
+                return false;
             }
 
             var infusion = compilation.GetPropertyInfusion(typeAssignment.ImplementedType);
 
-            return new InfuseToInject(infusion, propertyParameterList);
+            if (propertyParameterList.Count == 0)
+            {
+                injection = new InfuseToInjectWithoutParameterList(infusion);
+            }
+            else
+            {
+                injection = new InfuseToInjectWithParameterList(infusion, propertyParameterList);
+            }
+
+            return true;
         }
-        private IInjection? GetMethodInjection()
+
+        private bool CanInjectIntoMethod(out IInjection injection)
         {
+            injection = default!;
+
             if (methodParameterList == null)
             {
-                return null;
+                return false;
             }
 
             var infusion = compilation.GetMethodInfusion(typeAssignment.ImplementedType);
 
-            return new InfuseToInject(infusion, methodParameterList);
+            if (methodParameterList.Count == 0)
+            {
+                injection = new InfuseToInjectWithoutParameterList(infusion);
+            }
+            else
+            {
+                injection = new InfuseToInjectWithParameterList(infusion, methodParameterList);
+            }
+
+            return true;
         }
 
         public void AsSelf()
