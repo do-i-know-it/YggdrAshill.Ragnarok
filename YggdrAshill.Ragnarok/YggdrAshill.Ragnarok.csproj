@@ -12,7 +12,7 @@
     <ProjectReference Include="..\Expression\Expression.csproj" />
     <ProjectReference Include="..\Fabrication\Fabrication.csproj" />
     <ProjectReference Include="..\Hierarchization\Hierarchization.csproj" />
-    <ProjectReference Include="..\Composition\Composition.csproj" />
+    <ProjectReference Include="..\Motorization\Motorization.csproj" />
     <ProjectReference Include="..\Reflection\Reflection.csproj" />
   </ItemGroup>
 

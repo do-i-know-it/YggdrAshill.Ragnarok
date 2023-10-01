@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Construction", "Constructio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hierarchization", "Hierarchization\Hierarchization.csproj", "{ECED4B73-586A-4F0C-886B-9C9F3DE4873A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Composition", "Composition\Composition.csproj", "{43289E67-FF0C-4789-8C5E-6C29AB779441}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Motorization", "Motorization\Motorization.csproj", "{43289E67-FF0C-4789-8C5E-6C29AB779441}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabrication", "Fabrication\Fabrication.csproj", "{268711F8-FFAC-46E0-910B-AF11D5690413}"
 EndProject
