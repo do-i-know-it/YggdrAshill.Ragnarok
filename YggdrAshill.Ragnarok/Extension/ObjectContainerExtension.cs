@@ -1,4 +1,3 @@
-using YggdrAshill.Ragnarok.Fabrication;
 using System;
 
 namespace YggdrAshill.Ragnarok
@@ -88,26 +87,29 @@ namespace YggdrAshill.Ragnarok
             container.Register(installation);
         }
 
-        public static void RegisterFromSubContainer<T>(this IObjectContainer container, params IInstallation[] installationList)
+        public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, params IInstallation[] installationList)
             where T : notnull
         {
             var statement = new SubContainerStatement(typeof(T), container, installationList);
+
             container.Registration.Register(statement);
+
+            return statement;
         }
 
-        public static void RegisterFromSubContainer<T>(this IObjectContainer container, Action<IObjectContainer> installation)
+        public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, Action<IObjectContainer> installation)
             where T : notnull
         {
-            container.RegisterFromSubContainer<T>(new Installation(installation));
+            return container.RegisterFromSubContainer<T>(new Installation(installation));
         }
 
-        public static void RegisterFromSubContainer<TInstance, TInstallation>(this IObjectContainer container)
+        public static ITypeAssignment RegisterFromSubContainer<TInstance, TInstallation>(this IObjectContainer container)
             where TInstance : notnull
             where TInstallation : IInstallation
         {
             var installation = container.Resolver.Resolve<TInstallation>();
 
-            container.RegisterFromSubContainer<TInstance>(installation);
+            return container.RegisterFromSubContainer<TInstance>(installation);
         }
 
         public static IObjectScope CreateScope(this IObjectContainer container, params IInstallation[] installationList)

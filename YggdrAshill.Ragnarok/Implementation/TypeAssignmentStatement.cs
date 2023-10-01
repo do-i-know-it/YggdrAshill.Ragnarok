@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Fabrication
+namespace YggdrAshill.Ragnarok
 {
-    internal sealed class TypeAssignmentStatement : ITypeAssignment, IStatement
+    // TODO: add document comments.
+    public sealed class TypeAssignmentStatement : ITypeAssignment, IStatement
     {
         private readonly Func<IInstantiation> createInstantiation;
 

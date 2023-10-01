@@ -7,16 +7,10 @@ namespace YggdrAshill.Ragnarok
         private readonly Func<Argument, bool> detection;
         private readonly Func<object> instantiation;
 
-        private Parameter(Func<Argument, bool> detection, Func<object> instantiation)
-        {
-            this.detection = detection;
-            this.instantiation = instantiation;
-        }
-
         public Parameter(string name, Func<object> instantiation)
-            : this(argument => argument.Name == name, instantiation)
         {
-
+            detection = argument => argument.Name == name;
+            this.instantiation = instantiation;
         }
 
         public Parameter(string name, object instance) : this(name, () => instance)
@@ -45,16 +39,11 @@ namespace YggdrAshill.Ragnarok
         private readonly Func<Argument, bool> detection;
         private readonly Func<T> instantiation;
 
-        private Parameter(Func<Argument, bool> detection, Func<T> instantiation)
-        {
-            this.detection = detection;
-            this.instantiation = instantiation;
-        }
-
         public Parameter(Func<T> instantiation)
-            : this (argument => argument.Type == typeof(T), instantiation)
         {
-
+            var type = typeof(T);
+            detection = argument => argument.Type == type;
+            this.instantiation = instantiation;
         }
 
         public Parameter(T instance) : this (() => instance)
@@ -63,9 +52,9 @@ namespace YggdrAshill.Ragnarok
         }
 
         public Parameter(string name, Func<T> instantiation)
-            : this (argument => argument.Type == typeof(T) && argument.Name == name, instantiation)
         {
-
+            detection = argument => argument.Type == typeof(T) && argument.Name == name;
+            this.instantiation = instantiation;
         }
 
         public Parameter(string name, T instance) : this(name, () => instance)

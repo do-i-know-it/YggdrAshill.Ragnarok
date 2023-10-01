@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace YggdrAshill.Ragnarok.Fabrication
+namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
     public sealed class DependencyInjectionStatement : IDependencyInjection, IStatement
