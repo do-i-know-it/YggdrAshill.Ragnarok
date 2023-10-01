@@ -2,8 +2,7 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    public static class TypeValidation
+    internal static class TypeValidation
     {
         public static bool CanInstantiate(Type type)
         {
