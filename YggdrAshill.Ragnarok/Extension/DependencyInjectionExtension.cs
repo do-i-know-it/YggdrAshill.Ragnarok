@@ -3,7 +3,7 @@ using System;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public static class ConstructorInjectionExtension
+    public static class DependencyInjectionExtension
     {
         public static IDependencyInjection WithArgument(this IDependencyInjection injection, string name, object instance)
         {

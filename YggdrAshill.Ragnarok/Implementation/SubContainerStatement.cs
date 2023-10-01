@@ -38,15 +38,15 @@ namespace YggdrAshill.Ragnarok
         public Ownership Ownership => typeAssignment.Ownership;
         public IInstantiation Instantiation => typeAssignment.Instantiation;
 
-        public void AsSelf()
+        public void AsOwnSelf()
         {
-            typeAssignment.AsSelf();
+            typeAssignment.AsOwnSelf();
         }
-        public IAssignImplementedInterface As(Type implementedInterface)
+        public IInheritedTypeAssignment As(Type inheritedType)
         {
-            return typeAssignment.As(implementedInterface);
+            return typeAssignment.As(inheritedType);
         }
-        public IAssignImplementedType AsImplementedInterfaces()
+        public IOwnTypeAssignment AsImplementedInterfaces()
         {
             return typeAssignment.AsImplementedInterfaces();
         }

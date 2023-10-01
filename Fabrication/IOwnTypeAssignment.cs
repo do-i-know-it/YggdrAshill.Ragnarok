@@ -1,8 +1,8 @@
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public interface IAssignImplementedType
+    public interface IOwnTypeAssignment
     {
-        void AsSelf();
+        void AsOwnSelf();
     }
 }

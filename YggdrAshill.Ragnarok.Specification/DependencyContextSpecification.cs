@@ -247,7 +247,7 @@ namespace YggdrAshill.Ragnarok.Specification
                 .As<IInterfaceA>()
                 .As<IInterfaceB>()
                 .As<IInterfaceC>()
-                .AsSelf();
+                .AsOwnSelf();
 
             using var scope = context.CreateScope();
 
@@ -275,7 +275,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyContext(solver);
 
-            context.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsSelf();
+            context.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsOwnSelf();
 
             using var scope = context.CreateScope();
 
@@ -543,7 +543,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             context.RegisterFromSubContainer<MultipleDependencyService>(container =>
             {
-                container.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsSelf();
+                container.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsOwnSelf();
                 container.Register<MultipleDependencyService>(Lifetime.Global);
             });
 

@@ -1,8 +1,8 @@
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public interface ITypeAssignment : IAssignImplementedInterface
+    public interface ITypeAssignment : IInheritedTypeAssignment
     {
-        IAssignImplementedType AsImplementedInterfaces();
+        IOwnTypeAssignment AsImplementedInterfaces();
     }
 }

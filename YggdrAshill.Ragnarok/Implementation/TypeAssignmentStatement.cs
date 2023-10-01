@@ -31,24 +31,24 @@ namespace YggdrAshill.Ragnarok
 
         public IInstantiation Instantiation => createInstantiation.Invoke();
 
-        public void AsSelf()
+        public void AsOwnSelf()
         {
             AddToAssignedTypeList(ImplementedType);
         }
 
-        public IAssignImplementedInterface As(Type implementedInterface)
+        public IInheritedTypeAssignment As(Type inheritedType)
         {
-            if (!implementedInterface.IsAssignableFrom(ImplementedType))
+            if (!inheritedType.IsAssignableFrom(ImplementedType))
             {
-                throw new ArgumentException($"{ImplementedType} is not assignable from {implementedInterface}.");
+                throw new ArgumentException($"{ImplementedType} is not assignable from {inheritedType}.");
             }
 
-            AddToAssignedTypeList(implementedInterface);
+            AddToAssignedTypeList(inheritedType);
 
             return this;
         }
 
-        public IAssignImplementedType AsImplementedInterfaces()
+        public IOwnTypeAssignment AsImplementedInterfaces()
         {
             foreach (var interfaceType in ImplementedType.GetInterfaces())
             {
