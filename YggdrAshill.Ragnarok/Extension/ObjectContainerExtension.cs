@@ -20,7 +20,7 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(statement);
 
-            return statement.Injection;
+            return statement;
         }
 
         public static IConstructorInjection Register<TInterface, TImplementation>(this IObjectContainer container, Lifetime lifetime)
@@ -41,20 +41,20 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(statement);
 
-            statement.Assignment.As<T>();
+            statement.As<T>();
 
-            return statement.Assignment;
+            return statement;
         }
 
         public static IInstanceInjection Register<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
             where T : notnull
         {
             var statement
-                = new InstanceDependencyInjectionStatement(container.Compilation, typeof(T), lifetime, ownership, new InstantiateInstance<T>(instantiation));
+                = new InstanceInjectionStatement(container.Compilation, typeof(T), lifetime, ownership, new InstantiateInstance<T>(instantiation));
 
             container.Registration.Register(statement);
 
-            return statement.Injection;
+            return statement;
         }
 
         public static IInstanceInjection Register<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)

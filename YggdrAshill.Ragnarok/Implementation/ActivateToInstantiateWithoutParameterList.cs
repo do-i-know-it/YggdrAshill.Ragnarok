@@ -1,16 +1,12 @@
-using System.Collections.Generic;
-
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ActivateToInstantiate : IInstantiation
+    internal sealed class ActivateToInstantiateWithoutParameterList : IInstantiation
     {
         private readonly IActivation activation;
-        private readonly IReadOnlyList<IParameter> parameterList;
 
-        public ActivateToInstantiate(IActivation activation, IReadOnlyList<IParameter> parameterList)
+        public ActivateToInstantiateWithoutParameterList(IActivation activation)
         {
             this.activation = activation;
-            this.parameterList = parameterList;
         }
 
         public object Instantiate(IObjectResolver resolver)
@@ -24,7 +20,7 @@ namespace YggdrAshill.Ragnarok
             {
                 var argument = argumentList[index];
 
-                instanceList[index] = resolver.Resolve(parameterList, argument);
+                instanceList[index] = resolver.Resolve(argument.Type);
             }
 
             return activation.Activate(instanceList);

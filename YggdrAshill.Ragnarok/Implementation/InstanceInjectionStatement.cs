@@ -4,25 +4,45 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Fabrication
 {
     // TODO: add document comments.
-    public sealed class InstanceInjection : IInstanceInjection
+    public sealed class InstanceInjectionStatement : IInstanceInjection, IStatement
     {
         private readonly ICompilation compilation;
-        private readonly TypeAssignment typeAssignment;
+        private readonly Func<IInstantiation> createInstantiation;
+        private readonly TypeAssignmentStatement typeAssignment;
 
-        public InstanceInjection(ICompilation compilation, Type implementedType)
+        public InstanceInjectionStatement(ICompilation compilation, Type type, Lifetime lifetime, Ownership ownership, Func<IInstantiation> createInstantiation)
         {
             this.compilation = compilation;
-            typeAssignment = new TypeAssignment(implementedType);
+            this.createInstantiation = createInstantiation;
+            typeAssignment = new TypeAssignmentStatement(type, lifetime, ownership, CreateInstantiation);
         }
+
+        public InstanceInjectionStatement(ICompilation compilation, Type type, Lifetime lifetime, Ownership ownership, IInstantiation instantiation)
+            : this(compilation, type, lifetime, ownership, () => instantiation)
+        {
+
+        }
+
+        public Type ImplementedType => typeAssignment.ImplementedType;
+        public IReadOnlyList<Type> AssignedTypeList => typeAssignment.AssignedTypeList;
+        public Lifetime Lifetime => typeAssignment.Lifetime;
+        public Ownership Ownership => typeAssignment.Ownership;
+        public IInstantiation Instantiation => typeAssignment.Instantiation;
 
         private List<IParameter>? fieldParameterList;
         private List<IParameter>? methodParameterList;
         private List<IParameter>? propertyParameterList;
 
-        public Type ImplementedType => typeAssignment.ImplementedType;
-        public IReadOnlyList<Type> AssignedTypeList => typeAssignment.AssignedTypeList;
+        private IInstantiation CreateInstantiation()
+        {
+            var instantiation = createInstantiation.Invoke();
 
-        public IInjection? GetInjection()
+            var candidate = GetInjection();
+
+            return candidate == null ? instantiation : new InstantiateWithInjection(instantiation, candidate);
+        }
+
+        private IInjection? GetInjection()
         {
             var fieldInjection = GetFieldInjection();
             var propertyInjection = GetPropertyInjection();

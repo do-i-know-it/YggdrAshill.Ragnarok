@@ -3,23 +3,68 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok.Fabrication
 {
-    // TODO: add document comments.
-    public sealed class TypeAssignmentStatement : IStatement
+    internal sealed class TypeAssignmentStatement : ITypeAssignment, IStatement
     {
-        private readonly TypeAssignment assignment;
+        private readonly Func<IInstantiation> createInstantiation;
 
-        public IInstantiation Instantiation { get; }
+        public Type ImplementedType { get; }
+        public Lifetime Lifetime { get; }
+        public Ownership Ownership { get; }
 
-        public TypeAssignmentStatement(object instance)
+        public TypeAssignmentStatement(Type type, Lifetime lifetime, Ownership ownership, Func<IInstantiation> createInstantiation)
         {
-            assignment = new TypeAssignment(instance.GetType());
-            Instantiation = new InstantiateToReturnInstance(instance);
+            this.createInstantiation = createInstantiation;
+            ImplementedType = type;
+            Lifetime = lifetime;
+            Ownership = ownership;
         }
 
-        public ITypeAssignment Assignment => assignment;
-        public Type ImplementedType => assignment.ImplementedType;
-        public IReadOnlyList<Type> AssignedTypeList => assignment.AssignedTypeList;
-        public Lifetime Lifetime => Lifetime.Global;
-        public Ownership Ownership => Ownership.External;
+        public TypeAssignmentStatement(object instance)
+            : this(instance.GetType(), Lifetime.Global, Ownership.External, () => new InstantiateToReturnInstance(instance))
+        {
+
+        }
+
+        private readonly List<Type> assignedTypeList = new();
+        public IReadOnlyList<Type> AssignedTypeList => assignedTypeList;
+
+        public IInstantiation Instantiation => createInstantiation.Invoke();
+
+        public void AsSelf()
+        {
+            AddToAssignedTypeList(ImplementedType);
+        }
+
+        public IAssignImplementedInterface As(Type implementedInterface)
+        {
+            if (!implementedInterface.IsAssignableFrom(ImplementedType))
+            {
+                throw new ArgumentException($"{ImplementedType} is not assignable from {implementedInterface}.");
+            }
+
+            AddToAssignedTypeList(implementedInterface);
+
+            return this;
+        }
+
+        public IAssignImplementedType AsImplementedInterfaces()
+        {
+            foreach (var interfaceType in ImplementedType.GetInterfaces())
+            {
+                AddToAssignedTypeList(interfaceType);
+            }
+
+            return this;
+        }
+
+        private void AddToAssignedTypeList(Type type)
+        {
+            if (assignedTypeList.Contains(type))
+            {
+                return;
+            }
+
+            assignedTypeList.Add(type);
+        }
     }
 }
