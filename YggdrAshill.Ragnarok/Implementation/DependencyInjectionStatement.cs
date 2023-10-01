@@ -4,12 +4,12 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok.Fabrication
 {
     // TODO: add document comments.
-    public sealed class ConstructorInjectionStatement : IConstructorInjection, IStatement
+    public sealed class DependencyInjectionStatement : IDependencyInjection, IStatement
     {
         private readonly ICompilation compilation;
         private readonly InstanceInjectionStatement injection;
 
-        public ConstructorInjectionStatement(ICompilation compilation, Type implementedType, Lifetime lifetime)
+        public DependencyInjectionStatement(ICompilation compilation, Type implementedType, Lifetime lifetime)
         {
             this.compilation = compilation;
             injection = new InstanceInjectionStatement(compilation, implementedType, lifetime, Ownership.Internal, CreateInstantiation);
@@ -75,7 +75,7 @@ namespace YggdrAshill.Ragnarok.Fabrication
             return injection.WithFieldInjection();
         }
 
-        public IConstructorInjection WithArgument(IParameter parameter)
+        public IDependencyInjection WithArgument(IParameter parameter)
         {
             if (parameterList == null)
             {

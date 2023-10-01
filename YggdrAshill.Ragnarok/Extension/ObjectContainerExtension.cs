@@ -6,7 +6,7 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public static class ObjectContainerExtension
     {
-        public static IConstructorInjection Register<T>(this IObjectContainer container, Lifetime lifetime)
+        public static IDependencyInjection Register<T>(this IObjectContainer container, Lifetime lifetime)
             where T : notnull
         {
             var implementedType = typeof(T);
@@ -16,14 +16,14 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentException($"{implementedType} is not instantiatable.");
             }
 
-            var statement = new ConstructorInjectionStatement(container.Compilation, implementedType, lifetime);
+            var statement = new DependencyInjectionStatement(container.Compilation, implementedType, lifetime);
 
             container.Registration.Register(statement);
 
             return statement;
         }
 
-        public static IConstructorInjection Register<TInterface, TImplementation>(this IObjectContainer container, Lifetime lifetime)
+        public static IDependencyInjection Register<TInterface, TImplementation>(this IObjectContainer container, Lifetime lifetime)
             where TInterface : notnull
             where TImplementation : TInterface
         {
