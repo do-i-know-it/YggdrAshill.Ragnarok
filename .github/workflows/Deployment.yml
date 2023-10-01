@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Add MSBuild to Path
-        uses: microsoft/setup-msbuild@v1.1
+        uses: actions/setup-dotnet@v1.1
       
       - name: Restore solution
         shell: cmd
@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v3
       
       - name: Add MSBuild to Path
-        uses: microsoft/setup-msbuild@v1.1
+        uses: actions/setup-dotnet@v1.1
 
       - name: Build artifacts
         shell: cmd
