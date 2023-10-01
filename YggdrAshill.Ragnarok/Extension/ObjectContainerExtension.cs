@@ -45,7 +45,7 @@ namespace YggdrAshill.Ragnarok
             return statement;
         }
 
-        public static IInstanceInjection Register<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
             where T : notnull
         {
             var statement
@@ -56,35 +56,15 @@ namespace YggdrAshill.Ragnarok
             return statement;
         }
 
-        public static IInstanceInjection Register<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
             where TInterface : notnull
             where TImplementation : TInterface
         {
-            var instanceInjection = container.Register(instantiation, lifetime, ownership);
+            var instanceInjection = container.RegisterInstance(instantiation, lifetime, ownership);
 
             instanceInjection.As<TInterface>();
 
             return instanceInjection;
-        }
-
-        public static void Register(this IObjectContainer container, params IInstallation[] installationList)
-        {
-            foreach (var installation in installationList)
-            {
-                installation.Install(container);
-            }
-        }
-
-        public static void Register(this IObjectContainer container, Action<IObjectContainer> installation)
-        {
-            container.Register(new Installation(installation));
-        }
-
-        public static void Register<TInstallation>(this IObjectContainer container)
-            where TInstallation : IInstallation
-        {
-            var installation = container.Resolver.Resolve<TInstallation>();
-            container.Register(installation);
         }
 
         public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, params IInstallation[] installationList)
@@ -112,27 +92,48 @@ namespace YggdrAshill.Ragnarok
             return container.RegisterFromSubContainer<TInstance>(installation);
         }
 
-        public static IObjectScope CreateScope(this IObjectContainer container, params IInstallation[] installationList)
+        public static void Install(this IObjectContainer container, params IInstallation[] installationList)
         {
-            return container.CreateContext().Install(installationList).CreateScope();
+            foreach (var installation in installationList)
+            {
+                installation.Install(container);
+            }
         }
 
-        public static IObjectScope CreateScope(this IObjectContainer container, Action<IObjectContainer> installation)
+        public static void Install(this IObjectContainer container, Action<IObjectContainer> installation)
         {
-            return container.CreateScope(new Installation(installation));
+            container.Install(new Installation(installation));
         }
 
-        public static IObjectScope CreateScope<TInstallation>(this IObjectContainer container)
+        public static void Install<TInstallation>(this IObjectContainer container)
             where TInstallation : IInstallation
         {
             var installation = container.Resolver.Resolve<TInstallation>();
 
-            return container.CreateScope(installation);
+            container.Install(installation);
         }
 
-        public static bool IsRegistered(this IObjectContainer container,Func<IStatement, bool> condition)
+        public static IObjectScope CreateSubScope(this IObjectContainer container, params IInstallation[] installationList)
         {
-            return container.Registration.Count(new StatementSelection(condition)) > 0;
+            return container.CreateContext().CreateCurrentScope(installationList);
+        }
+
+        public static IObjectScope CreateSubScope(this IObjectContainer container, Action<IObjectContainer> installation)
+        {
+            return container.CreateContext().CreateCurrentScope(installation);
+        }
+
+        public static IObjectScope CreateSubScope<TInstallation>(this IObjectContainer container)
+            where TInstallation : IInstallation
+        {
+            var installation = container.Resolver.Resolve<TInstallation>();
+
+            return container.CreateSubScope(installation);
+        }
+
+        public static int Count(this IObjectContainer container, Func<IStatement, bool> condition)
+        {
+            return container.Registration.Count(new StatementSelection(condition));
         }
 
         public static void Register(this IObjectContainer container, Action<IObjectResolver> operation)

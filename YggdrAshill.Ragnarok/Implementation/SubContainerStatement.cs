@@ -22,7 +22,7 @@ namespace YggdrAshill.Ragnarok
         {
             if (instantiation == null)
             {
-                var scope = container.CreateScope(installationList);
+                var scope = container.CreateSubScope(installationList);
 
                 container.Registration.Register(scope);
 

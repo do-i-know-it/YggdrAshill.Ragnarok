@@ -5,14 +5,14 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public static class ObjectScopeExtension
     {
-        public static IObjectScope CreateScope(this IObjectScope scope, params IInstallation[] installationList)
+        public static IObjectScope CreateChildScope(this IObjectScope scope, params IInstallation[] installationList)
         {
-            return scope.CreateContext().Install(installationList).CreateScope();
+            return scope.CreateContext().CreateCurrentScope(installationList);
         }
 
-        public static IObjectScope CreateScope(this IObjectScope scope, Action<IObjectContainer> installation)
+        public static IObjectScope CreateChildScope(this IObjectScope scope, Action<IObjectContainer> installation)
         {
-            return scope.CreateContext().Install(installation).CreateScope();
+            return scope.CreateContext().CreateCurrentScope(installation);
         }
     }
 }

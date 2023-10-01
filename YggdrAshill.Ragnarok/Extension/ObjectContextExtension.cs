@@ -5,19 +5,19 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public static class ObjectContextExtension
     {
-        public static IObjectContext Install(this IObjectContext context, params IInstallation[] installationList)
+        public static IObjectScope CreateCurrentScope(this IObjectContext context, params IInstallation[] installationList)
         {
             foreach (var installation in installationList)
             {
                 installation.Install(context);
             }
 
-            return context;
+            return context.CreateScope();
         }
 
-        public static IObjectContext Install(this IObjectContext context, Action<IObjectContainer> installation)
+        public static IObjectScope CreateCurrentScope(this IObjectContext context, Action<IObjectContainer> installation)
         {
-            return context.Install(new Installation(installation));
+            return context.CreateCurrentScope(new Installation(installation));
         }
     }
 }
