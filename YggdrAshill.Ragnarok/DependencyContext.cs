@@ -27,8 +27,12 @@ namespace YggdrAshill.Ragnarok
         /// <param name="resolverBuilder">
         /// <see cref="IScopedResolverBuilder"/> for <see cref="DependencyContext"/>.
         /// </param>
-        public DependencyContext(IScopedResolverBuilder resolverBuilder)
-            : this(new ObjectContext(resolverBuilder))
+        public DependencyContext(IScopedResolverBuilder resolverBuilder) : this(new ObjectContext(resolverBuilder))
+        {
+
+        }
+
+        public DependencyContext(IRootResolver resolver) : this(new ScopedResolverBuilder(resolver))
         {
 
         }
@@ -42,8 +46,7 @@ namespace YggdrAshill.Ragnarok
         /// /// <param name="solver">
         /// <see cref="ISolver"/> for <see cref="DependencyContext"/>.
         /// </param>
-        public DependencyContext(ISelector selector, ISolver solver)
-            : this(new ScopedResolverBuilder(selector, solver))
+        public DependencyContext(ISelector selector, ISolver solver) : this(new RootResolver(selector, solver))
         {
 
         }
@@ -57,8 +60,7 @@ namespace YggdrAshill.Ragnarok
         /// <remarks>
         /// <see cref="ISelector"/> is <see cref="AnnotationSelector"/>.
         /// </remarks>
-        public DependencyContext(ISolver solver)
-            : this(AnnotationSelector.Instance, solver)
+        public DependencyContext(ISolver solver) : this(AnnotationSelector.Instance, solver)
         {
 
         }
@@ -70,8 +72,7 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="ISelector"/> is <see cref="AnnotationSelector"/>, and
         /// <see cref="ISolver"/> is <see cref="ExpressionSolver"/>.
         /// </remarks>
-        public DependencyContext()
-            : this(AnnotationSelector.Instance, ExpressionSolver.Instance)
+        public DependencyContext() : this(AnnotationSelector.Instance, ExpressionSolver.Instance)
         {
 
         }

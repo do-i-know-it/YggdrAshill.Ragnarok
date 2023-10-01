@@ -5,10 +5,10 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public interface ISolver
     {
-        IActivation CreateActivation(ConstructorInjection injection);
-        IInfusion CreateFieldInfusion(FieldInjection injection);
-        IInfusion CreatePropertyInfusion(PropertyInjection injection);
-        IInfusion CreateMethodInfusion(MethodInjection injection);
+        IActivation CreateActivation(DependencyInjectionRequest request);
+        IInfusion CreateFieldInfusion(FieldInjectionRequest request);
+        IInfusion CreatePropertyInfusion(PropertyInjectionRequest request);
+        IInfusion CreateMethodInfusion(MethodInjectionRequest request);
         IActivation CreateCollectionActivation(Type elementType);
     }
 }

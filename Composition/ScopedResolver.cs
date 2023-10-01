@@ -6,15 +6,15 @@ namespace YggdrAshill.Ragnarok.Composition
 {
     internal sealed class ScopedResolver : IScopedResolver
     {
-        private readonly Compilation compilation;
+        private readonly Engine engine;
         private readonly IScopedResolver? parent;
 
         private readonly Dictionary<Type, IDescription?> dictionary;
 
-        public ScopedResolver(IDictionary<Type, IDescription?> content, Compilation compilation, IScopedResolver? parent)
+        public ScopedResolver(IDictionary<Type, IDescription?> content, Engine engine, IScopedResolver? parent)
         {
             dictionary = new Dictionary<Type, IDescription?>(content);
-            this.compilation = compilation;
+            this.engine = engine;
             this.parent = parent;
         }
 
@@ -126,16 +126,14 @@ namespace YggdrAshill.Ragnarok.Composition
         {
             description = default!;
 
-            if (!CollectionDescription.TryToGetElementType(type, out var elementType))
+            if (!CollectionDescription.CanResolve(type, out var elementType))
             {
                 return false;
             }
 
-            var implementedType = CollectionDescription.GetImplementedType(elementType);
-
-            description = registrationCache.GetOrAdd(implementedType, _ =>
+            description = registrationCache.GetOrAdd(type, _ =>
             {
-                var activation = compilation.GetActivation(implementedType);
+                var activation = engine.GetActivation(type);
 
                 if (!CanResolve(elementType, out var elementDescription))
                 {
@@ -152,16 +150,18 @@ namespace YggdrAshill.Ragnarok.Composition
         {
             description = default!;
 
-            if (!ServiceBundleDescription.TryToGetTargetType(type, out var targetType))
+            if (!ServiceBundleDescription.CanResolve(type, out var elementType))
             {
                 return false;
             }
+
+            var targetType = TypeCache.ReadOnlyListOf(elementType);
 
             if (CanResolve(targetType, out var found) && found is CollectionDescription collection)
             {
                 description = registrationCache.GetOrAdd(type, _ =>
                 {
-                    var activation = compilation.GetActivation(type);
+                    var activation = engine.GetActivation(type);
 
                     return new ServiceBundleDescription(type, activation, collection);
                 });
@@ -218,7 +218,7 @@ namespace YggdrAshill.Ragnarok.Composition
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            return new ScopedResolverBuilder(compilation, this);
+            return new ScopedResolverBuilder(engine, this);
         }
 
         public void Dispose()

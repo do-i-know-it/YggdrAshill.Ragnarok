@@ -5,20 +5,20 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionFieldInfusion : IInfusion
     {
-        private readonly FieldInjection injection;
+        private readonly FieldInjectionRequest request;
 
         public IReadOnlyList<Argument> ArgumentList
-            => injection.FieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray();
+            => request.FieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray();
 
-        public ReflectionFieldInfusion(FieldInjection injection)
+        public ReflectionFieldInfusion(FieldInjectionRequest request)
         {
-            this.injection = injection;
+            this.request = request;
         }
 
         public void Infuse(object instance, object[] parameterList)
         {
-            var implementedType = injection.ImplementedType;
-            var fieldList = injection.FieldList;
+            var implementedType = request.ImplementedType;
+            var fieldList = request.FieldList;
 
             if (!implementedType.IsInstanceOfType(instance))
             {

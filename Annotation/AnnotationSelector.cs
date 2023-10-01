@@ -1,4 +1,3 @@
-using YggdrAshill.Ragnarok.Composition;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -29,13 +28,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public Type GetServiceBundleType(Type elementType)
-        {
-            return serviceBundleTypeCache.GetOrAdd(elementType, createServiceBundleType);
-        }
-
-        /// <inheritdoc/>
-        public ConstructorInjection CreateConstructorInjection(Type type)
+        public DependencyInjectionRequest RequestDependencyInjection(Type type)
         {
             const BindingFlags BindingFlags
                 = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -71,19 +64,19 @@ namespace YggdrAshill.Ragnarok
 
             if (injectedConstructor != null)
             {
-                return new ConstructorInjection(type, injectedConstructor);
+                return new DependencyInjectionRequest(type, injectedConstructor);
             }
 
             if (constructorHavingMaxParameterCount != null)
             {
-                return new ConstructorInjection(type, constructorHavingMaxParameterCount);
+                return new DependencyInjectionRequest(type, constructorHavingMaxParameterCount);
             }
 
             throw new RagnarokNotAnnotatedException(type, $"Injectable constructor of {type} not found.");
         }
 
         /// <inheritdoc/>
-        public FieldInjection CreateFieldInjection(Type type)
+        public FieldInjectionRequest RequestFieldInjection(Type type)
         {
             // TODO: concrete class?
 
@@ -103,11 +96,11 @@ namespace YggdrAshill.Ragnarok
                 buffer.Add(fieldInfo);
             }
 
-            return new FieldInjection(type, buffer.ToArray());
+            return new FieldInjectionRequest(type, buffer.ToArray());
         }
 
         /// <inheritdoc/>
-        public PropertyInjection CreatePropertyInjection(Type type)
+        public PropertyInjectionRequest RequestPropertyInjection(Type type)
         {
             // TODO: concrete class?
 
@@ -127,11 +120,11 @@ namespace YggdrAshill.Ragnarok
                 buffer.Add(propertyInfo);
             }
 
-            return new PropertyInjection(type, buffer.ToArray());
+            return new PropertyInjectionRequest(type, buffer.ToArray());
         }
 
         /// <inheritdoc/>
-        public MethodInjection CreateMethodInjection(Type type)
+        public MethodInjectionRequest RequestMethodInjection(Type type)
         {
             var injectedMethod = default(MethodInfo);
 
@@ -155,7 +148,15 @@ namespace YggdrAshill.Ragnarok
                 throw new RagnarokNotAnnotatedException(type, $"Injectable method of {type} not found.");
             }
 
-            return new MethodInjection(type, injectedMethod);
+            return new MethodInjectionRequest(type, injectedMethod);
+        }
+
+        /// <inheritdoc/>
+        public DependencyInjectionRequest RequestServiceBundleInjection(Type elementType)
+        {
+            var targetType = serviceBundleTypeCache.GetOrAdd(elementType, createServiceBundleType);
+
+            return RequestDependencyInjection(targetType);
         }
     }
 }

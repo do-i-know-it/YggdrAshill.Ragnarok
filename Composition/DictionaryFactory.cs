@@ -6,12 +6,14 @@ namespace YggdrAshill.Ragnarok
     internal readonly struct DictionaryFactory : IDisposable
     {
         private readonly ICompilation compilation;
+        private readonly IEnumerable<IStatement> statementList;
         private readonly Dictionary<Type, IDescription?> tableOfTypeToDescription;
         private readonly Dictionary<Type, List<IDescription>> tableOfTypeToDescriptionList;
 
-        public DictionaryFactory(ICompilation compilation)
+        public DictionaryFactory(ICompilation compilation, IEnumerable<IStatement> statementList)
         {
             this.compilation = compilation;
+            this.statementList = statementList;
 
             // TODO: object pooling.
             const int BufferSize = 128;
@@ -19,7 +21,7 @@ namespace YggdrAshill.Ragnarok
             tableOfTypeToDescriptionList = new Dictionary<Type, List<IDescription>>(BufferSize);
         }
 
-        public IDictionary<Type, IDescription?> CreateContent(IEnumerable<IStatement> statementList)
+        public IDictionary<Type, IDescription?> Create()
         {
             foreach (var statement in statementList)
             {
@@ -93,13 +95,13 @@ namespace YggdrAshill.Ragnarok
                 var elementType = pair.Key;
                 var registrationList = pair.Value;
 
-                var implementedType = CollectionDescription.GetImplementedType(elementType);
+                var implementedType = TypeCache.ArrayTypeOf(elementType);
 
                 var activation = compilation.GetActivation(implementedType);
 
                 var collection = new CollectionDescription(elementType, activation, registrationList.ToArray());
 
-                foreach (var assignedType in collection.AssignedTypeList)
+                foreach (var assignedType in CollectionDescription.AssignedTypeListOf(elementType))
                 {
                     if (tableOfTypeToDescription.TryGetValue(assignedType, out _))
                     {
@@ -109,6 +111,11 @@ namespace YggdrAshill.Ragnarok
                     tableOfTypeToDescription.Add(assignedType, collection);
                 }
             }
+        }
+
+        public void Validate(IScopedResolver resolver)
+        {
+            TypeAnalysis.Validate(statementList, resolver);
         }
 
         public void Dispose()

@@ -9,35 +9,22 @@ namespace YggdrAshill.Ragnarok.Composition
     /// </summary>
     public sealed class ScopedResolverBuilder : IScopedResolverBuilder
     {
-        private readonly Compilation compilation;
+        private readonly Engine engine;
         private readonly IScopedResolver? parent;
 
-        /// <summary>
-        /// Creates <see cref="ScopedResolverBuilder"/> for child <see cref="IScopedResolver"/>.
-        /// </summary>
-        /// <param name="compilation">
-        /// <see cref="Compilation"/> for <see cref="ScopedResolverBuilder"/>.
-        /// </param>
-        /// <param name="parent">
-        /// <see cref="IScopedResolver"/> for <see cref="ScopedResolverBuilder"/>.
-        /// </param>
-        public ScopedResolverBuilder(Compilation compilation, IScopedResolver? parent)
+        internal ScopedResolverBuilder(Engine engine, IScopedResolver? parent)
         {
-            this.compilation = compilation;
+            this.engine = engine;
             this.parent = parent;
         }
 
         /// <summary>
         /// Creates <see cref="ScopedResolverBuilder"/> for root <see cref="IScopedResolver"/>.
         /// </summary>
-        /// <param name="selector">
-        /// <see cref="ISelector"/> for <see cref="ScopedResolverBuilder"/>.
+        /// <param name="resolver">
+        /// <see cref="IRootResolver"/> for <see cref="ScopedResolverBuilder"/>.
         /// </param>
-        /// <param name="solver">
-        /// <see cref="ISolver"/> for <see cref="ScopedResolverBuilder"/>.
-        /// </param>
-        public ScopedResolverBuilder(ISelector selector, ISolver solver)
-            : this(new Compilation(selector, solver), null)
+        public ScopedResolverBuilder(IRootResolver resolver) : this(new Engine(resolver), null)
         {
 
         }
@@ -51,38 +38,21 @@ namespace YggdrAshill.Ragnarok.Composition
         private readonly List<IDisposable> disposableList = new();
 
         /// <inheritdoc/>
-        public ICompilation Compilation => compilation;
-
-        /// <inheritdoc/>
-        public T Resolve<T>()
+        public IObjectResolver Resolver
         {
-            return (T)Resolve(typeof(T));
+            get
+            {
+                if (parent != null)
+                {
+                    return parent;
+                }
+
+                return engine.Resolver;
+            }
         }
 
         /// <inheritdoc/>
-        public object Resolve(Type type)
-        {
-            if (parent != null)
-            {
-                return parent.Resolve(type);
-            }
-
-            var activation = Compilation.GetActivation(type);
-
-            var argumentList = activation.ArgumentList;
-
-            // TODO: object pooling.
-            var instanceList = new object[argumentList.Count];
-
-            for (var index = 0; index < argumentList.Count; index++)
-            {
-                var argument = argumentList[index];
-
-                instanceList[index] = Resolve(argument.Type);
-            }
-
-            return activation.Activate(instanceList);
-        }
+        public ICompilation Compilation => engine;
 
         /// <inheritdoc/>
         public int StatementCount => statementList.Count;
@@ -129,19 +99,19 @@ namespace YggdrAshill.Ragnarok.Composition
         /// <inheritdoc/>
         public IScopedResolverBuilder CreateBuilder()
         {
-            return new ScopedResolverBuilder(compilation, parent);
+            return new ScopedResolverBuilder(engine, parent);
         }
 
         /// <inheritdoc/>
         public IScopedResolver Build()
         {
-            using var factory = new DictionaryFactory(compilation);
+            using var factory = engine.CreateFactory(statementList);
 
-            var content = factory.CreateContent(statementList);
+            var content = factory.Create();
 
-            var resolver = new ScopedResolver(content, compilation, parent);
+            var resolver = new ScopedResolver(content, engine, parent);
 
-            TypeAnalysis.Validate(statementList, resolver);
+            factory.Validate(resolver);
 
             foreach (var disposable in disposableList)
             {

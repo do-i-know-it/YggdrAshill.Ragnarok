@@ -5,21 +5,21 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionMethodInfusion : IInfusion
     {
-        private readonly MethodInjection injection;
+        private readonly MethodInjectionRequest request;
 
         public IReadOnlyList<Argument> ArgumentList
-            => injection.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
+            => request.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
 
-        public ReflectionMethodInfusion(MethodInjection injection)
+        public ReflectionMethodInfusion(MethodInjectionRequest request)
         {
-            this.injection = injection;
+            this.request = request;
         }
 
         public void Infuse(object instance, object[] parameterList)
         {
-            var implementedType = injection.ImplementedType;
-            var method = injection.Method;
-            var argumentList = injection.ParameterList;
+            var implementedType = request.ImplementedType;
+            var method = request.Method;
+            var argumentList = request.ParameterList;
 
             if (!implementedType.IsInstanceOfType(instance))
             {

@@ -6,12 +6,18 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class CollectionDescription : IDescription
     {
-        public static Type GetImplementedType(Type elementType)
+        public static IEnumerable<Type> AssignedTypeListOf(Type elementType)
         {
-            return TypeCache.ArrayTypeOf(elementType);
+            return new[]
+            {
+                TypeCache.ArrayTypeOf(elementType),
+                TypeCache.EnumerableOf(elementType),
+                TypeCache.ReadOnlyCollectionOf(elementType),
+                TypeCache.ReadOnlyListOf(elementType),
+            };
         }
 
-        public static bool TryToGetElementType(Type type, out Type elementType)
+        public static bool CanResolve(Type type, out Type elementType)
         {
             elementType = default!;
 
@@ -30,18 +36,18 @@ namespace YggdrAshill.Ragnarok
             var openGenericType = TypeCache.OpenGenericTypeOf(type);
 
             var isCollectionType
-                = openGenericType == typeof(IEnumerable<>) ||
-                  openGenericType == typeof(IReadOnlyList<>) ||
-                  openGenericType == typeof(IReadOnlyCollection<>);
+                = openGenericType == TypeCache.OpenGenericEnumerable ||
+                  openGenericType == TypeCache.OpenGenericReadOnlyCollection ||
+                  openGenericType == TypeCache.OpenGenericReadOnlyList;
 
-            if (isCollectionType)
+            if (!isCollectionType)
             {
-                elementType = TypeCache.GenericTypeParameterListOf(type)[0];
-
-                return true;
+                return false;
             }
 
-            return false;
+            elementType = TypeCache.GenericTypeParameterListOf(type)[0];
+
+            return true;
         }
 
         private readonly IActivation activation;
@@ -50,7 +56,6 @@ namespace YggdrAshill.Ragnarok
         public Type ImplementedType { get; }
         public Lifetime Lifetime => Lifetime.Temporal;
         public Ownership Ownership => Ownership.External;
-        public IReadOnlyList<Type> AssignedTypeList { get; }
 
         public CollectionDescription(Type elementType, IActivation activation, IDescription[] descriptionList)
         {
@@ -58,14 +63,6 @@ namespace YggdrAshill.Ragnarok
             this.descriptionList = descriptionList;
 
             ImplementedType = TypeCache.ArrayTypeOf(elementType);
-
-            AssignedTypeList = new List<Type>
-            {
-                ImplementedType,
-                TypeCache.EnumerableOf(elementType),
-                TypeCache.ReadOnlyListOf(elementType),
-                TypeCache.ReadOnlyCollectionOf(elementType),
-            };
         }
 
         internal IEnumerable<IDescription> Collect(IScopedResolver resolver, bool localOnly)

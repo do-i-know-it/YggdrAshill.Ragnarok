@@ -4,21 +4,7 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class ServiceBundleDescription : IDescription
     {
-        public static bool TryToGetTargetType(Type type, out Type targetType)
-        {
-            targetType = default!;
-
-            if (!TryGetElementType(type, out var elementType))
-            {
-                return false;
-            }
-
-            targetType = TypeCache.ReadOnlyListOf(elementType);
-
-            return true;
-        }
-
-        public static bool TryGetElementType(Type type, out Type elementType)
+        public static bool CanResolve(Type type, out Type elementType)
         {
             elementType = default!;
 
@@ -29,7 +15,7 @@ namespace YggdrAshill.Ragnarok
 
             var openGenericType = TypeCache.OpenGenericTypeOf(type);
 
-            if (openGenericType != typeof(IServiceBundle<>))
+            if (openGenericType != TypeCache.OpenGenericServiceBundle)
             {
                 return false;
             }

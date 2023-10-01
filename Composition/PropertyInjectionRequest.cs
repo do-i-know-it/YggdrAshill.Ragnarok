@@ -5,15 +5,14 @@ using System.Reflection;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    // TODO: rename class?
-    public sealed class PropertyInjection
+    public sealed class PropertyInjectionRequest
     {
         public Type ImplementedType { get; }
 
         private readonly PropertyInfo[] propertyList;
         public PropertyInfo[] PropertyList => propertyList.ToArray();
 
-        public PropertyInjection(Type implementedType, PropertyInfo[] propertyList)
+        public PropertyInjectionRequest(Type implementedType, PropertyInfo[] propertyList)
         {
             ImplementedType = implementedType;
             this.propertyList = propertyList;

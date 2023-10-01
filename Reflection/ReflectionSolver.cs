@@ -18,27 +18,27 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IActivation CreateActivation(ConstructorInjection injection)
+        public IActivation CreateActivation(DependencyInjectionRequest request)
         {
-            return new ReflectionActivation(injection);
+            return new ReflectionActivation(request);
         }
 
         /// <inheritdoc/>
-        public IInfusion CreateFieldInfusion(FieldInjection injection)
+        public IInfusion CreateFieldInfusion(FieldInjectionRequest request)
         {
-            return new ReflectionFieldInfusion(injection);
+            return new ReflectionFieldInfusion(request);
         }
 
         /// <inheritdoc/>
-        public IInfusion CreatePropertyInfusion(PropertyInjection injection)
+        public IInfusion CreatePropertyInfusion(PropertyInjectionRequest request)
         {
-            return new ReflectionPropertyInfusion(injection);
+            return new ReflectionPropertyInfusion(request);
         }
 
         /// <inheritdoc/>
-        public IInfusion CreateMethodInfusion(MethodInjection injection)
+        public IInfusion CreateMethodInfusion(MethodInjectionRequest request)
         {
-            return new ReflectionMethodInfusion(injection);
+            return new ReflectionMethodInfusion(request);
         }
 
         /// <inheritdoc/>

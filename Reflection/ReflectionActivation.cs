@@ -5,24 +5,24 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionActivation : IActivation
     {
-        private readonly ConstructorInjection injection;
+        private readonly DependencyInjectionRequest request;
 
         public IReadOnlyList<Argument> ArgumentList
-            => injection.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
+            => request.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
 
-        public ReflectionActivation(ConstructorInjection injection)
+        public ReflectionActivation(DependencyInjectionRequest request)
         {
-            this.injection = injection;
+            this.request = request;
         }
 
         public object Activate(object[] parameterList)
         {
-            var constructor = injection.Constructor;
-            var argumentList = injection.ParameterList;
+            var constructor = request.Constructor;
+            var argumentList = request.ParameterList;
 
             if (argumentList.Length != parameterList.Length)
             {
-                throw new RagnarokReflectionException(injection.ImplementedType, nameof(parameterList));
+                throw new RagnarokReflectionException(request.ImplementedType, nameof(parameterList));
             }
 
             for (var index = 0; index < argumentList.Length; index++)

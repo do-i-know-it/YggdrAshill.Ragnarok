@@ -5,15 +5,14 @@ using System.Reflection;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    // TODO: rename class?
-    public sealed class FieldInjection
+    public sealed class FieldInjectionRequest
     {
         public Type ImplementedType { get; }
 
         private readonly FieldInfo[] fieldList;
         public FieldInfo[] FieldList => fieldList.ToArray();
 
-        public FieldInjection(Type implementedType, FieldInfo[] fieldList)
+        public FieldInjectionRequest(Type implementedType, FieldInfo[] fieldList)
         {
             ImplementedType = implementedType;
             this.fieldList = fieldList;

@@ -3,8 +3,13 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Defines how to build <see cref="IScopedResolver"/>.
     /// </summary>
-    public interface IScopedResolverBuilder : IRegistration, IObjectResolver
+    public interface IScopedResolverBuilder : IRegistration
     {
+        /// <summary>
+        /// <see cref="IObjectResolver"/> to resolve dependency.
+        /// </summary>
+        IObjectResolver Resolver { get; }
+
         /// <summary>
         /// <see cref="ICompilation"/> to resolve dependency.
         /// </summary>

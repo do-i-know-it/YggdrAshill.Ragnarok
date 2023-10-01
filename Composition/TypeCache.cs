@@ -39,6 +39,7 @@ namespace YggdrAshill.Ragnarok
             return elementType.MakeArrayType();
         }
 
+        public static Type OpenGenericEnumerable { get; } = typeof(IEnumerable<>);
         public static Type EnumerableOf(Type elementType)
         {
             return enumerableTypeCache.GetOrAdd(elementType, createEnumerable);
@@ -47,20 +48,10 @@ namespace YggdrAshill.Ragnarok
         private static readonly Func<Type, Type> createEnumerable = CreateEnumerable;
         private static Type CreateEnumerable(Type elementType)
         {
-            return typeof(IEnumerable<>).MakeGenericType(elementType);
+            return OpenGenericEnumerable.MakeGenericType(elementType);
         }
 
-        public static Type ReadOnlyListOf(Type elementType)
-        {
-            return readOnlyListTypeCache.GetOrAdd(elementType, createReadOnlyListFunctionCache);
-        }
-        private static readonly ConcurrentDictionary<Type, Type> readOnlyListTypeCache = new();
-        private static readonly Func<Type, Type> createReadOnlyListFunctionCache = CreateReadOnlyList;
-        private static Type CreateReadOnlyList(Type elementType)
-        {
-            return typeof(IReadOnlyList<>).MakeGenericType(elementType);
-        }
-
+        public static Type OpenGenericReadOnlyCollection { get; } = typeof(IReadOnlyCollection<>);
         public static Type ReadOnlyCollectionOf(Type elementType)
         {
             return readOnlyCollectionTypeCache.GetOrAdd(elementType, createReadOnlyCollectionType);
@@ -69,7 +60,21 @@ namespace YggdrAshill.Ragnarok
         private static readonly Func<Type, Type> createReadOnlyCollectionType = CreateReadOnlyCollectionType;
         private static Type CreateReadOnlyCollectionType(Type elementType)
         {
-            return typeof(IReadOnlyCollection<>).MakeGenericType(elementType);
+            return OpenGenericReadOnlyCollection.MakeGenericType(elementType);
         }
+
+        public static Type OpenGenericReadOnlyList { get; } = typeof(IReadOnlyList<>);
+        public static Type ReadOnlyListOf(Type elementType)
+        {
+            return readOnlyListTypeCache.GetOrAdd(elementType, createReadOnlyListFunctionCache);
+        }
+        private static readonly ConcurrentDictionary<Type, Type> readOnlyListTypeCache = new();
+        private static readonly Func<Type, Type> createReadOnlyListFunctionCache = CreateReadOnlyList;
+        private static Type CreateReadOnlyList(Type elementType)
+        {
+            return OpenGenericReadOnlyList.MakeGenericType(elementType);
+        }
+
+        public static Type OpenGenericServiceBundle { get; } = typeof(IServiceBundle<>);
     }
 }
