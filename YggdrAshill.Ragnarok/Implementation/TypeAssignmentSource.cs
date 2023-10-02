@@ -1,39 +1,30 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class TypeAssignmentStatement : ITypeAssignment, IStatement
+    public sealed class TypeAssignmentSource : ITypeAssignment
     {
-        private readonly Func<IInstantiation> createInstantiation;
-
         public Type ImplementedType { get; }
-        public Lifetime Lifetime { get; }
-        public Ownership Ownership { get; }
 
-        public TypeAssignmentStatement(Type type, Lifetime lifetime, Ownership ownership, Func<IInstantiation> createInstantiation)
+        public TypeAssignmentSource(Type type)
         {
-            this.createInstantiation = createInstantiation;
             ImplementedType = type;
-            Lifetime = lifetime;
-            Ownership = ownership;
         }
 
-        public TypeAssignmentStatement(object instance)
-            : this(instance.GetType(), Lifetime.Global, Ownership.External, () => new InstantiateToReturnInstance(instance))
+        private List<Type>? assignedTypeList;
+        public IReadOnlyList<Type> AssignedTypeList
         {
+            get
+            {
+                if (assignedTypeList == null)
+                {
+                    return Array.Empty<Type>();
+                }
 
-        }
-
-        private readonly List<Type> assignedTypeList = new();
-        public IReadOnlyList<Type> AssignedTypeList => assignedTypeList;
-
-        public IInstantiation Instantiation => createInstantiation.Invoke();
-
-        public void AsOwnSelf()
-        {
-            AddToAssignedTypeList(ImplementedType);
+                return assignedTypeList;
+            }
         }
 
         public IInheritedTypeAssignment As(Type inheritedType)
@@ -48,6 +39,11 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
+        public void AsOwnSelf()
+        {
+            AddToAssignedTypeList(ImplementedType);
+        }
+
         public IOwnTypeAssignment AsImplementedInterfaces()
         {
             foreach (var interfaceType in ImplementedType.GetInterfaces())
@@ -60,6 +56,11 @@ namespace YggdrAshill.Ragnarok
 
         private void AddToAssignedTypeList(Type type)
         {
+            if (assignedTypeList == null)
+            {
+                assignedTypeList = new List<Type>();
+            }
+
             if (assignedTypeList.Contains(type))
             {
                 return;

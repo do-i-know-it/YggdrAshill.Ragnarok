@@ -5,20 +5,6 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public static class DependencyInjectionExtension
     {
-        public static IDependencyInjection WithArgument(this IDependencyInjection injection, string name, object instance)
-        {
-            var parameter = new Parameter(name, instance);
-
-            return injection.WithArgument(parameter);
-        }
-
-        public static IDependencyInjection WithArgument(this IDependencyInjection injection, string name, Func<object> instantiation)
-        {
-            var parameter = new Parameter(name, instantiation);
-
-            return injection.WithArgument(parameter);
-        }
-
         public static IDependencyInjection WithArgument<T>(this IDependencyInjection injection, T instance)
             where T : notnull
         {

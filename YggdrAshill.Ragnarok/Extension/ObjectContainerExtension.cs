@@ -19,7 +19,7 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(statement);
 
-            return statement;
+            return statement.DependencyInjection;
         }
 
         public static IDependencyInjection Register<TInterface, TImplementation>(this IObjectContainer container, Lifetime lifetime)
@@ -36,45 +36,46 @@ namespace YggdrAshill.Ragnarok
         public static ITypeAssignment RegisterInstance<T>(this IObjectContainer container, T instance)
             where T : notnull
         {
-            var statement = new TypeAssignmentStatement(instance);
+            var statement = new ReturnInstanceStatement(instance);
 
             container.Registration.Register(statement);
 
-            statement.As<T>();
+            var assignment = statement.TypeAssignment;
 
-            return statement;
+            assignment.As<T>();
+
+            return assignment;
         }
 
-        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where T : notnull
         {
-            var statement
-                = new InstanceInjectionStatement(container.Compilation, typeof(T), lifetime, ownership, new InstantiateInstance<T>(instantiation));
+            var statement = new CreateInstanceStatement<T>(container.Compilation, lifetime, ownership, instantiation);
 
             container.Registration.Register(statement);
 
-            return statement;
+            return statement.InstanceInjection;
         }
 
-        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where TInterface : notnull
             where TImplementation : TInterface
         {
-            var instanceInjection = container.RegisterInstance(instantiation, lifetime, ownership);
+            var injection = container.RegisterInstance(instantiation, lifetime, ownership);
 
-            instanceInjection.As<TInterface>();
+            injection.As<TInterface>();
 
-            return instanceInjection;
+            return injection;
         }
 
         public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, params IInstallation[] installationList)
             where T : notnull
         {
-            var statement = new SubContainerStatement(typeof(T), container, installationList);
+            var statement = new ResolveFromSubContainerStatement(typeof(T), container, installationList);
 
             container.Registration.Register(statement);
 
-            return statement;
+            return statement.TypeAssignment;
         }
 
         public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, Action<IObjectContainer> installation)

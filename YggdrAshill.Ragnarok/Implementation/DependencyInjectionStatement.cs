@@ -4,90 +4,28 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class DependencyInjectionStatement : IDependencyInjection, IStatement
+    public sealed class DependencyInjectionStatement : IStatement
     {
-        private readonly ICompilation compilation;
-        private readonly InstanceInjectionStatement injection;
+        private readonly DependencyInjectionSource source;
+        private readonly Lazy<IInstantiation> instantiation;
+
+        public Lifetime Lifetime { get; }
 
         public DependencyInjectionStatement(ICompilation compilation, Type implementedType, Lifetime lifetime)
         {
-            this.compilation = compilation;
-            injection = new InstanceInjectionStatement(compilation, implementedType, lifetime, Ownership.Internal, CreateInstantiation);
+            source = new DependencyInjectionSource(implementedType, compilation);
+            instantiation = new Lazy<IInstantiation>(() => source.CreateInstantiation());
+            Lifetime = lifetime;
         }
 
-        private List<IParameter>? parameterList;
+        public IDependencyInjection DependencyInjection => source;
 
-        private IInstantiation CreateInstantiation()
-        {
-            var activation = compilation.CreateActivation(ImplementedType);
+        public Type ImplementedType => source.ImplementedType;
 
-            return parameterList == null
-                ? new ActivateToInstantiateWithoutParameterList(activation)
-                : new ActivateToInstantiateWithParameterList(activation, parameterList);
-        }
+        public IReadOnlyList<Type> AssignedTypeList => source.AssignedTypeList;
 
-        public Type ImplementedType => injection.ImplementedType;
-        public IReadOnlyList<Type> AssignedTypeList => injection.AssignedTypeList;
-        public Lifetime Lifetime => injection.Lifetime;
-        public Ownership Ownership => injection.Ownership;
-        public IInstantiation Instantiation => injection.Instantiation;
+        public Ownership Ownership => Ownership.Internal;
 
-        public void AsOwnSelf()
-        {
-            injection.AsOwnSelf();
-        }
-        public IInheritedTypeAssignment As(Type inheritedType)
-        {
-            return injection.As(inheritedType);
-        }
-        public IOwnTypeAssignment AsImplementedInterfaces()
-        {
-            return injection.AsImplementedInterfaces();
-        }
-
-        public IMethodInjection WithMethodArgument(IParameter parameter)
-        {
-            return injection.WithMethodArgument(parameter);
-        }
-
-        public IMethodInjection WithMethodInjection()
-        {
-            return injection.WithMethodInjection();
-        }
-
-        public IPropertyInjection WithProperty(IParameter parameter)
-        {
-            return injection.WithProperty(parameter);
-        }
-
-        public IPropertyInjection WithPropertyInjection()
-        {
-            return injection.WithPropertyInjection();
-        }
-
-        public IFieldInjection WithField(IParameter parameter)
-        {
-            return injection.WithField(parameter);
-        }
-
-        public IFieldInjection WithFieldInjection()
-        {
-            return injection.WithFieldInjection();
-        }
-
-        public IDependencyInjection WithArgument(IParameter parameter)
-        {
-            if (parameterList == null)
-            {
-                parameterList = new List<IParameter>();
-            }
-
-            if (!parameterList.Contains(parameter))
-            {
-                parameterList.Add(parameter);
-            }
-
-            return this;
-        }
+        public IInstantiation Instantiation => instantiation.Value;
     }
 }

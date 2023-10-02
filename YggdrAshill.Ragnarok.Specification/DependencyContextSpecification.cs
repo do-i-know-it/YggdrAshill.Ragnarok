@@ -547,7 +547,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             var instance = new NoDependencyClass();
 
-            context.Register<MethodInjectable>(Lifetime.Global).WithMethodArgument(instance);
+            context.Register<MethodInjectable>(Lifetime.Global).WithMethod(instance);
 
             using var scope = context.CreateScope();
 

@@ -1,51 +1,27 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class InstanceInjectionStatement : IInstanceInjection, IStatement
+    public sealed class InstanceInjectionSource : IInstanceInjection
     {
+        private readonly Type type;
         private readonly ICompilation compilation;
-        private readonly Func<IInstantiation> createInstantiation;
-        private readonly TypeAssignmentStatement typeAssignment;
+        private readonly TypeAssignmentSource source;
 
-        public InstanceInjectionStatement(ICompilation compilation, Type type, Lifetime lifetime, Ownership ownership, Func<IInstantiation> createInstantiation)
+        public InstanceInjectionSource(Type type, ICompilation compilation)
         {
+            this.type = type;
             this.compilation = compilation;
-            this.createInstantiation = createInstantiation;
-            typeAssignment = new TypeAssignmentStatement(type, lifetime, ownership, CreateInstantiation);
+            source = new TypeAssignmentSource(type);
         }
-
-        public InstanceInjectionStatement(ICompilation compilation, Type type, Lifetime lifetime, Ownership ownership, IInstantiation instantiation)
-            : this(compilation, type, lifetime, ownership, () => instantiation)
-        {
-
-        }
-
-        public Type ImplementedType => typeAssignment.ImplementedType;
-        public IReadOnlyList<Type> AssignedTypeList => typeAssignment.AssignedTypeList;
-        public Lifetime Lifetime => typeAssignment.Lifetime;
-        public Ownership Ownership => typeAssignment.Ownership;
-        public IInstantiation Instantiation => typeAssignment.Instantiation;
 
         private List<IParameter>? fieldParameterList;
-        private List<IParameter>? methodParameterList;
         private List<IParameter>? propertyParameterList;
+        private List<IParameter>? methodParameterList;
 
-        private IInstantiation CreateInstantiation()
-        {
-            var instantiation = createInstantiation.Invoke();
-
-            if (!CanInjectIntoInstance(out var injection))
-            {
-                return instantiation;
-            }
-
-            return new InstantiateAntInject(instantiation, injection);
-        }
-
-        private bool CanInjectIntoInstance(out IInjection injection)
+        public bool CanInjectIntoInstance(out IInjection injection)
         {
             if (CanInjectIntoField(out injection))
             {
@@ -110,7 +86,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var infusion = compilation.GetFieldInfusion(typeAssignment.ImplementedType);
+            var infusion = compilation.GetFieldInfusion(type);
 
             if (fieldParameterList.Count == 0)
             {
@@ -133,7 +109,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var infusion = compilation.GetPropertyInfusion(typeAssignment.ImplementedType);
+            var infusion = compilation.GetPropertyInfusion(type);
 
             if (propertyParameterList.Count == 0)
             {
@@ -156,7 +132,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var infusion = compilation.GetMethodInfusion(typeAssignment.ImplementedType);
+            var infusion = compilation.GetMethodInfusion(type);
 
             if (methodParameterList.Count == 0)
             {
@@ -170,20 +146,26 @@ namespace YggdrAshill.Ragnarok
             return true;
         }
 
+        public Type ImplementedType => source.ImplementedType;
+
+        public IReadOnlyList<Type> AssignedTypeList => source.AssignedTypeList;
+
         public void AsOwnSelf()
         {
-            typeAssignment.AsOwnSelf();
-        }
-        public IInheritedTypeAssignment As(Type inheritedType)
-        {
-            return typeAssignment.As(inheritedType);
-        }
-        public IOwnTypeAssignment AsImplementedInterfaces()
-        {
-            return typeAssignment.AsImplementedInterfaces();
+            source.AsOwnSelf();
         }
 
-        public IMethodInjection WithMethodArgument(IParameter parameter)
+        public IInheritedTypeAssignment As(Type inheritedType)
+        {
+            return source.As(inheritedType);
+        }
+
+        public IOwnTypeAssignment AsImplementedInterfaces()
+        {
+            return source.AsImplementedInterfaces();
+        }
+
+        public IMethodInjection WithMethod(IParameter parameter)
         {
             if (methodParameterList == null)
             {
