@@ -61,11 +61,11 @@ namespace YggdrAshill.Ragnarok
             where TInterface : notnull
             where TImplementation : TInterface
         {
-            var instanceInjection = container.RegisterInstance(instantiation, lifetime, ownership);
+            var injection = container.RegisterInstance(instantiation, lifetime, ownership);
 
-            instanceInjection.As<TInterface>();
+            injection.As<TInterface>();
 
-            return instanceInjection;
+            return injection;
         }
 
         public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, params IInstallation[] installationList)
