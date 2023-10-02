@@ -74,9 +74,9 @@ namespace YggdrAshill.Ragnarok
             return source.AsImplementedInterfaces();
         }
 
-        public IMethodInjection WithMethodArgument(IParameter parameter)
+        public IMethodInjection WithMethod(IParameter parameter)
         {
-            return source.WithMethodArgument(parameter);
+            return source.WithMethod(parameter);
         }
 
         public IMethodInjection WithMethodInjection()
