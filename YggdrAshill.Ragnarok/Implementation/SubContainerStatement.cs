@@ -8,47 +8,47 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly IObjectContainer container;
         private readonly IInstallation[] installationList;
-        private readonly TypeAssignmentStatement typeAssignment;
+        private readonly TypeAssignmentStatement assignment;
 
         public SubContainerStatement(Type type, IObjectContainer container, IInstallation[] installationList)
         {
             this.container = container;
             this.installationList = installationList;
-            typeAssignment = new TypeAssignmentStatement(type, Lifetime.Temporal, Ownership.External, CreateInstantiation);
+            assignment = new TypeAssignmentStatement(type, Lifetime.Temporal, Ownership.External, CreateInstantiation);
         }
 
-        private IInstantiation? instantiation;
         private IInstantiation CreateInstantiation()
         {
-            if (instantiation == null)
-            {
-                var scope = container.CreateSubScope(installationList);
+            var scope = container.CreateSubScope(installationList);
 
-                container.Registration.Register(scope);
+            container.Registration.Register(scope);
 
-                instantiation = new InstantiateFromOtherResolver(ImplementedType, scope.Resolver);
-            }
-
-            return instantiation;
+            return new InstantiateFromOtherResolver(ImplementedType, scope.Resolver);
         }
 
-        public Type ImplementedType => typeAssignment.ImplementedType;
-        public IReadOnlyList<Type> AssignedTypeList => typeAssignment.AssignedTypeList;
-        public Lifetime Lifetime => typeAssignment.Lifetime;
-        public Ownership Ownership => typeAssignment.Ownership;
-        public IInstantiation Instantiation => typeAssignment.Instantiation;
+        public Type ImplementedType => assignment.ImplementedType;
+
+        public IReadOnlyList<Type> AssignedTypeList => assignment.AssignedTypeList;
+
+        public Lifetime Lifetime => assignment.Lifetime;
+
+        public Ownership Ownership => assignment.Ownership;
+
+        public IInstantiation Instantiation => assignment.Instantiation;
 
         public void AsOwnSelf()
         {
-            typeAssignment.AsOwnSelf();
+            assignment.AsOwnSelf();
         }
+
         public IInheritedTypeAssignment As(Type inheritedType)
         {
-            return typeAssignment.As(inheritedType);
+            return assignment.As(inheritedType);
         }
+
         public IOwnTypeAssignment AsImplementedInterfaces()
         {
-            return typeAssignment.AsImplementedInterfaces();
+            return assignment.AsImplementedInterfaces();
         }
     }
 }

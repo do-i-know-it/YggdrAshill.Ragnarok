@@ -1,30 +1,28 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class TypeAssignmentStatement : ITypeAssignment, IStatement
+    public sealed class InstanceStatement : ITypeAssignment, IStatement
     {
         private readonly TypeAssignmentSource assignment;
-        private readonly Lazy<IInstantiation> instantiation;
 
-        public Lifetime Lifetime { get; }
-        public Ownership Ownership { get; }
-
-        public TypeAssignmentStatement(Type type, Lifetime lifetime, Ownership ownership, Func<IInstantiation> createInstantiation)
+        public InstanceStatement(object instance)
         {
-            assignment = new TypeAssignmentSource(type);
-            Lifetime = lifetime;
-            Ownership = ownership;
-            instantiation = new Lazy<IInstantiation>(createInstantiation);
+            assignment = new TypeAssignmentSource(instance.GetType());
+            Instantiation = new InstantiateToReturnInstance(instance);
         }
 
         public Type ImplementedType => assignment.ImplementedType;
 
         public IReadOnlyList<Type> AssignedTypeList => assignment.AssignedTypeList;
 
-        public IInstantiation Instantiation => instantiation.Value;
+        public Lifetime Lifetime => Lifetime.Global;
+
+        public Ownership Ownership => Ownership.External;
+
+        public IInstantiation Instantiation { get; }
 
         public void AsOwnSelf()
         {

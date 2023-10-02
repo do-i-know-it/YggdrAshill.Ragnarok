@@ -36,7 +36,7 @@ namespace YggdrAshill.Ragnarok
         public static ITypeAssignment RegisterInstance<T>(this IObjectContainer container, T instance)
             where T : notnull
         {
-            var statement = new TypeAssignmentStatement(instance);
+            var statement = new InstanceStatement(instance);
 
             container.Registration.Register(statement);
 

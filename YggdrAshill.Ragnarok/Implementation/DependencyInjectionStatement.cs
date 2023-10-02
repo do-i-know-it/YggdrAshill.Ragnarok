@@ -6,86 +6,92 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public sealed class DependencyInjectionStatement : IDependencyInjection, IStatement
     {
-        private readonly ICompilation compilation;
-        private readonly InstanceInjectionStatement injection;
+        private readonly TypeAssignmentStatement assignment;
+        private readonly InstanceInjectionSource instanceInjection;
+        private readonly DependencyInjectionSource dependencyInjection;
 
         public DependencyInjectionStatement(ICompilation compilation, Type implementedType, Lifetime lifetime)
         {
-            this.compilation = compilation;
-            injection = new InstanceInjectionStatement(compilation, implementedType, lifetime, Ownership.Internal, CreateInstantiation);
+            assignment = new TypeAssignmentStatement(implementedType, lifetime, Ownership.Internal, CreateInstantiation);
+            instanceInjection = new InstanceInjectionSource(implementedType, compilation);
+            dependencyInjection = new DependencyInjectionSource(implementedType, compilation);
         }
-
-        private List<IParameter>? parameterList;
 
         private IInstantiation CreateInstantiation()
         {
-            var activation = compilation.CreateActivation(ImplementedType);
+            var instantiation = dependencyInjection.CreateInstantiation();
 
-            return parameterList == null
-                ? new ActivateToInstantiateWithoutParameterList(activation)
-                : new ActivateToInstantiateWithParameterList(activation, parameterList);
+            return instanceInjection.CreateInstantiation(instantiation);
         }
 
-        public Type ImplementedType => injection.ImplementedType;
-        public IReadOnlyList<Type> AssignedTypeList => injection.AssignedTypeList;
-        public Lifetime Lifetime => injection.Lifetime;
-        public Ownership Ownership => injection.Ownership;
-        public IInstantiation Instantiation => injection.Instantiation;
+        public Type ImplementedType => assignment.ImplementedType;
+
+        public IReadOnlyList<Type> AssignedTypeList => assignment.AssignedTypeList;
+
+        public Lifetime Lifetime => assignment.Lifetime;
+
+        public Ownership Ownership => assignment.Ownership;
+
+        public IInstantiation Instantiation => assignment.Instantiation;
 
         public void AsOwnSelf()
         {
-            injection.AsOwnSelf();
+            assignment.AsOwnSelf();
         }
         public IInheritedTypeAssignment As(Type inheritedType)
         {
-            return injection.As(inheritedType);
+            return assignment.As(inheritedType);
         }
         public IOwnTypeAssignment AsImplementedInterfaces()
         {
-            return injection.AsImplementedInterfaces();
+            return assignment.AsImplementedInterfaces();
         }
 
         public IMethodInjection WithMethodArgument(IParameter parameter)
         {
-            return injection.WithMethodArgument(parameter);
+            instanceInjection.AddMethodParameter(parameter);
+
+            return this;
         }
 
         public IMethodInjection WithMethodInjection()
         {
-            return injection.WithMethodInjection();
+            instanceInjection.CreateMethodParameterBuffer();
+
+            return this;
         }
 
         public IPropertyInjection WithProperty(IParameter parameter)
         {
-            return injection.WithProperty(parameter);
+            instanceInjection.AddPropertyParameter(parameter);
+
+            return this;
         }
 
         public IPropertyInjection WithPropertyInjection()
         {
-            return injection.WithPropertyInjection();
+            instanceInjection.CreatePropertyParameterBuffer();
+
+            return this;
         }
 
         public IFieldInjection WithField(IParameter parameter)
         {
-            return injection.WithField(parameter);
+            instanceInjection.AddFieldParameter(parameter);
+
+            return this;
         }
 
         public IFieldInjection WithFieldInjection()
         {
-            return injection.WithFieldInjection();
+            instanceInjection.CreateFieldParameterBuffer();
+
+            return this;
         }
 
         public IDependencyInjection WithArgument(IParameter parameter)
         {
-            if (parameterList == null)
-            {
-                parameterList = new List<IParameter>();
-            }
-
-            if (!parameterList.Contains(parameter))
-            {
-                parameterList.Add(parameter);
-            }
+            dependencyInjection.AddArgument(parameter);
 
             return this;
         }
