@@ -1,3 +1,6 @@
-# Release notes for version 0.10.1
+# Release notes for version 0.10.2
 
-- Modified project settings.
+- Modified implementations.
+- Modified extensions.
+- Renamed definitions for Fabrication.
+- Removed unnecessary extensions.
