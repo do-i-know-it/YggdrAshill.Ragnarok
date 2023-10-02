@@ -5,20 +5,6 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public static class PropertyInjectionExtension
     {
-        public static IPropertyInjection WithProperty(this IPropertyInjection injection, string name, object instance)
-        {
-            var parameter = new Parameter(name, instance);
-
-            return injection.WithProperty(parameter);
-        }
-
-        public static IPropertyInjection WithProperty(this IPropertyInjection injection, string name, Func<object> instantiation)
-        {
-            var parameter = new Parameter(name, instantiation);
-
-            return injection.WithProperty(parameter);
-        }
-
         public static IPropertyInjection WithProperty<T>(this IPropertyInjection injection, T instance)
             where T : notnull
         {

@@ -5,20 +5,6 @@ namespace YggdrAshill.Ragnarok
     // TODO: add document comments.
     public static class MethodInjectionExtension
     {
-        public static IMethodInjection WithMethod(this IMethodInjection injection, string name, object instance)
-        {
-            var parameter = new Parameter(name, instance);
-
-            return injection.WithMethod(parameter);
-        }
-
-        public static IMethodInjection WithMethod(this IMethodInjection injection, string name, Func<object> instantiation)
-        {
-            var parameter = new Parameter(name, instantiation);
-
-            return injection.WithMethod(parameter);
-        }
-
         public static IMethodInjection WithMethod<T>(this IMethodInjection injection, T instance)
             where T : notnull
         {
