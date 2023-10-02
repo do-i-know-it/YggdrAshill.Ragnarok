@@ -4,20 +4,34 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class DependencyInjectionSource
+    public sealed class DependencyInjectionSource : IDependencyInjection
     {
         private readonly Type implementedType;
         private readonly ICompilation compilation;
+        private readonly InstanceInjectionSource source;
 
         public DependencyInjectionSource(Type implementedType, ICompilation compilation)
         {
             this.implementedType = implementedType;
             this.compilation = compilation;
+            source = new InstanceInjectionSource(implementedType, compilation);
         }
 
         private List<IParameter>? parameterList;
 
         public IInstantiation CreateInstantiation()
+        {
+            var instantiation = CreateInstantiationInternally();
+
+            if (!source.CanInjectIntoInstance(out var injection))
+            {
+                return instantiation;
+            }
+
+            return new InstantiateThenInject(instantiation, injection);
+        }
+
+        private IInstantiation CreateInstantiationInternally()
         {
             var activation = compilation.CreateActivation(implementedType);
 
@@ -26,7 +40,11 @@ namespace YggdrAshill.Ragnarok
                 : new ActivateToInstantiateWithParameterList(activation, parameterList);
         }
 
-        public void AddArgument(IParameter parameter)
+        public Type ImplementedType => source.ImplementedType;
+
+        public IReadOnlyList<Type> AssignedTypeList => source.AssignedTypeList;
+
+        public IDependencyInjection WithArgument(IParameter parameter)
         {
             if (parameterList == null)
             {
@@ -37,6 +55,53 @@ namespace YggdrAshill.Ragnarok
             {
                 parameterList.Add(parameter);
             }
+
+            return this;
+        }
+
+        public void AsOwnSelf()
+        {
+            source.AsOwnSelf();
+        }
+
+        public IInheritedTypeAssignment As(Type inheritedType)
+        {
+            return source.As(inheritedType);
+        }
+
+        public IOwnTypeAssignment AsImplementedInterfaces()
+        {
+            return source.AsImplementedInterfaces();
+        }
+
+        public IMethodInjection WithMethodArgument(IParameter parameter)
+        {
+            return source.WithMethodArgument(parameter);
+        }
+
+        public IMethodInjection WithMethodInjection()
+        {
+            return source.WithMethodInjection();
+        }
+
+        public IPropertyInjection WithProperty(IParameter parameter)
+        {
+            return source.WithProperty(parameter);
+        }
+
+        public IPropertyInjection WithPropertyInjection()
+        {
+            return source.WithPropertyInjection();
+        }
+
+        public IFieldInjection WithField(IParameter parameter)
+        {
+            return source.WithField(parameter);
+        }
+
+        public IFieldInjection WithFieldInjection()
+        {
+            return source.WithFieldInjection();
         }
     }
 }

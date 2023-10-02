@@ -1,10 +1,10 @@
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InstantiateToReturnInstance : IInstantiation
+    internal sealed class ReturnInstance : IInstantiation
     {
         private readonly object instance;
 
-        public InstantiateToReturnInstance(object instance)
+        public ReturnInstance(object instance)
         {
             this.instance = instance;
         }

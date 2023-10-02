@@ -4,95 +4,24 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class InstanceInjectionSource
+    public sealed class InstanceInjectionSource : IInstanceInjection
     {
         private readonly Type type;
         private readonly ICompilation compilation;
+        private readonly TypeAssignmentSource source;
 
         public InstanceInjectionSource(Type type, ICompilation compilation)
         {
             this.type = type;
             this.compilation = compilation;
+            source = new TypeAssignmentSource(type);
         }
 
         private List<IParameter>? fieldParameterList;
         private List<IParameter>? propertyParameterList;
         private List<IParameter>? methodParameterList;
 
-        public void CreateFieldParameterBuffer()
-        {
-            if (fieldParameterList == null)
-            {
-                fieldParameterList = new List<IParameter>();
-            }
-        }
-
-        public void AddFieldParameter(IParameter parameter)
-        {
-            if (fieldParameterList == null)
-            {
-                fieldParameterList = new List<IParameter>();
-            }
-
-            if (!fieldParameterList.Contains(parameter))
-            {
-                fieldParameterList.Add(parameter);
-            }
-        }
-
-        public void CreatePropertyParameterBuffer()
-        {
-            if (propertyParameterList == null)
-            {
-                propertyParameterList = new List<IParameter>();
-            }
-        }
-
-        public void AddPropertyParameter(IParameter parameter)
-        {
-            if (propertyParameterList == null)
-            {
-                propertyParameterList = new List<IParameter>();
-            }
-
-            if (!propertyParameterList.Contains(parameter))
-            {
-                propertyParameterList.Add(parameter);
-            }
-        }
-
-        public void CreateMethodParameterBuffer()
-        {
-            if (methodParameterList == null)
-            {
-                methodParameterList = new List<IParameter>();
-            }
-        }
-
-        public void AddMethodParameter(IParameter parameter)
-        {
-            if (methodParameterList == null)
-            {
-                methodParameterList = new List<IParameter>();
-            }
-
-            if (!methodParameterList.Contains(parameter))
-            {
-                methodParameterList.Add(parameter);
-            }
-        }
-
-        public IInstantiation CreateInstantiation(IInstantiation instantiation)
-        {
-            if (!CanInjectIntoInstance(out var injection))
-            {
-                return instantiation;
-            }
-
-            return new InstantiateAntInject(instantiation, injection);
-        }
-
-        private bool CanInjectIntoInstance(out IInjection injection)
+        public bool CanInjectIntoInstance(out IInjection injection)
         {
             if (CanInjectIntoField(out injection))
             {
@@ -215,6 +144,100 @@ namespace YggdrAshill.Ragnarok
             }
 
             return true;
+        }
+
+        public Type ImplementedType => source.ImplementedType;
+
+        public IReadOnlyList<Type> AssignedTypeList => source.AssignedTypeList;
+
+        public void AsOwnSelf()
+        {
+            source.AsOwnSelf();
+        }
+
+        public IInheritedTypeAssignment As(Type inheritedType)
+        {
+            return source.As(inheritedType);
+        }
+
+        public IOwnTypeAssignment AsImplementedInterfaces()
+        {
+            return source.AsImplementedInterfaces();
+        }
+
+        public IMethodInjection WithMethodArgument(IParameter parameter)
+        {
+            if (methodParameterList == null)
+            {
+                methodParameterList = new List<IParameter>();
+            }
+
+            if (!methodParameterList.Contains(parameter))
+            {
+                methodParameterList.Add(parameter);
+            }
+
+            return this;
+        }
+
+        public IMethodInjection WithMethodInjection()
+        {
+            if (methodParameterList == null)
+            {
+                methodParameterList = new List<IParameter>();
+            }
+
+            return this;
+        }
+
+        public IPropertyInjection WithProperty(IParameter parameter)
+        {
+            if (propertyParameterList == null)
+            {
+                propertyParameterList = new List<IParameter>();
+            }
+
+            if (!propertyParameterList.Contains(parameter))
+            {
+                propertyParameterList.Add(parameter);
+            }
+
+            return this;
+        }
+
+        public IPropertyInjection WithPropertyInjection()
+        {
+            if (propertyParameterList == null)
+            {
+                propertyParameterList = new List<IParameter>();
+            }
+
+            return this;
+        }
+
+        public IFieldInjection WithField(IParameter parameter)
+        {
+            if (fieldParameterList == null)
+            {
+                fieldParameterList = new List<IParameter>();
+            }
+
+            if (!fieldParameterList.Contains(parameter))
+            {
+                fieldParameterList.Add(parameter);
+            }
+
+            return this;
+        }
+
+        public IFieldInjection WithFieldInjection()
+        {
+            if (fieldParameterList == null)
+            {
+                fieldParameterList = new List<IParameter>();
+            }
+
+            return this;
         }
     }
 }

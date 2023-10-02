@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class TypeAssignmentSource
+    public sealed class TypeAssignmentSource : ITypeAssignment
     {
         public Type ImplementedType { get; }
 
@@ -27,7 +27,7 @@ namespace YggdrAshill.Ragnarok
             }
         }
 
-        public void Assign(Type inheritedType)
+        public IInheritedTypeAssignment As(Type inheritedType)
         {
             if (!inheritedType.IsAssignableFrom(ImplementedType))
             {
@@ -35,19 +35,23 @@ namespace YggdrAshill.Ragnarok
             }
 
             AddToAssignedTypeList(inheritedType);
+
+            return this;
         }
 
-        public void AssignOwnType()
+        public void AsOwnSelf()
         {
             AddToAssignedTypeList(ImplementedType);
         }
 
-        public void AssignAllInterfaces()
+        public IOwnTypeAssignment AsImplementedInterfaces()
         {
             foreach (var interfaceType in ImplementedType.GetInterfaces())
             {
                 AddToAssignedTypeList(interfaceType);
             }
+
+            return this;
         }
 
         private void AddToAssignedTypeList(Type type)

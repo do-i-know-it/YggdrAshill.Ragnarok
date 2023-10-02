@@ -2,12 +2,12 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InstantiateInstance<T> : IInstantiation
+    internal sealed class CreateInstance<T> : IInstantiation
         where T : notnull
     {
         private readonly Func<T> onInstantiated;
 
-        public InstantiateInstance(Func<T> onInstantiated)
+        public CreateInstance(Func<T> onInstantiated)
         {
             this.onInstantiated = onInstantiated;
         }
