@@ -125,6 +125,37 @@ context.Register<Service>(Lifetime.Temporal);
 
 using var scope = context.CreateScope();
 
+// You can resolve an instance of Service and run it.
+scope.Resolver.Resolve<Service>().Run();
+```
+
+or using `IInstallation`s as below:
+
+```cs
+class ServiceInstallation : IInstallation
+{
+    public void Install(IObjectContainer container)
+    {
+        container.Register<ISender, ConsoleSender>(Lifetime.Local).WithArgument("announcement", "Enter any text");
+
+        container.Register<IReceiver, ConsoleReceiver>(Lifetime.Global).WithField("header", "Recieved");
+
+        container.Register<Service>(Lifetime.Temporal);
+    }
+}
+```
+
+like:
+```cs
+var context = new DependencyInjectionContext();
+
+// You can register installation like:
+context.Install<ServiceInstallation>();
+// or 
+context.Install(new ServiceInstallation());
+
+using var scope = context.CreateScope();
+
 // The result is like:
 // "Enter any text: This is a test."
 // "Recieved: This is a test."
@@ -160,7 +191,7 @@ context.Register<ILogger, FileLogger>(Lifetime.Global);
 
 using var scope = context.CreateScope();
 
-// you can resolve collection like:
+// You can resolve collection like:
 var array = scope.Resolver.Resolve<ILogger[]>();
 // or
 var readOnlyList = scope.Resolver.Resolve<IReadOnlyList<ILogger>>();
