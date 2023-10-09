@@ -8,14 +8,14 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly IObjectContainer container;
         private readonly IInstallation[] installationList;
-        private readonly TypeAssignmentSource source;
+        private readonly SubContainerSource source;
         private readonly Lazy<IInstantiation> instantiation;
 
         public ResolveFromSubContainerStatement(Type type, IObjectContainer container, IInstallation[] installationList)
         {
             this.container = container;
             this.installationList = installationList;
-            source = new TypeAssignmentSource(type);
+            source = new SubContainerSource(container.Registration, type);
             instantiation = new Lazy<IInstantiation>(CreateInstantiation);
         }
 
@@ -25,7 +25,7 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(scope);
 
-            return new ResolveFromSubContainer(ImplementedType, scope.Resolver);
+            return source.CreateInstantiation(scope);
         }
 
         public ITypeAssignment TypeAssignment => source;
