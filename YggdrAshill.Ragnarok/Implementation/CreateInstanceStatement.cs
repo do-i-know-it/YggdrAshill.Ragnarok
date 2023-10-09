@@ -32,7 +32,7 @@ namespace YggdrAshill.Ragnarok
                 return instantiation;
             }
 
-            return new InstantiateThenInject(instantiation, injection);
+            return injection.ToInstantiate(instantiation);
         }
 
         public IInstanceInjection InstanceInjection => source;

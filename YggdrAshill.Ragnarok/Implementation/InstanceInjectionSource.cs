@@ -90,11 +90,11 @@ namespace YggdrAshill.Ragnarok
 
             if (fieldParameterList.Count == 0)
             {
-                injection = new InfuseToInjectWithoutParameterList(infusion);
+                injection = infusion.ToInject();
             }
             else
             {
-                injection = new InfuseToInjectWithParameterList(infusion, fieldParameterList);
+                injection = infusion.ToInject(fieldParameterList);
             }
 
             return true;
@@ -113,11 +113,11 @@ namespace YggdrAshill.Ragnarok
 
             if (propertyParameterList.Count == 0)
             {
-                injection = new InfuseToInjectWithoutParameterList(infusion);
+                injection = infusion.ToInject();
             }
             else
             {
-                injection = new InfuseToInjectWithParameterList(infusion, propertyParameterList);
+                injection = infusion.ToInject(propertyParameterList);
             }
 
             return true;
@@ -136,11 +136,11 @@ namespace YggdrAshill.Ragnarok
 
             if (methodParameterList.Count == 0)
             {
-                injection = new InfuseToInjectWithoutParameterList(infusion);
+                injection = infusion.ToInject();
             }
             else
             {
-                injection = new InfuseToInjectWithParameterList(infusion, methodParameterList);
+                injection = infusion.ToInject(methodParameterList);
             }
 
             return true;
