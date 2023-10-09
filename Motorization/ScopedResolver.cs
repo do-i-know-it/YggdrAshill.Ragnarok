@@ -24,11 +24,6 @@ namespace YggdrAshill.Ragnarok
 
         private bool isDisposed;
 
-        public T Resolve<T>()
-        {
-            return (T)Resolve(typeof(T));
-        }
-
         public object Resolve(Type type)
         {
             if (isDisposed)

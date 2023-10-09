@@ -20,12 +20,6 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public T Resolve<T>()
-        {
-            return (T)Resolve(typeof(T));
-        }
-
-        /// <inheritdoc/>
         public object Resolve(Type type)
         {
             var request = Selector.RequestDependencyInjection(type);

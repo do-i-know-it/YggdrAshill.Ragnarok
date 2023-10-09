@@ -20,19 +20,5 @@ namespace YggdrAshill.Ragnarok
         /// Thrown if something goes wrong in resolving dependencies.
         /// </exception>
         object Resolve(Type type);
-
-        /// <summary>
-        /// Gets instance of <typeparamref name="T"/>.
-        /// </summary>
-        /// <typeparam name="T">
-        /// Type to resolve.
-        /// </typeparam>
-        /// <returns>
-        /// <typeparamref name="T"/> resolved.
-        /// </returns>
-        /// <exception cref="RagnarokException">
-        /// Thrown if something goes wrong in resolving dependencies.
-        /// </exception>
-        T Resolve<T>();
     }
 }
