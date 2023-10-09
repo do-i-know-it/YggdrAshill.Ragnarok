@@ -36,32 +36,26 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            IScopedResolver resolver = this;
+            return Resolve(type, this);
+        }
 
-            while (true)
+        private object Resolve(Type type, IScopedResolver resolver)
+        {
+            do
             {
                 if (resolver.CanResolve(type, out var description))
                 {
-                    var lifetime = description.Lifetime;
-
-                    switch (lifetime)
+                    return description.Lifetime switch
                     {
-                        case Lifetime.Global:
-                            return resolver.Resolve(description);
-                        case Lifetime.Local:
-                            return ResolveLocally(description);
-                        case Lifetime.Temporal:
-                            return ResolveTemporally(description);
-                        default:
-                            throw new NotSupportedException($"{lifetime} is invalid.");
-                    }
+                        Lifetime.Global => resolver.Resolve(description),
+                        Lifetime.Local => ResolveLocally(description),
+                        Lifetime.Temporal => ResolveTemporally(description),
+                        _ => throw new NotSupportedException($"{description.Lifetime} is invalid.")
+                    };
                 }
+            } while (resolver.CanEscalate(out resolver));
 
-                if (!resolver.CanEscalate(out resolver))
-                {
-                    throw new RagnarokNotRegisteredException(type);
-                }
-            }
+            throw new RagnarokNotRegisteredException(type);
         }
 
         private object ResolveLocally(IDescription description)
@@ -71,24 +65,22 @@ namespace YggdrAshill.Ragnarok
 
         private object ResolveTemporally(IDescription description)
         {
-            var instance = description.Instantiate(this);
-            var ownership = description.Ownership;
-
-            switch (ownership)
+            switch (description.Ownership)
             {
                 case Ownership.Internal:
+                    var instance = description.Instantiate(this);
+
                     if (instance is IDisposable disposable)
                     {
                         Bind(disposable);
                     }
-                    break;
-                case Ownership.External:
-                    break;
-                default:
-                    throw new NotSupportedException($"{ownership} is invalid.");
-            }
 
-            return instance;
+                    return instance;
+                case Ownership.External:
+                    return description.Instantiate(this);
+                default:
+                    throw new NotSupportedException($"{description.Ownership} is invalid.");
+            }
         }
 
         public bool CanEscalate(out IScopedResolver resolver)
@@ -179,25 +171,20 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            var lifetime = description.Lifetime;
-
-            switch (lifetime)
+            switch (description.Lifetime)
             {
                 case Lifetime.Global:
-                {
                     if (parent == null || dictionary.ContainsKey(description.ImplementedType))
                     {
                         return ResolveLocally(description);
                     }
-
                     return parent.Resolve(description);
-                }
                 case Lifetime.Local:
                     return ResolveLocally(description);
                 case Lifetime.Temporal:
                     return ResolveTemporally(description);
                 default:
-                    throw new NotSupportedException($"{lifetime} is invalid.");
+                    throw new NotSupportedException($"{description.Lifetime} is invalid.");
             }
         }
 
