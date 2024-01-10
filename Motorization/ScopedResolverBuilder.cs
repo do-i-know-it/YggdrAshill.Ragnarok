@@ -38,17 +38,19 @@ namespace YggdrAshill.Ragnarok
         private readonly List<IDisposable> disposableList = new();
 
         /// <inheritdoc/>
-        public IObjectResolver Resolver
+        public object Resolve(Type type)
         {
-            get
+            if (typeof(IInstallation).IsAssignableFrom(type))
             {
-                if (parent != null)
-                {
-                    return parent;
-                }
-
-                return engine.Resolver;
+                return engine.Resolver.Resolve(type);
             }
+
+            if (parent != null)
+            {
+                return parent.Resolve(type);
+            }
+
+            throw new RagnarokNotRegisteredException(type);
         }
 
         /// <inheritdoc/>
@@ -109,7 +111,7 @@ namespace YggdrAshill.Ragnarok
 
             var content = factory.Create();
 
-            var resolver = new ScopedResolver(content, engine, parent);
+            IScopedResolver resolver = new ScopedResolver(content, engine, parent);
 
             factory.Validate(resolver);
 

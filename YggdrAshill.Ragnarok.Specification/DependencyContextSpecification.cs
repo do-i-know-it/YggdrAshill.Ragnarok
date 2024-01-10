@@ -557,7 +557,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(SolverList))]
-        public void ShouldRegisterInstallation(ISolver solver)
+        public void ShouldRegisterInstallationInRootContext(ISolver solver)
         {
             var context = new DependencyContext(solver);
 
@@ -568,6 +568,25 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(() =>
             {
                 scope.Resolver.Resolve<NoDependencyClass>();
+            }, Throws.Nothing);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldRegisterInstallationInChildContext(ISolver solver)
+        {
+            var parentContext = new DependencyContext(solver);
+
+            using var parentScope = parentContext.CreateScope();
+
+            var childContext = parentScope.CreateContext();
+
+            childContext.Install<NoDependencyClassInstallation>();
+
+            using var childScope = childContext.CreateScope();
+
+            Assert.That(() =>
+            {
+                childScope.Resolver.Resolve<NoDependencyClass>();
             }, Throws.Nothing);
         }
 
