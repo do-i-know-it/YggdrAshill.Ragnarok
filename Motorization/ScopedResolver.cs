@@ -18,7 +18,7 @@ namespace YggdrAshill.Ragnarok
             this.parent = parent;
         }
 
-        private readonly ConcurrentDictionary<Type, IDescription> registrationCache = new();
+        private readonly ConcurrentDictionary<Type, IDescription> descriptionCache = new();
         private readonly ConcurrentDictionary<IDescription, object> instanceCache = new();
         private readonly CompositeDisposable compositeDisposable = new();
 
@@ -118,7 +118,7 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            description = registrationCache.GetOrAdd(type, _ =>
+            description = descriptionCache.GetOrAdd(type, _ =>
             {
                 var activation = engine.GetActivation(type);
 
@@ -146,7 +146,7 @@ namespace YggdrAshill.Ragnarok
 
             if (CanResolve(targetType, out var found) && found is CollectionDescription collection)
             {
-                description = registrationCache.GetOrAdd(type, _ =>
+                description = descriptionCache.GetOrAdd(type, _ =>
                 {
                     var activation = engine.GetActivation(type);
 
@@ -212,7 +212,7 @@ namespace YggdrAshill.Ragnarok
 
             compositeDisposable.Dispose();
 
-            registrationCache.Clear();
+            descriptionCache.Clear();
 
             instanceCache.Clear();
 
