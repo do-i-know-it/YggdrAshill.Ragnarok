@@ -97,13 +97,11 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            description = default!;
-
-            if (dictionary.TryGetValue(type, out var found) && found != null)
+            if (dictionary.TryGetValue(type, out var found))
             {
-                description = found;
+                description = found!;
 
-                return true;
+                return found != null;
             }
 
             return CanResolveCollection(type, out description) || CanResolveServiceBundle(type, out description);
