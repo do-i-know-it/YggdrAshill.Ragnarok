@@ -21,23 +21,15 @@ namespace YggdrAshill.Ragnarok
 
         public IInstantiation CreateInstantiation()
         {
-            var instantiation = CreateInstantiationInternally();
+            var activation = compilation.GetActivation(implementedType);
+            var instantiation = parameterList == null ? activation.ToInstantiate() : activation.ToInstantiate(parameterList);
 
             if (!source.CanInjectIntoInstance(out var injection))
             {
                 return instantiation;
             }
 
-            return new InstantiateThenInject(instantiation, injection);
-        }
-
-        private IInstantiation CreateInstantiationInternally()
-        {
-            var activation = compilation.CreateActivation(implementedType);
-
-            return parameterList == null
-                ? new ActivateToInstantiateWithoutParameterList(activation)
-                : new ActivateToInstantiateWithParameterList(activation, parameterList);
+            return injection.ToInstantiate(instantiation);
         }
 
         public Type ImplementedType => source.ImplementedType;

@@ -7,10 +7,29 @@ namespace YggdrAshill.Ragnarok
     /// </summary>
     public interface IScopedResolver : IObjectResolver, IDisposable
     {
-        // TODO: add document comments.
+        /// <summary>
+        /// Escalates <see cref="IScopedResolver"/> if this can.
+        /// </summary>
+        /// <param name="resolver">
+        /// Parent <see cref="IScopedResolver"/>.
+        /// </param>
+        /// <returns>
+        /// True if this has parent <see cref="IScopedResolver"/>.
+        /// </returns>
         bool CanEscalate(out IScopedResolver resolver);
 
-        // TODO: add document comments.
+        /// <summary>
+        /// Resolve <see cref="IDescription"/> of <see cref="Type"/> if this can.
+        /// </summary>
+        /// <param name="type">
+        /// <see cref="Type"/> to resolve.
+        /// </param>
+        /// <param name="description">
+        /// <see cref="IDescription"/> resolved.
+        /// </param>
+        /// <returns>
+        /// True if this has <see cref="IDescription"/>.
+        /// </returns>
         bool CanResolve(Type type, out IDescription description);
 
         /// <summary>
@@ -27,7 +46,12 @@ namespace YggdrAshill.Ragnarok
         /// </exception>
         object Resolve(IDescription description);
 
-        // TODO: add document comments.
+        /// <summary>
+        /// Adds <see cref="IDisposable"/> to dispose when this disposes.
+        /// </summary>
+        /// <param name="disposable">
+        /// <see cref="IDisposable"/> to bind.
+        /// </param>
         void Bind(IDisposable disposable);
 
         /// <summary>

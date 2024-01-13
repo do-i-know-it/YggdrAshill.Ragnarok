@@ -17,7 +17,10 @@ namespace YggdrAshill.Ragnarok
 
             // TODO: object pooling.
             const int BufferSize = 128;
-            tableOfTypeToDescription = new Dictionary<Type, IDescription?>(BufferSize);
+            tableOfTypeToDescription = new Dictionary<Type, IDescription?>(BufferSize)
+            {
+                { ObjectResolverDescription.Instance.ImplementedType, ObjectResolverDescription.Instance }
+            };
             tableOfTypeToDescriptionList = new Dictionary<Type, List<IDescription>>(BufferSize);
         }
 
@@ -97,7 +100,7 @@ namespace YggdrAshill.Ragnarok
 
                 var implementedType = TypeCache.ArrayTypeOf(elementType);
 
-                var activation = compilation.CreateActivation(implementedType);
+                var activation = compilation.GetActivation(implementedType);
 
                 var collection = new CollectionDescription(elementType, activation, registrationList.ToArray());
 

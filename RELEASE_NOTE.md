@@ -1,6 +1,6 @@
-# Release notes for version 0.10.2
+# Release notes for version 0.11.0
 
-- Modified implementations.
-- Modified extensions.
-- Renamed definitions for Fabrication.
-- Removed unnecessary extensions.
+- Modified definitions.
+- Rearranged definitions.
+- Fixed implementations.
+- Added document comments.

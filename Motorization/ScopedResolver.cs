@@ -18,16 +18,11 @@ namespace YggdrAshill.Ragnarok
             this.parent = parent;
         }
 
-        private readonly ConcurrentDictionary<Type, IDescription> registrationCache = new();
+        private readonly ConcurrentDictionary<Type, IDescription> descriptionCache = new();
         private readonly ConcurrentDictionary<IDescription, object> instanceCache = new();
         private readonly CompositeDisposable compositeDisposable = new();
 
         private bool isDisposed;
-
-        public T Resolve<T>()
-        {
-            return (T)Resolve(typeof(T));
-        }
 
         public object Resolve(Type type)
         {
@@ -36,32 +31,26 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            IScopedResolver resolver = this;
+            return Resolve(type, this);
+        }
 
-            while (true)
+        private object Resolve(Type type, IScopedResolver resolver)
+        {
+            do
             {
                 if (resolver.CanResolve(type, out var description))
                 {
-                    var lifetime = description.Lifetime;
-
-                    switch (lifetime)
+                    return description.Lifetime switch
                     {
-                        case Lifetime.Global:
-                            return resolver.Resolve(description);
-                        case Lifetime.Local:
-                            return ResolveLocally(description);
-                        case Lifetime.Temporal:
-                            return ResolveTemporally(description);
-                        default:
-                            throw new NotSupportedException($"{lifetime} is invalid.");
-                    }
+                        Lifetime.Global => resolver.Resolve(description),
+                        Lifetime.Local => ResolveLocally(description),
+                        Lifetime.Temporal => ResolveTemporally(description),
+                        _ => throw new NotSupportedException($"{description.Lifetime} is invalid.")
+                    };
                 }
+            } while (resolver.CanEscalate(out resolver));
 
-                if (!resolver.CanEscalate(out resolver))
-                {
-                    throw new RagnarokNotRegisteredException(type);
-                }
-            }
+            throw new RagnarokNotRegisteredException(type);
         }
 
         private object ResolveLocally(IDescription description)
@@ -71,24 +60,22 @@ namespace YggdrAshill.Ragnarok
 
         private object ResolveTemporally(IDescription description)
         {
-            var instance = description.Instantiate(this);
-            var ownership = description.Ownership;
-
-            switch (ownership)
+            switch (description.Ownership)
             {
                 case Ownership.Internal:
+                    var instance = description.Instantiate(this);
+
                     if (instance is IDisposable disposable)
                     {
                         Bind(disposable);
                     }
-                    break;
-                case Ownership.External:
-                    break;
-                default:
-                    throw new NotSupportedException($"{ownership} is invalid.");
-            }
 
-            return instance;
+                    return instance;
+                case Ownership.External:
+                    return description.Instantiate(this);
+                default:
+                    throw new NotSupportedException($"{description.Ownership} is invalid.");
+            }
         }
 
         public bool CanEscalate(out IScopedResolver resolver)
@@ -110,13 +97,11 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            description = default!;
-
-            if (dictionary.TryGetValue(type, out var found) && found != null)
+            if (dictionary.TryGetValue(type, out var found))
             {
-                description = found;
+                description = found!;
 
-                return true;
+                return found != null;
             }
 
             return CanResolveCollection(type, out description) || CanResolveServiceBundle(type, out description);
@@ -131,9 +116,9 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            description = registrationCache.GetOrAdd(type, _ =>
+            description = descriptionCache.GetOrAdd(type, _ =>
             {
-                var activation = engine.CreateActivation(type);
+                var activation = engine.GetActivation(type);
 
                 if (!CanResolve(elementType, out var elementDescription))
                 {
@@ -159,9 +144,9 @@ namespace YggdrAshill.Ragnarok
 
             if (CanResolve(targetType, out var found) && found is CollectionDescription collection)
             {
-                description = registrationCache.GetOrAdd(type, _ =>
+                description = descriptionCache.GetOrAdd(type, _ =>
                 {
-                    var activation = engine.CreateActivation(type);
+                    var activation = engine.GetActivation(type);
 
                     return new ServiceBundleDescription(type, activation, collection);
                 });
@@ -179,25 +164,20 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            var lifetime = description.Lifetime;
-
-            switch (lifetime)
+            switch (description.Lifetime)
             {
                 case Lifetime.Global:
-                {
                     if (parent == null || dictionary.ContainsKey(description.ImplementedType))
                     {
                         return ResolveLocally(description);
                     }
-
                     return parent.Resolve(description);
-                }
                 case Lifetime.Local:
                     return ResolveLocally(description);
                 case Lifetime.Temporal:
                     return ResolveTemporally(description);
                 default:
-                    throw new NotSupportedException($"{lifetime} is invalid.");
+                    throw new NotSupportedException($"{description.Lifetime} is invalid.");
             }
         }
 
@@ -230,7 +210,7 @@ namespace YggdrAshill.Ragnarok
 
             compositeDisposable.Dispose();
 
-            registrationCache.Clear();
+            descriptionCache.Clear();
 
             instanceCache.Clear();
 
