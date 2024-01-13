@@ -19,7 +19,7 @@ namespace YggdrAshill.Ragnarok
 
             var statement = new DependencyInjectionStatement(container.Compilation, implementedType, lifetime);
 
-            container.Registration.Register(statement);
+            container.Register(statement);
 
             return statement.DependencyInjection;
         }
@@ -42,7 +42,7 @@ namespace YggdrAshill.Ragnarok
         {
             var statement = new ReturnInstanceStatement(instance);
 
-            container.Registration.Register(statement);
+            container.Register(statement);
 
             var assignment = statement.TypeAssignment;
 
@@ -57,7 +57,7 @@ namespace YggdrAshill.Ragnarok
         {
             var statement = new CreateInstanceStatement<T>(container.Compilation, lifetime, ownership, instantiation);
 
-            container.Registration.Register(statement);
+            container.Register(statement);
 
             return statement.InstanceInjection;
         }
@@ -80,7 +80,7 @@ namespace YggdrAshill.Ragnarok
         {
             var statement = new ResolveFromSubContainerStatement(typeof(T), container, installationList);
 
-            container.Registration.Register(statement);
+            container.Register(statement);
 
             return statement.TypeAssignment;
         }
@@ -150,13 +150,13 @@ namespace YggdrAshill.Ragnarok
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Count(this IObjectContainer container, Func<IStatement, bool> condition)
         {
-            return container.Registration.Count(new StatementSelection(condition));
+            return container.Count(new StatementSelection(condition));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Register(this IObjectContainer container, Action<IObjectResolver> operation)
         {
-            container.Registration.Register(new Operation(operation));
+            container.Register(new Operation(operation));
         }
     }
 }

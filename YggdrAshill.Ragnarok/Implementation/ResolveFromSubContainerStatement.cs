@@ -15,7 +15,7 @@ namespace YggdrAshill.Ragnarok
         {
             this.container = container;
             this.installationList = installationList;
-            source = new SubContainerSource(container.Registration, type);
+            source = new SubContainerSource(container, type);
             instantiation = new Lazy<IInstantiation>(CreateInstantiation);
         }
 
@@ -23,7 +23,7 @@ namespace YggdrAshill.Ragnarok
         {
             var scope = container.CreateSubScope(installationList);
 
-            container.Registration.Register(scope);
+            container.Register(scope);
 
             return source.CreateInstantiation(scope);
         }

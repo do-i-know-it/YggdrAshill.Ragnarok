@@ -16,19 +16,19 @@ namespace YggdrAshill.Ragnarok
         {
             this.resolver = resolver;
 
-            createActivation = CreateActivationInternally;
-            createFieldInfusion = CreateFieldInfusionInternally;
-            createPropertyInfusion = CreatePropertyInfusionInternally;
-            createMethodInfusion = CreateMethodInfusionInternally;
+            createActivation = CreateActivation;
+            createFieldInfusion = CreateFieldInfusion;
+            createPropertyInfusion = CreatePropertyInfusion;
+            createMethodInfusion = CreateMethodInfusion;
         }
 
         public IObjectResolver Resolver => resolver;
 
-        public IActivation CreateActivation(Type type)
+        public IActivation GetActivation(Type type)
         {
             return TypeAnalysis.GetActivation(type, createActivation);
         }
-        private IActivation CreateActivationInternally(Type type)
+        private IActivation CreateActivation(Type type)
         {
             if (CollectionDescription.CanResolve(type, out var arrayElementType))
             {
@@ -46,7 +46,7 @@ namespace YggdrAshill.Ragnarok
         {
             return TypeAnalysis.GetFieldInfusion(type, createFieldInfusion);
         }
-        private IInfusion CreateFieldInfusionInternally(Type type)
+        private IInfusion CreateFieldInfusion(Type type)
         {
             var request = resolver.Selector.RequestFieldInjection(type);
 
@@ -57,7 +57,7 @@ namespace YggdrAshill.Ragnarok
         {
             return TypeAnalysis.GetPropertyInfusion(type, createPropertyInfusion);
         }
-        private IInfusion CreatePropertyInfusionInternally(Type type)
+        private IInfusion CreatePropertyInfusion(Type type)
         {
             var request = resolver.Selector.RequestPropertyInjection(type);
 
@@ -68,7 +68,7 @@ namespace YggdrAshill.Ragnarok
         {
             return TypeAnalysis.GetMethodInfusion(type, createMethodInfusion);
         }
-        private IInfusion CreateMethodInfusionInternally(Type type)
+        private IInfusion CreateMethodInfusion(Type type)
         {
             var request = resolver.Selector.RequestMethodInjection(type);
 

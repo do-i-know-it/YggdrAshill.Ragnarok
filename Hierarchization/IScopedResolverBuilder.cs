@@ -1,9 +1,11 @@
+using System.Collections.Generic;
+
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to build <see cref="IScopedResolver"/>.
     /// </summary>
-    public interface IScopedResolverBuilder : IObjectResolver, IRegistration
+    public interface IScopedResolverBuilder : IObjectResolver
     {
         /// <summary>
         /// <see cref="ICompilation"/> to resolve dependency.
@@ -11,19 +13,14 @@ namespace YggdrAshill.Ragnarok
         ICompilation Compilation { get; }
 
         /// <summary>
-        /// Creates a <see cref="IScopedResolverBuilder"/>.
-        /// </summary>
-        /// <returns>
-        /// <see cref="IScopedResolverBuilder"/> created.
-        /// </returns>
-        IScopedResolverBuilder CreateBuilder();
-
-        /// <summary>
         /// Creates a <see cref="IScopedResolver"/>.
         /// </summary>
+        /// <param name="statementList">
+        /// <see cref="IStatement"/>s to build.
+        /// </param>
         /// <returns>
         /// <see cref="IScopedResolver"/> created.
         /// </returns>
-        IScopedResolver Build();
+        IScopedResolver Build(IReadOnlyList<IStatement> statementList);
     }
 }

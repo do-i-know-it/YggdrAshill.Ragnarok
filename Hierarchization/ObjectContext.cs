@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
@@ -18,6 +22,10 @@ namespace YggdrAshill.Ragnarok
             this.resolverBuilder = resolverBuilder;
         }
 
+        private readonly List<IStatement> statementList = new();
+        private readonly List<IOperation> operationList = new();
+        private readonly List<IDisposable> disposableList = new();
+
         /// <inheritdoc/>
         public IObjectResolver Resolver => resolverBuilder;
 
@@ -25,18 +33,64 @@ namespace YggdrAshill.Ragnarok
         public ICompilation Compilation => resolverBuilder.Compilation;
 
         /// <inheritdoc/>
-        public IRegistration Registration => resolverBuilder;
+        public int Count(IStatementSelection selection)
+        {
+            return statementList.Where(selection.IsSatisfied).Count();
+        }
+
+        /// <inheritdoc/>
+        public void Register(IStatement statement)
+        {
+            if (statementList.Contains(statement))
+            {
+                return;
+            }
+
+            statementList.Add(statement);
+        }
+
+        /// <inheritdoc/>
+        public void Register(IOperation operation)
+        {
+            if (operationList.Contains(operation))
+            {
+                return;
+            }
+
+            operationList.Add(operation);
+        }
+
+        /// <inheritdoc/>
+        public void Register(IDisposable disposable)
+        {
+            if (disposableList.Contains(disposable))
+            {
+                return;
+            }
+
+            disposableList.Add(disposable);
+        }
 
         /// <inheritdoc/>
         public IObjectContext CreateContext()
         {
-            return new ObjectContext(resolverBuilder.CreateBuilder());
+            return new ObjectContext(resolverBuilder);
         }
 
         /// <inheritdoc/>
         public IObjectScope CreateScope()
         {
-            var resolver = resolverBuilder.Build();
+            var resolver = resolverBuilder.Build(statementList);
+
+            foreach (var disposable in disposableList)
+            {
+                resolver.Bind(disposable);
+            }
+
+            foreach (var operation in operationList)
+            {
+                operation.Operate(resolver);
+            }
 
             return new ObjectScope(resolver);
         }
