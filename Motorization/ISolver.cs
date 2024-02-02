@@ -8,15 +8,15 @@ namespace YggdrAshill.Ragnarok
     public interface ISolver
     {
         /// <summary>
-        /// Creates <see cref="IActivation"/> for <see cref="DependencyInjectionRequest"/>.
+        /// Creates <see cref="IActivation"/> for <see cref="ConstructorInjectionRequest"/>.
         /// </summary>
         /// <param name="request">
-        /// <see cref="DependencyInjectionRequest"/> for request.
+        /// <see cref="ConstructorInjectionRequest"/> for request.
         /// </param>
         /// <returns>
         /// <see cref="IActivation"/> created.
         /// </returns>
-        IActivation CreateActivation(DependencyInjectionRequest request);
+        IActivation CreateActivation(ConstructorInjectionRequest request);
 
         /// <summary>
         /// Creates <see cref="IInfusion"/> for <see cref="FieldInjectionRequest"/>.

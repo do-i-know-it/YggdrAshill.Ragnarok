@@ -20,7 +20,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IActivation CreateActivation(DependencyInjectionRequest request)
+        public IActivation CreateActivation(ConstructorInjectionRequest request)
         {
             var constructor = request.Constructor;
             var argumentList = request.ParameterList;

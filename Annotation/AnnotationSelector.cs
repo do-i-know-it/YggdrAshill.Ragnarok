@@ -28,7 +28,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public DependencyInjectionRequest RequestDependencyInjection(Type type)
+        public ConstructorInjectionRequest RequestDependencyInjection(Type type)
         {
             const BindingFlags BindingFlags
                 = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -64,12 +64,12 @@ namespace YggdrAshill.Ragnarok
 
             if (injectedConstructor != null)
             {
-                return new DependencyInjectionRequest(type, injectedConstructor);
+                return new ConstructorInjectionRequest(type, injectedConstructor);
             }
 
             if (constructorHavingMaxParameterCount != null)
             {
-                return new DependencyInjectionRequest(type, constructorHavingMaxParameterCount);
+                return new ConstructorInjectionRequest(type, constructorHavingMaxParameterCount);
             }
 
             throw new RagnarokNotAnnotatedException(type, $"Injectable constructor of {type} not found.");
@@ -152,7 +152,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public DependencyInjectionRequest RequestServiceBundleInjection(Type elementType)
+        public ConstructorInjectionRequest RequestServiceBundleInjection(Type elementType)
         {
             var targetType = serviceBundleTypeCache.GetOrAdd(elementType, createServiceBundleType);
 

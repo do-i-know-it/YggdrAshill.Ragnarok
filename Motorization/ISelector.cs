@@ -8,15 +8,15 @@ namespace YggdrAshill.Ragnarok
     public interface ISelector
     {
         /// <summary>
-        /// Gets <see cref="DependencyInjectionRequest"/> for <see cref="Type"/>.
+        /// Gets <see cref="ConstructorInjectionRequest"/> for <see cref="Type"/>.
         /// </summary>
         /// <param name="type">
         /// <see cref="Type"/> for request.
         /// </param>
         /// <returns>
-        /// <see cref="DependencyInjectionRequest"/> selected.
+        /// <see cref="ConstructorInjectionRequest"/> selected.
         /// </returns>
-        DependencyInjectionRequest RequestDependencyInjection(Type type);
+        ConstructorInjectionRequest RequestDependencyInjection(Type type);
 
         /// <summary>
         /// Gets <see cref="FieldInjectionRequest"/> for <see cref="Type"/>.
@@ -52,14 +52,14 @@ namespace YggdrAshill.Ragnarok
         MethodInjectionRequest RequestMethodInjection(Type type);
 
         /// <summary>
-        /// Gets <see cref="DependencyInjectionRequest"/> for <see cref="Type"/>.
+        /// Gets <see cref="ConstructorInjectionRequest"/> for <see cref="Type"/>.
         /// </summary>
         /// <param name="elementType">
         /// <see cref="Type"/> of element for request.
         /// </param>
         /// <returns>
-        /// <see cref="DependencyInjectionRequest"/> selected.
+        /// <see cref="ConstructorInjectionRequest"/> selected.
         /// </returns>
-        DependencyInjectionRequest RequestServiceBundleInjection(Type elementType);
+        ConstructorInjectionRequest RequestServiceBundleInjection(Type elementType);
     }
 }

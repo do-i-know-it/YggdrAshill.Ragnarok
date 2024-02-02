@@ -18,7 +18,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IActivation CreateActivation(DependencyInjectionRequest request)
+        public IActivation CreateActivation(ConstructorInjectionRequest request)
         {
             return new ReflectionActivation(request);
         }

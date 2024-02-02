@@ -5,12 +5,12 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionActivation : IActivation
     {
-        private readonly DependencyInjectionRequest request;
+        private readonly ConstructorInjectionRequest request;
 
         public IReadOnlyList<Argument> ArgumentList
             => request.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
 
-        public ReflectionActivation(DependencyInjectionRequest request)
+        public ReflectionActivation(ConstructorInjectionRequest request)
         {
             this.request = request;
         }
