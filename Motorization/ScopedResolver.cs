@@ -6,15 +6,15 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class ScopedResolver : IScopedResolver
     {
-        private readonly Engine engine;
+        private readonly Interpretation interpretation;
         private readonly IScopedResolver? parent;
 
         private readonly Dictionary<Type, IDescription?> dictionary;
 
-        public ScopedResolver(IDictionary<Type, IDescription?> content, Engine engine, IScopedResolver? parent)
+        public ScopedResolver(IDictionary<Type, IDescription?> content, Interpretation interpretation, IScopedResolver? parent)
         {
             dictionary = new Dictionary<Type, IDescription?>(content);
-            this.engine = engine;
+            this.interpretation = interpretation;
             this.parent = parent;
         }
 
@@ -36,7 +36,7 @@ namespace YggdrAshill.Ragnarok
 
         private object Resolve(Type type, IScopedResolver resolver)
         {
-            do
+            while (true)
             {
                 if (resolver.CanResolve(type, out var description))
                 {
@@ -48,7 +48,12 @@ namespace YggdrAshill.Ragnarok
                         _ => throw new NotSupportedException($"{description.Lifetime} is invalid.")
                     };
                 }
-            } while (resolver.CanEscalate(out resolver));
+
+                if (!resolver.CanEscalate(out resolver))
+                {
+                    break;
+                }
+            }
 
             throw new RagnarokNotRegisteredException(type);
         }
@@ -104,7 +109,9 @@ namespace YggdrAshill.Ragnarok
                 return found != null;
             }
 
-            return CanResolveCollection(type, out description) || CanResolveServiceBundle(type, out description);
+            return CanResolveCollection(type, out description) ||
+                   CanResolveServiceBundle(type, out description) ||
+                   CanResolveInstallation(type, out description);
         }
 
         private bool CanResolveCollection(Type type, out IDescription description)
@@ -118,7 +125,7 @@ namespace YggdrAshill.Ragnarok
 
             description = descriptionCache.GetOrAdd(type, _ =>
             {
-                var activation = engine.GetActivation(type);
+                var activation = interpretation.ActivationOf(type);
 
                 if (!CanResolve(elementType, out var elementDescription))
                 {
@@ -146,7 +153,7 @@ namespace YggdrAshill.Ragnarok
             {
                 description = descriptionCache.GetOrAdd(type, _ =>
                 {
-                    var activation = engine.GetActivation(type);
+                    var activation = interpretation.ActivationOf(type);
 
                     return new ServiceBundleDescription(type, activation, collection);
                 });
@@ -155,6 +162,25 @@ namespace YggdrAshill.Ragnarok
             }
 
             return false;
+        }
+
+        private bool CanResolveInstallation(Type type, out IDescription description)
+        {
+            description = default!;
+
+            if (!InstallationDescription.CanResolve(type))
+            {
+                return false;
+            }
+
+            description = descriptionCache.GetOrAdd(type, _ =>
+            {
+                var activation = interpretation.ActivationOf(type);
+
+                return new InstallationDescription(type, activation);
+            });
+
+            return true;
         }
 
         public object Resolve(IDescription description)
@@ -198,7 +224,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            return new ScopedResolverBuilder(engine, this);
+            return new ScopedResolverBuilder(interpretation, this);
         }
 
         public void Dispose()

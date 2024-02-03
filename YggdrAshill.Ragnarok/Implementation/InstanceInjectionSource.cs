@@ -86,16 +86,11 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var infusion = compilation.GetFieldInfusion(type);
+            var request = fieldParameterList == null ?
+                new DependencyInjectionRequest(type) :
+                new DependencyInjectionRequest(type, fieldParameterList.ToArray());
 
-            if (fieldParameterList.Count == 0)
-            {
-                injection = infusion.ToInject();
-            }
-            else
-            {
-                injection = infusion.ToInject(fieldParameterList);
-            }
+            injection = compilation.CreateFieldInjection(request);
 
             return true;
         }
@@ -109,16 +104,11 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var infusion = compilation.GetPropertyInfusion(type);
+            var request = propertyParameterList == null ?
+                new DependencyInjectionRequest(type) :
+                new DependencyInjectionRequest(type, propertyParameterList.ToArray());
 
-            if (propertyParameterList.Count == 0)
-            {
-                injection = infusion.ToInject();
-            }
-            else
-            {
-                injection = infusion.ToInject(propertyParameterList);
-            }
+            injection = compilation.CreatePropertyInjection(request);
 
             return true;
         }
@@ -132,16 +122,11 @@ namespace YggdrAshill.Ragnarok
                 return false;
             }
 
-            var infusion = compilation.GetMethodInfusion(type);
+            var request = methodParameterList == null ?
+                new DependencyInjectionRequest(type) :
+                new DependencyInjectionRequest(type, methodParameterList.ToArray());
 
-            if (methodParameterList.Count == 0)
-            {
-                injection = infusion.ToInject();
-            }
-            else
-            {
-                injection = infusion.ToInject(methodParameterList);
-            }
+            injection = compilation.CreateMethodInjection(request);
 
             return true;
         }

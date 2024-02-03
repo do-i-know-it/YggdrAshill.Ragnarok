@@ -5,7 +5,7 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Defines how to activate or infuse instance.
     /// </summary>
-    public interface IInstruction
+    public interface IOperation
     {
         /// <summary>
         /// Creates <see cref="IActivation"/> for <see cref="ConstructorInjectionRequest"/>.
@@ -16,7 +16,7 @@ namespace YggdrAshill.Ragnarok
         /// <returns>
         /// <see cref="IActivation"/> created.
         /// </returns>
-        IActivationV2 CreateActivation(ConstructorInjectionRequest request);
+        IActivation CreateActivation(ConstructorInjectionRequest request);
 
         /// <summary>
         /// Creates <see cref="IInfusion"/> for <see cref="FieldInjectionRequest"/>.
@@ -27,7 +27,7 @@ namespace YggdrAshill.Ragnarok
         /// <returns>
         /// <see cref="IInfusion"/> created.
         /// </returns>
-        IInfusionV2 CreateFieldInfusion(FieldInjectionRequest request);
+        IInfusion CreateFieldInfusion(FieldInjectionRequest request);
 
         /// <summary>
         /// Creates <see cref="IInfusion"/> for <see cref="PropertyInjectionRequest"/>.
@@ -38,7 +38,7 @@ namespace YggdrAshill.Ragnarok
         /// <returns>
         /// <see cref="IInfusion"/> created.
         /// </returns>
-        IInfusionV2 CreatePropertyInfusion(PropertyInjectionRequest request);
+        IInfusion CreatePropertyInfusion(PropertyInjectionRequest request);
 
         /// <summary>
         /// Creates <see cref="IInfusion"/> for <see cref="MethodInjectionRequest"/>.
@@ -49,17 +49,17 @@ namespace YggdrAshill.Ragnarok
         /// <returns>
         /// <see cref="IInfusion"/> created.
         /// </returns>
-        IInfusionV2 CreateMethodInfusion(MethodInjectionRequest request);
+        IInfusion CreateMethodInfusion(MethodInjectionRequest request);
 
         /// <summary>
         /// Creates <see cref="IActivation"/> for collection of <see cref="Type"/>.
         /// </summary>
-        /// <param name="elementType">
-        /// <see cref="Type"/> for request.
+        /// <param name="request">
+        /// <see cref="CollectionInjectionRequest"/> for request.
         /// </param>
         /// <returns>
         /// <see cref="IActivation"/> created.
         /// </returns>
-        IActivationV2 CreateCollectionActivation(Type elementType);
+        IActivation CreateCollectionActivation(CollectionInjectionRequest request);
     }
 }

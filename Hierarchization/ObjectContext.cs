@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
@@ -9,88 +5,42 @@ namespace YggdrAshill.Ragnarok
     /// </summary>
     public sealed class ObjectContext : IObjectContext
     {
-        private readonly IScopedResolverBuilder resolverBuilder;
+        private readonly IScopedResolverBuilder builder;
+        private readonly Compilation compilation;
+        private readonly Registration registration;
 
         /// <summary>
-        /// Creates <see cref="ObjectContext"/>.
+        /// Constructor of <see cref="ObjectContext"/>.
         /// </summary>
-        /// <param name="resolverBuilder">
+        /// <param name="builder">
         /// <see cref="IScopedResolverBuilder"/> for <see cref="ObjectContext"/>.
         /// </param>
-        public ObjectContext(IScopedResolverBuilder resolverBuilder)
+        public ObjectContext(IScopedResolverBuilder builder)
         {
-            this.resolverBuilder = resolverBuilder;
-        }
-
-        private readonly List<IStatement> statementList = new();
-        private readonly List<IOperation> operationList = new();
-        private readonly List<IDisposable> disposableList = new();
-
-        /// <inheritdoc/>
-        public IObjectResolver Resolver => resolverBuilder;
-
-        /// <inheritdoc/>
-        public ICompilation Compilation => resolverBuilder.Compilation;
-
-        /// <inheritdoc/>
-        public int Count(IStatementSelection selection)
-        {
-            return statementList.Where(selection.IsSatisfied).Count();
+            this.builder = builder;
+            compilation = new Compilation(builder.Interpretation);
+            registration = new Registration(builder);
         }
 
         /// <inheritdoc/>
-        public void Register(IStatement statement)
-        {
-            if (statementList.Contains(statement))
-            {
-                return;
-            }
-
-            statementList.Add(statement);
-        }
+        public IRegistration Registration => registration;
 
         /// <inheritdoc/>
-        public void Register(IOperation operation)
-        {
-            if (operationList.Contains(operation))
-            {
-                return;
-            }
-
-            operationList.Add(operation);
-        }
+        public IObjectResolver Resolver => builder;
 
         /// <inheritdoc/>
-        public void Register(IDisposable disposable)
-        {
-            if (disposableList.Contains(disposable))
-            {
-                return;
-            }
-
-            disposableList.Add(disposable);
-        }
+        public ICompilation Compilation => compilation;
 
         /// <inheritdoc/>
         public IObjectContext CreateContext()
         {
-            return new ObjectContext(resolverBuilder);
+            return new ObjectContext(builder);
         }
 
         /// <inheritdoc/>
         public IObjectScope CreateScope()
         {
-            var resolver = resolverBuilder.Build(statementList);
-
-            foreach (var disposable in disposableList)
-            {
-                resolver.Bind(disposable);
-            }
-
-            foreach (var operation in operationList)
-            {
-                operation.Operate(resolver);
-            }
+            var resolver = registration.Build();
 
             return new ObjectScope(resolver);
         }

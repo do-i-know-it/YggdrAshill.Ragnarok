@@ -6,16 +6,16 @@ using System.Reflection;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="ISelector"/> finding annotation.
+    /// Implementation of <see cref="IDecision"/> with annotation.
     /// </summary>
-    public sealed class AnnotationSelector : ISelector
+    public sealed class AnnotateToDecide : IDecision
     {
         /// <summary>
-        /// Singleton of <see cref="AnnotationSelector"/>.
+        /// Singleton of <see cref="AnnotateToDecide"/>.
         /// </summary>
-        public static AnnotationSelector Instance { get; } = new();
+        public static AnnotateToDecide Instance { get; } = new();
 
-        private AnnotationSelector()
+        private AnnotateToDecide()
         {
             createServiceBundleType = CreateServiceBundleTypeOf;
         }

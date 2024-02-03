@@ -8,24 +8,26 @@ namespace YggdrAshill.Ragnarok
     /// </summary>
     public sealed class ScopedResolverBuilder : IScopedResolverBuilder
     {
-        private static readonly Type installationType = typeof(IInstallation);
-
-        private readonly Engine engine;
+        private readonly Interpretation interpretation;
         private readonly IScopedResolver? parent;
 
-        internal ScopedResolverBuilder(Engine engine, IScopedResolver? parent)
+        internal ScopedResolverBuilder(Interpretation interpretation, IScopedResolver? parent)
         {
-            this.engine = engine;
+            this.interpretation = interpretation;
             this.parent = parent;
         }
 
         /// <summary>
-        /// Creates <see cref="ScopedResolverBuilder"/> for root <see cref="IScopedResolver"/>.
+        /// Constructor of <see cref="ScopedResolverBuilder"/> for root <see cref="IScopedResolver"/>.
         /// </summary>
-        /// <param name="resolver">
-        /// <see cref="IRootResolver"/> for <see cref="ScopedResolverBuilder"/>.
+        /// <param name="decision">
+        /// <see cref="IDecision"/> for <see cref="ScopedResolverBuilder"/>.
         /// </param>
-        public ScopedResolverBuilder(IRootResolver resolver) : this(new Engine(resolver), null)
+        /// /// <param name="operation">
+        /// <see cref="IOperation"/> for <see cref="ScopedResolverBuilder"/>.
+        /// </param>
+        public ScopedResolverBuilder(IDecision decision, IOperation operation)
+            : this(new Interpretation(decision, operation), null)
         {
 
         }
@@ -33,32 +35,34 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public object Resolve(Type type)
         {
-            if (installationType.IsAssignableFrom(type))
-            {
-                return engine.Resolver.Resolve(type);
-            }
-
             if (parent != null)
             {
                 return parent.Resolve(type);
+            }
+
+            if (InstallationDescription.CanResolve(type))
+            {
+                var activation = interpretation.ActivationOf(type);
+
+                return InstallationDescription.Resolve(activation, this);
             }
 
             throw new RagnarokNotRegisteredException(type);
         }
 
         /// <inheritdoc/>
-        public ICompilation Compilation => engine;
+        public IInterpretation Interpretation => interpretation;
 
         /// <inheritdoc/>
         public IScopedResolver Build(IReadOnlyList<IStatement> statementList)
         {
-            using var factory = engine.CreateFactory(statementList);
+            using var factory = new DictionaryFactory(interpretation, statementList);
 
             var content = factory.Create();
 
-            var resolver = new ScopedResolver(content, engine, parent);
+            var resolver = new ScopedResolver(content, interpretation, parent);
 
-            factory.Validate(resolver);
+            TypeAnalysis.Validate(statementList, resolver);
 
             return resolver;
         }

@@ -1,19 +1,15 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionPropertyInfusion : IInfusion
     {
         private readonly PropertyInjectionRequest request;
 
-        public IReadOnlyList<Argument> ArgumentList
-            => request.PropertyList.Select(info => new Argument(info.Name, info.PropertyType)).ToArray();
-
         public ReflectionPropertyInfusion(PropertyInjectionRequest request)
         {
             this.request = request;
         }
+
+        public IDependency Dependency => request.Dependency;
 
         public void Infuse(object instance, object[] parameterList)
         {

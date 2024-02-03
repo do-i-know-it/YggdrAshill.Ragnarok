@@ -76,5 +76,6 @@ namespace YggdrAshill.Ragnarok
         }
 
         public static Type OpenGenericServiceBundle { get; } = typeof(IServiceBundle<>);
+        public static Type Installation { get; } = typeof(IInstallation);
     }
 }

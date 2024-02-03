@@ -3,9 +3,9 @@
     internal sealed class RealizeThenActivateToInstantiate : IInstantiation
     {
         private readonly IRealization realization;
-        private readonly IActivationV2 activation;
+        private readonly IActivation activation;
 
-        public RealizeThenActivateToInstantiate(IRealization realization, IActivationV2 activation)
+        public RealizeThenActivateToInstantiate(IRealization realization, IActivation activation)
         {
             this.realization = realization;
             this.activation = activation;

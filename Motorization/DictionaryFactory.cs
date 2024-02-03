@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     internal readonly struct DictionaryFactory : IDisposable
     {
-        private readonly ICompilation compilation;
+        private readonly IInterpretation interpretation;
         private readonly IEnumerable<IStatement> statementList;
         private readonly Dictionary<Type, IDescription?> tableOfTypeToDescription;
         private readonly Dictionary<Type, List<IDescription>> tableOfTypeToDescriptionList;
 
-        public DictionaryFactory(ICompilation compilation, IEnumerable<IStatement> statementList)
+        public DictionaryFactory(IInterpretation interpretation, IEnumerable<IStatement> statementList)
         {
-            this.compilation = compilation;
+            this.interpretation = interpretation;
             this.statementList = statementList;
 
             // TODO: object pooling.
@@ -93,14 +93,11 @@ namespace YggdrAshill.Ragnarok
         }
         private void AddCollection()
         {
-            foreach (var pair in tableOfTypeToDescriptionList)
+            foreach (var (elementType, registrationList) in tableOfTypeToDescriptionList)
             {
-                var elementType = pair.Key;
-                var registrationList = pair.Value;
-
                 var implementedType = TypeCache.ArrayTypeOf(elementType);
 
-                var activation = compilation.GetActivation(implementedType);
+                var activation = interpretation.ActivationOf(implementedType);
 
                 var collection = new CollectionDescription(elementType, activation, registrationList.ToArray());
 
@@ -114,11 +111,6 @@ namespace YggdrAshill.Ragnarok
                     tableOfTypeToDescription.Add(assignedType, collection);
                 }
             }
-        }
-
-        public void Validate(IScopedResolver resolver)
-        {
-            TypeAnalysis.Validate(statementList, resolver);
         }
 
         public void Dispose()

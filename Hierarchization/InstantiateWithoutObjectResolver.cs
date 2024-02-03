@@ -4,9 +4,9 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class InstantiateWithoutObjectResolver : IInstantiation
     {
-        private readonly IActivationV2 activation;
+        private readonly IActivation activation;
 
-        public InstantiateWithoutObjectResolver(IActivationV2 activation)
+        public InstantiateWithoutObjectResolver(IActivation activation)
         {
             this.activation = activation;
         }

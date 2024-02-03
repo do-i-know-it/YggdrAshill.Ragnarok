@@ -2,7 +2,7 @@
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class Compilation : ICompilationV2
+    internal sealed class Compilation : ICompilation
     {
         private readonly IInterpretation interpretation;
 
@@ -48,7 +48,7 @@ namespace YggdrAshill.Ragnarok
             return CreateInjection(infusion, request.ParameterList);
         }
 
-        private static IInjection CreateInjection(IInfusionV2 infusion, IReadOnlyList<IParameter> parameterList)
+        private static IInjection CreateInjection(IInfusion infusion, IReadOnlyList<IParameter> parameterList)
         {
             var dependency = infusion.Dependency;
 

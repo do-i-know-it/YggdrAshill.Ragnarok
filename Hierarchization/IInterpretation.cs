@@ -14,7 +14,7 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="Type"/> to get <see cref="IActivation"/>.
         /// </param>
         /// <returns></returns>
-        IActivationV2 ActivationOf(Type type);
+        IActivation ActivationOf(Type type);
 
         /// <summary>
         /// Gets <see cref="IInfusion"/> for fields of <see cref="Type"/>.
@@ -25,7 +25,7 @@ namespace YggdrAshill.Ragnarok
         /// <returns>
         /// <see cref="IInfusion"/> for fields.
         /// </returns>
-        IInfusionV2 FieldInfusionOf(Type type);
+        IInfusion FieldInfusionOf(Type type);
 
         /// <summary>
         /// Gets <see cref="IInfusion"/> for properties of <see cref="Type"/>.
@@ -36,7 +36,7 @@ namespace YggdrAshill.Ragnarok
         /// <returns>
         /// <see cref="IInfusion"/> for properties.
         /// </returns>
-        IInfusionV2 PropertyInfusionOf(Type type);
+        IInfusion PropertyInfusionOf(Type type);
 
         /// <summary>
         /// Gets <see cref="IInfusion"/> for method of <see cref="Type"/>.
@@ -47,6 +47,6 @@ namespace YggdrAshill.Ragnarok
         /// <returns>
         /// <see cref="IInfusion"/> for method.
         /// </returns>
-        IInfusionV2 MethodInfusionOf(Type type);
+        IInfusion MethodInfusionOf(Type type);
     }
 }

@@ -31,7 +31,16 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public DependencyContext(IRootResolver resolver) : this(new ScopedResolverBuilder(resolver))
+        /// <summary>
+        /// Creates <see cref="DependencyContext"/>.
+        /// </summary>
+        /// <param name="decision">
+        /// <see cref="IDecision"/> for <see cref="DependencyContext"/>.
+        /// </param>
+        /// <param name="operation">
+        /// <see cref="IOperation"/> for <see cref="DependencyContext"/>.
+        /// </param>
+        public DependencyContext(IDecision decision, IOperation operation) : this(new ScopedResolverBuilder(decision, operation))
         {
 
         }
@@ -39,27 +48,13 @@ namespace YggdrAshill.Ragnarok
         /// <summary>
         /// Creates <see cref="DependencyContext"/>.
         /// </summary>
-        /// <param name="selector">
-        /// <see cref="ISelector"/> for <see cref="DependencyContext"/>.
-        /// </param>
-        /// /// <param name="solver">
-        /// <see cref="ISolver"/> for <see cref="DependencyContext"/>.
-        /// </param>
-        public DependencyContext(ISelector selector, ISolver solver) : this(new RootResolver(selector, solver))
-        {
-
-        }
-
-        /// <summary>
-        /// Creates <see cref="DependencyContext"/>.
-        /// </summary>
-        /// <param name="solver">
-        /// <see cref="ISolver"/> for <see cref="DependencyContext"/>.
+        /// <param name="operation">
+        /// <see cref="IOperation"/> for <see cref="DependencyContext"/>.
         /// </param>
         /// <remarks>
-        /// <see cref="ISelector"/> is <see cref="AnnotationSelector"/>.
+        /// <see cref="IDecision"/> is <see cref="AnnotateToDecide"/>.
         /// </remarks>
-        public DependencyContext(ISolver solver) : this(AnnotationSelector.Instance, solver)
+        public DependencyContext(IOperation operation) : this(AnnotateToDecide.Instance, operation)
         {
 
         }
@@ -68,16 +63,19 @@ namespace YggdrAshill.Ragnarok
         /// Creates <see cref="DependencyContext"/>.
         /// </summary>
         /// <remarks>
-        /// <see cref="ISelector"/> is <see cref="AnnotationSelector"/>, and
-        /// <see cref="ISolver"/> is <see cref="ExpressionSolver"/>.
+        /// <see cref="IDecision"/> is <see cref="AnnotateToDecide"/>, and
+        /// <see cref="IOperation"/> is <see cref="ExpressionToOperate"/>.
         /// </remarks>
-        public DependencyContext() : this(AnnotationSelector.Instance, ExpressionSolver.Instance)
+        public DependencyContext() : this(AnnotateToDecide.Instance, ExpressionToOperate.Instance)
         {
 
         }
 
         /// <inheritdoc/>
         public IObjectResolver Resolver => context.Resolver;
+
+        /// <inheritdoc/>
+        public IRegistration Registration => context.Registration;
 
         /// <inheritdoc/>
         public ICompilation Compilation => context.Compilation;
@@ -92,30 +90,6 @@ namespace YggdrAshill.Ragnarok
         public IObjectScope CreateScope()
         {
             return context.CreateScope();
-        }
-
-        /// <inheritdoc/>
-        public int Count(IStatementSelection selection)
-        {
-            return context.Count(selection);
-        }
-
-        /// <inheritdoc/>
-        public void Register(IStatement statement)
-        {
-            context.Register(statement);
-        }
-
-        /// <inheritdoc/>
-        public void Register(IOperation operation)
-        {
-            context.Register(operation);
-        }
-
-        /// <inheritdoc/>
-        public void Register(IDisposable disposable)
-        {
-            context.Register(disposable);
         }
     }
 }

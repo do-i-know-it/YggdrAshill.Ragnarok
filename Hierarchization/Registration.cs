@@ -6,13 +6,20 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class Registration : IRegistration
     {
+        private readonly IScopedResolverBuilder builder;
+
+        public Registration(IScopedResolverBuilder builder)
+        {
+            this.builder = builder;
+        }
+
         private readonly List<IStatement> statementList = new();
-        private readonly List<IOperation> operationList = new();
+        private readonly List<IInstruction> instructionList = new();
         private readonly List<IDisposable> disposableList = new();
 
-        public int Count(IStatementSelection selection)
+        public int Count(ICondition condition)
         {
-            return statementList.Where(selection.IsSatisfied).Count();
+            return statementList.Where(condition.IsSatisfied).Count();
         }
 
         public void Register(IStatement statement)
@@ -25,14 +32,14 @@ namespace YggdrAshill.Ragnarok
             statementList.Add(statement);
         }
 
-        public void Register(IOperation operation)
+        public void Register(IInstruction instruction)
         {
-            if (operationList.Contains(operation))
+            if (instructionList.Contains(instruction))
             {
                 return;
             }
 
-            operationList.Add(operation);
+            instructionList.Add(instruction);
         }
 
         public void Register(IDisposable disposable)
@@ -45,7 +52,7 @@ namespace YggdrAshill.Ragnarok
             disposableList.Add(disposable);
         }
 
-        public void Build(IScopedResolverBuilder builder)
+        public IScopedResolver Build()
         {
             var resolver = builder.Build(statementList);
 
@@ -54,10 +61,12 @@ namespace YggdrAshill.Ragnarok
                 resolver.Bind(disposable);
             }
 
-            foreach (var operation in operationList)
+            foreach (var operation in instructionList)
             {
-                operation.Operate(resolver);
+                operation.Execute(resolver);
             }
+
+            return resolver;
         }
     }
 }

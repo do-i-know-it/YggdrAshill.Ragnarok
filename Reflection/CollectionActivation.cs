@@ -1,21 +1,21 @@
 using System;
-using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class CollectionActivation : IActivation
     {
-        private readonly Type elementType;
+        private readonly CollectionInjectionRequest request;
 
-        public CollectionActivation(Type elementType)
+        public CollectionActivation(CollectionInjectionRequest request)
         {
-            this.elementType = elementType;
+            this.request = request;
         }
 
-        public IReadOnlyList<Argument> ArgumentList { get; } = Array.Empty<Argument>();
+        public IDependency Dependency => request.Dependency;
 
         public object Activate(object[] parameterList)
         {
+            var elementType = request.ElementType;
             var array = Array.CreateInstance(elementType, parameterList.Length);
 
             for (var index = 0; index < parameterList.Length; index++)

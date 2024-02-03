@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class Interpretation : IInterpretation
     {
-        private readonly IRootResolverV2 rootResolver;
         private readonly IDecision decision;
-        private readonly IInstruction instruction;
+        private readonly IOperation operation;
 
-        private readonly Func<Type, IActivationV2> createActivation;
-        private readonly Func<Type, IInfusionV2> createFieldInfusion;
-        private readonly Func<Type, IInfusionV2> createPropertyInfusion;
-        private readonly Func<Type, IInfusionV2> createMethodInfusion;
+        private readonly Func<Type, IActivation> createActivation;
+        private readonly Func<Type, IInfusion> createFieldInfusion;
+        private readonly Func<Type, IInfusion> createPropertyInfusion;
+        private readonly Func<Type, IInfusion> createMethodInfusion;
 
-        public Interpretation(IRootResolverV2 rootResolver)
+        public Interpretation(IDecision decision, IOperation operation)
         {
-            this.rootResolver = rootResolver;
-            decision = rootResolver.Decision;
-            instruction = rootResolver.Instruction;
+            this.decision = decision;
+            this.operation = operation;
 
             createActivation = CreateActivation;
             createFieldInfusion = CreateFieldInfusion;
@@ -26,67 +23,60 @@ namespace YggdrAshill.Ragnarok
             createMethodInfusion = CreateMethodInfusion;
         }
 
-        public IObjectResolver RootResolver => rootResolver;
-
-        public IActivationV2 ActivationOf(Type type)
+        public IActivation ActivationOf(Type type)
         {
-            return TypeAnalysisV2.GetActivation(type, createActivation);
+            return TypeAnalysis.GetActivation(type, createActivation);
         }
-        private IActivationV2 CreateActivation(Type type)
+        private IActivation CreateActivation(Type type)
         {
-            if (CollectionDescriptionV2.CanResolve(type, out var arrayElementType))
+            if (CollectionDescription.CanResolve(type, out var arrayElementType))
             {
-                return instruction.CreateCollectionActivation(arrayElementType);
+                return operation.CreateCollectionActivation(new CollectionInjectionRequest(arrayElementType));
             }
 
-            var request = ServiceBundleDescriptionV2.CanResolve(type, out var bundleElementType)
-                ? decision.RequestServiceBundleInjection(bundleElementType)
-                : decision.RequestDependencyInjection(type);
+            if (ServiceBundleDescription.CanResolve(type, out var bundleElementType))
+            {
+                var bundleRequest = decision.RequestServiceBundleInjection(bundleElementType);
 
-            return instruction.CreateActivation(request);
+                return operation.CreateActivation(bundleRequest);
+            }
+
+            var request = decision.RequestDependencyInjection(type);
+
+            return operation.CreateActivation(request);
         }
 
-        public IInfusionV2 FieldInfusionOf(Type type)
+        public IInfusion FieldInfusionOf(Type type)
         {
-            return TypeAnalysisV2.GetFieldInfusion(type, createFieldInfusion);
+            return TypeAnalysis.GetFieldInfusion(type, createFieldInfusion);
         }
-        private IInfusionV2 CreateFieldInfusion(Type type)
+        private IInfusion CreateFieldInfusion(Type type)
         {
             var request = decision.RequestFieldInjection(type);
 
-            return request.FieldList.Length == 0 ? InfuseNothing.Instance : instruction.CreateFieldInfusion(request);
+            return request.FieldList.Length == 0 ? InfuseNothing.Instance : operation.CreateFieldInfusion(request);
         }
 
-        public IInfusionV2 PropertyInfusionOf(Type type)
+        public IInfusion PropertyInfusionOf(Type type)
         {
-            return TypeAnalysisV2.GetPropertyInfusion(type, createPropertyInfusion);
+            return TypeAnalysis.GetPropertyInfusion(type, createPropertyInfusion);
         }
-        private IInfusionV2 CreatePropertyInfusion(Type type)
+        private IInfusion CreatePropertyInfusion(Type type)
         {
             var request = decision.RequestPropertyInjection(type);
 
-            return request.PropertyList.Length == 0 ? InfuseNothing.Instance : instruction.CreatePropertyInfusion(request);
+            return request.PropertyList.Length == 0 ? InfuseNothing.Instance : operation.CreatePropertyInfusion(request);
         }
 
-        public IInfusionV2 MethodInfusionOf(Type type)
+        public IInfusion MethodInfusionOf(Type type)
         {
-            return TypeAnalysisV2.GetMethodInfusion(type, createMethodInfusion);
+            return TypeAnalysis.GetMethodInfusion(type, createMethodInfusion);
         }
-        private IInfusionV2 CreateMethodInfusion(Type type)
+        private IInfusion CreateMethodInfusion(Type type)
         {
             var request = decision.RequestMethodInjection(type);
 
-            return request.ParameterList.Length == 0 ? InfuseNothing.Instance : instruction.CreateMethodInfusion(request);
-        }
-
-        public void Validate(IScopedResolver resolver, IEnumerable<IStatement> statementList)
-        {
-            TypeAnalysisV2.Validate(statementList, resolver);
-        }
-
-        public DictionaryFactoryV2 CreateFactory(IEnumerable<IStatement> statementList)
-        {
-            return new DictionaryFactoryV2(this, statementList);
+            return request.ParameterList.Length == 0 ? InfuseNothing.Instance : operation.CreateMethodInfusion(request);
         }
     }
 }

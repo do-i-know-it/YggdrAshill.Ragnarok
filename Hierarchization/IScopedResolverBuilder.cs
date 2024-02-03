@@ -8,9 +8,9 @@ namespace YggdrAshill.Ragnarok
     public interface IScopedResolverBuilder : IObjectResolver
     {
         /// <summary>
-        /// <see cref="ICompilation"/> to resolve dependency.
+        /// <see cref="Interpretation"/> to resolve dependency.
         /// </summary>
-        ICompilation Compilation { get; }
+        IInterpretation Interpretation { get; }
 
         /// <summary>
         /// Creates a <see cref="IScopedResolver"/>.

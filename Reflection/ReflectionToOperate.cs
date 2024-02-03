@@ -1,18 +1,16 @@
-using System;
-
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation <see cref="ISolver"/> with Reflection.
+    /// Implementation <see cref="IOperation"/> with Reflection.
     /// </summary>
-    public sealed class ReflectionSolver : ISolver
+    public sealed class ReflectionToOperate : IOperation
     {
         /// <summary>
-        /// Singleton instance of <see cref="ReflectionSolver"/>.
+        /// Singleton instance of <see cref="ReflectionToOperate"/>.
         /// </summary>
-        public static ReflectionSolver Instance { get; } = new();
+        public static ReflectionToOperate Instance { get; } = new();
 
-        private ReflectionSolver()
+        private ReflectionToOperate()
         {
 
         }
@@ -42,9 +40,9 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IActivation CreateCollectionActivation(Type elementType)
+        public IActivation CreateCollectionActivation(CollectionInjectionRequest request)
         {
-            return new CollectionActivation(elementType);
+            return new CollectionActivation(request);
         }
     }
 }

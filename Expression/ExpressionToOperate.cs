@@ -5,16 +5,16 @@ using System.Linq.Expressions;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="ISolver"/> with <see cref="Expression"/>.
+    /// Implementation of <see cref="IOperation"/> with <see cref="Expression"/>.
     /// </summary>
-    public sealed class ExpressionSolver : ISolver
+    public sealed class ExpressionToOperate : IOperation
     {
         /// <summary>
-        /// Singleton instance of <see cref="ExpressionSolver"/>.
+        /// Singleton instance of <see cref="ExpressionToOperate"/>.
         /// </summary>
-        public static ExpressionSolver Instance { get; } = new();
+        public static ExpressionToOperate Instance { get; } = new();
 
-        private ExpressionSolver()
+        private ExpressionToOperate()
         {
 
         }
@@ -37,7 +37,7 @@ namespace YggdrAshill.Ragnarok
 
             var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList).Compile();
 
-            return new ActivateWithFunction(lambda, argumentList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray());
+            return new ActivateWithFunction(lambda, request.Dependency);
         }
 
         /// <inheritdoc/>
@@ -63,7 +63,7 @@ namespace YggdrAshill.Ragnarok
 
             var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
 
-            return new InfuseWithAction(lambda, fieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray());
+            return new InfuseWithAction(lambda, request.Dependency);
         }
 
         /// <inheritdoc/>
@@ -90,7 +90,7 @@ namespace YggdrAshill.Ragnarok
 
             var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
 
-            return new InfuseWithAction(lambda, propertyList.Select(info => new Argument(info.Name, info.PropertyType)).ToArray());
+            return new InfuseWithAction(lambda, request.Dependency);
         }
 
         /// <inheritdoc/>
@@ -115,12 +115,13 @@ namespace YggdrAshill.Ragnarok
 
             var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
 
-            return new InfuseWithAction(lambda, argumentList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray());
+            return new InfuseWithAction(lambda, request.Dependency);
         }
 
         /// <inheritdoc/>
-        public IActivation CreateCollectionActivation(Type elementType)
+        public IActivation CreateCollectionActivation(CollectionInjectionRequest request)
         {
+            var elementType = request.ElementType;
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
             var length = Expression.Parameter(typeof(int), "length");
             var assignParameterListLength = Expression.Assign(length, Expression.ArrayLength(parameterList));
@@ -149,7 +150,7 @@ namespace YggdrAshill.Ragnarok
 
             var method = lambda.Compile();
 
-            return new ActivateWithFunction(method, Array.Empty<Argument>());
+            return new ActivateWithFunction(method, request.Dependency);
         }
     }
 }

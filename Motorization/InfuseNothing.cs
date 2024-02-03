@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class InfuseNothing : IInfusion, IInfusionV2
+    internal sealed class InfuseNothing : IInfusion
     {
         public static InfuseNothing Instance { get; } = new();
 
@@ -11,8 +8,6 @@ namespace YggdrAshill.Ragnarok
         {
 
         }
-
-        public IReadOnlyList<Argument> ArgumentList { get; } = Array.Empty<Argument>();
 
         public IDependency Dependency => WithoutDependency.Instance;
 
