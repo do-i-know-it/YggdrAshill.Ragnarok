@@ -4,29 +4,29 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="IScopedResolverBuilder"/>.
+    /// Implementation of <see cref="IScopedResolverContext"/>.
     /// </summary>
-    public sealed class ScopedResolverBuilder : IScopedResolverBuilder
+    public sealed class ScopedResolverContext : IScopedResolverContext
     {
         private readonly Interpretation interpretation;
         private readonly IScopedResolver? parent;
 
-        internal ScopedResolverBuilder(Interpretation interpretation, IScopedResolver? parent)
+        internal ScopedResolverContext(Interpretation interpretation, IScopedResolver? parent)
         {
             this.interpretation = interpretation;
             this.parent = parent;
         }
 
         /// <summary>
-        /// Constructor of <see cref="ScopedResolverBuilder"/> for root <see cref="IScopedResolver"/>.
+        /// Constructor of <see cref="ScopedResolverContext"/> for root <see cref="IScopedResolver"/>.
         /// </summary>
         /// <param name="decision">
-        /// <see cref="IDecision"/> for <see cref="ScopedResolverBuilder"/>.
+        /// <see cref="IDecision"/> for <see cref="ScopedResolverContext"/>.
         /// </param>
         /// /// <param name="operation">
-        /// <see cref="IOperation"/> for <see cref="ScopedResolverBuilder"/>.
+        /// <see cref="IOperation"/> for <see cref="ScopedResolverContext"/>.
         /// </param>
-        public ScopedResolverBuilder(IDecision decision, IOperation operation)
+        public ScopedResolverContext(IDecision decision, IOperation operation)
             : this(new Interpretation(decision, operation), null)
         {
 

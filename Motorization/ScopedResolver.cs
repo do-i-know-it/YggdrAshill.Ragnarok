@@ -22,6 +22,8 @@ namespace YggdrAshill.Ragnarok
         private readonly ConcurrentDictionary<IDescription, object> instanceCache = new();
         private readonly CompositeDisposable compositeDisposable = new();
 
+        private ScopedResolverContext? context;
+
         private bool isDisposed;
 
         public object Resolve(Type type)
@@ -217,14 +219,19 @@ namespace YggdrAshill.Ragnarok
             compositeDisposable.Add(disposable);
         }
 
-        public IScopedResolverBuilder CreateBuilder()
+        public IScopedResolverContext CreateContext()
         {
             if (isDisposed)
             {
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            return new ScopedResolverBuilder(interpretation, this);
+            if (context == null)
+            {
+                context = new ScopedResolverContext(interpretation, this);
+            }
+
+            return context;
         }
 
         public void Dispose()

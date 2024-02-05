@@ -5,7 +5,7 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Defines how to build <see cref="IScopedResolver"/>.
     /// </summary>
-    public interface IScopedResolverBuilder : IObjectResolver
+    public interface IScopedResolverContext : IObjectResolver
     {
         /// <summary>
         /// <see cref="Interpretation"/> to resolve dependency.

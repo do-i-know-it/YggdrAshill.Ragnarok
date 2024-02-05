@@ -23,10 +23,10 @@ namespace YggdrAshill.Ragnarok
         /// <summary>
         /// Creates <see cref="DependencyContext"/>.
         /// </summary>
-        /// <param name="resolverBuilder">
-        /// <see cref="IScopedResolverBuilder"/> for <see cref="DependencyContext"/>.
+        /// <param name="context">
+        /// <see cref="IScopedResolverContext"/> for <see cref="DependencyContext"/>.
         /// </param>
-        public DependencyContext(IScopedResolverBuilder resolverBuilder) : this(new ObjectContext(resolverBuilder))
+        public DependencyContext(IScopedResolverContext context) : this(new ObjectContext(context))
         {
 
         }
@@ -40,7 +40,7 @@ namespace YggdrAshill.Ragnarok
         /// <param name="operation">
         /// <see cref="IOperation"/> for <see cref="DependencyContext"/>.
         /// </param>
-        public DependencyContext(IDecision decision, IOperation operation) : this(new ScopedResolverBuilder(decision, operation))
+        public DependencyContext(IDecision decision, IOperation operation) : this(new ScopedResolverContext(decision, operation))
         {
 
         }

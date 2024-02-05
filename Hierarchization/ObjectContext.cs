@@ -1,32 +1,32 @@
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="IObjectContext"/> using <see cref="IScopedResolver"/> and <see cref="IScopedResolverBuilder"/>.
+    /// Implementation of <see cref="IObjectContext"/> using <see cref="IScopedResolver"/> and <see cref="IScopedResolverContext"/>.
     /// </summary>
     public sealed class ObjectContext : IObjectContext
     {
-        private readonly IScopedResolverBuilder builder;
+        private readonly IScopedResolverContext context;
         private readonly Compilation compilation;
         private readonly Registration registration;
 
         /// <summary>
         /// Constructor of <see cref="ObjectContext"/>.
         /// </summary>
-        /// <param name="builder">
-        /// <see cref="IScopedResolverBuilder"/> for <see cref="ObjectContext"/>.
+        /// <param name="context">
+        /// <see cref="IScopedResolverContext"/> for <see cref="ObjectContext"/>.
         /// </param>
-        public ObjectContext(IScopedResolverBuilder builder)
+        public ObjectContext(IScopedResolverContext context)
         {
-            this.builder = builder;
-            compilation = new Compilation(builder.Interpretation);
-            registration = new Registration(builder);
+            this.context = context;
+            compilation = new Compilation(context.Interpretation);
+            registration = new Registration(context);
         }
 
         /// <inheritdoc/>
         public IRegistration Registration => registration;
 
         /// <inheritdoc/>
-        public IObjectResolver Resolver => builder;
+        public IObjectResolver Resolver => context;
 
         /// <inheritdoc/>
         public ICompilation Compilation => compilation;
@@ -34,7 +34,7 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public IObjectContext CreateContext()
         {
-            return new ObjectContext(builder);
+            return new ObjectContext(context);
         }
 
         /// <inheritdoc/>

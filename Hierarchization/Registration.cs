@@ -6,11 +6,11 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class Registration : IRegistration
     {
-        private readonly IScopedResolverBuilder builder;
+        private readonly IScopedResolverContext context;
 
-        public Registration(IScopedResolverBuilder builder)
+        public Registration(IScopedResolverContext context)
         {
-            this.builder = builder;
+            this.context = context;
         }
 
         private readonly List<IStatement> statementList = new();
@@ -54,7 +54,7 @@ namespace YggdrAshill.Ragnarok
 
         public IScopedResolver Build()
         {
-            var resolver = builder.Build(statementList);
+            var resolver = context.Build(statementList);
 
             foreach (var disposable in disposableList)
             {
