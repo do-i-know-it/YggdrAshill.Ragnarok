@@ -55,14 +55,11 @@ namespace YggdrAshill.Ragnarok
         void Bind(IDisposable disposable);
 
         /// <summary>
-        /// Creates a <see cref="IScopedResolverBuilder"/> to create new <see cref="IScopedResolver"/>.
+        /// Creates <see cref="IScopedResolverContext"/> to create new <see cref="IScopedResolver"/>.
         /// </summary>
-        /// <returns>
-        /// <see cref="IScopedResolverBuilder"/> created.
-        /// </returns>
         /// <exception cref="ObjectDisposedException">
         /// Thrown if this <see cref="IScopedResolver"/> is disposed.
         /// </exception>
-        IScopedResolverBuilder CreateBuilder();
+        IScopedResolverContext CreateContext();
     }
 }

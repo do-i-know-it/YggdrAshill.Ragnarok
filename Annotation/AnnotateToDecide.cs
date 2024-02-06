@@ -6,16 +6,16 @@ using System.Reflection;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="ISelector"/> finding annotation.
+    /// Implementation of <see cref="IDecision"/> with annotation.
     /// </summary>
-    public sealed class AnnotationSelector : ISelector
+    public sealed class AnnotateToDecide : IDecision
     {
         /// <summary>
-        /// Singleton of <see cref="AnnotationSelector"/>.
+        /// Singleton of <see cref="AnnotateToDecide"/>.
         /// </summary>
-        public static AnnotationSelector Instance { get; } = new();
+        public static AnnotateToDecide Instance { get; } = new();
 
-        private AnnotationSelector()
+        private AnnotateToDecide()
         {
             createServiceBundleType = CreateServiceBundleTypeOf;
         }
@@ -28,7 +28,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public DependencyInjectionRequest RequestDependencyInjection(Type type)
+        public ConstructorInjectionRequest RequestDependencyInjection(Type type)
         {
             const BindingFlags BindingFlags
                 = BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
@@ -64,12 +64,12 @@ namespace YggdrAshill.Ragnarok
 
             if (injectedConstructor != null)
             {
-                return new DependencyInjectionRequest(type, injectedConstructor);
+                return new ConstructorInjectionRequest(type, injectedConstructor);
             }
 
             if (constructorHavingMaxParameterCount != null)
             {
-                return new DependencyInjectionRequest(type, constructorHavingMaxParameterCount);
+                return new ConstructorInjectionRequest(type, constructorHavingMaxParameterCount);
             }
 
             throw new RagnarokNotAnnotatedException(type, $"Injectable constructor of {type} not found.");
@@ -152,7 +152,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public DependencyInjectionRequest RequestServiceBundleInjection(Type elementType)
+        public ConstructorInjectionRequest RequestServiceBundleInjection(Type elementType)
         {
             var targetType = serviceBundleTypeCache.GetOrAdd(elementType, createServiceBundleType);
 

@@ -1,22 +1,22 @@
-using System;
+﻿using System;
 
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Defines how to create or set up instance.
+    /// Defines how to activate or infuse instance.
     /// </summary>
-    public interface ISolver
+    public interface IOperation
     {
         /// <summary>
-        /// Creates <see cref="IActivation"/> for <see cref="DependencyInjectionRequest"/>.
+        /// Creates <see cref="IActivation"/> for <see cref="ConstructorInjectionRequest"/>.
         /// </summary>
         /// <param name="request">
-        /// <see cref="DependencyInjectionRequest"/> for request.
+        /// <see cref="ConstructorInjectionRequest"/> for request.
         /// </param>
         /// <returns>
         /// <see cref="IActivation"/> created.
         /// </returns>
-        IActivation CreateActivation(DependencyInjectionRequest request);
+        IActivation CreateActivation(ConstructorInjectionRequest request);
 
         /// <summary>
         /// Creates <see cref="IInfusion"/> for <see cref="FieldInjectionRequest"/>.
@@ -54,12 +54,12 @@ namespace YggdrAshill.Ragnarok
         /// <summary>
         /// Creates <see cref="IActivation"/> for collection of <see cref="Type"/>.
         /// </summary>
-        /// <param name="elementType">
-        /// <see cref="Type"/> for request.
+        /// <param name="request">
+        /// <see cref="CollectionInjectionRequest"/> for request.
         /// </param>
         /// <returns>
         /// <see cref="IActivation"/> created.
         /// </returns>
-        IActivation CreateCollectionActivation(Type elementType);
+        IActivation CreateCollectionActivation(CollectionInjectionRequest request);
     }
 }

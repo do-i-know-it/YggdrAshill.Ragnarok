@@ -1,20 +1,16 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionFieldInfusion : IInfusion
     {
         private readonly FieldInjectionRequest request;
 
-        public IReadOnlyList<Argument> ArgumentList
-            => request.FieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray();
-
         public ReflectionFieldInfusion(FieldInjectionRequest request)
         {
             this.request = request;
         }
 
+        public IDependency Dependency => request.Dependency;
+        
         public void Infuse(object instance, object[] parameterList)
         {
             var implementedType = request.ImplementedType;

@@ -1,52 +1,52 @@
-using System;
-
-namespace YggdrAshill.Ragnarok
+﻿namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Defines how to create or set up instance.
+    /// Defines how to instantiate or inject into instance.
     /// </summary>
     public interface ICompilation
     {
         /// <summary>
-        /// Gets <see cref="IActivation"/> for <see cref="Type"/>.
+        /// Creates <see cref="IInstantiation"/> for <paramref name="request"/> to instantiate.
         /// </summary>
-        /// <param name="type">
-        /// <see cref="Type"/> to get <see cref="IActivation"/>.
-        /// </param>
-        /// <returns></returns>
-        IActivation GetActivation(Type type);
-
-        /// <summary>
-        /// Gets <see cref="IInfusion"/> for fields of <see cref="Type"/>.
-        /// </summary>
-        /// <param name="type">
-        /// <see cref="Type"/> to get <see cref="IInfusion"/>.
+        /// <param name="request">
+        /// <see cref="DependencyInjectionRequest"/> to create.
         /// </param>
         /// <returns>
-        /// <see cref="IInfusion"/> for fields.
+        /// <see cref="IInstantiation"/> created.
         /// </returns>
-        IInfusion GetFieldInfusion(Type type);
+        IInstantiation CreateInstantiation(DependencyInjectionRequest request);
 
         /// <summary>
-        /// Gets <see cref="IInfusion"/> for properties of <see cref="Type"/>.
+        /// Creates <see cref="IInjection"/> for <paramref name="request"/> to inject dependencies into fields.
         /// </summary>
-        /// <param name="type">
-        /// <see cref="Type"/> to get <see cref="IInfusion"/>.
+        /// <param name="request">
+        /// <see cref="DependencyInjectionRequest"/> to create.
         /// </param>
         /// <returns>
-        /// <see cref="IInfusion"/> for properties.
+        /// <see cref="IInjection"/> created.
         /// </returns>
-        IInfusion GetPropertyInfusion(Type type);
+        IInjection CreateFieldInjection(DependencyInjectionRequest request);
 
         /// <summary>
-        /// Gets <see cref="IInfusion"/> for method of <see cref="Type"/>.
+        /// Creates <see cref="IInjection"/> for <paramref name="request"/> to inject dependencies into properties.
         /// </summary>
-        /// <param name="type">
-        /// <see cref="Type"/> to get <see cref="IInfusion"/>.
+        /// <param name="request">
+        /// <see cref="DependencyInjectionRequest"/> to create.
         /// </param>
         /// <returns>
-        /// <see cref="IInfusion"/> for method.
+        /// <see cref="IInjection"/> created.
         /// </returns>
-        IInfusion GetMethodInfusion(Type type);
+        IInjection CreatePropertyInjection(DependencyInjectionRequest request);
+
+        /// <summary>
+        /// Creates <see cref="IInjection"/> for <paramref name="request"/> to inject dependencies into method.
+        /// </summary>
+        /// <param name="request">
+        /// <see cref="DependencyInjectionRequest"/> to create.
+        /// </param>
+        /// <returns>
+        /// <see cref="IInjection"/> created.
+        /// </returns>
+        IInjection CreateMethodInjection(DependencyInjectionRequest request);
     }
 }

@@ -4,7 +4,7 @@
         <OutputPath></OutputPath>
         <Configuration></Configuration>
         <MajorVersion>0</MajorVersion>
-        <MinorVersion>11</MinorVersion>
+        <MinorVersion>12</MinorVersion>
         <Revision>0</Revision>
         <BuildNumber>0</BuildNumber>
     </PropertyGroup>

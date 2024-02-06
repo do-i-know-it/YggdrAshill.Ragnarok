@@ -1,19 +1,15 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class ReflectionMethodInfusion : IInfusion
     {
         private readonly MethodInjectionRequest request;
 
-        public IReadOnlyList<Argument> ArgumentList
-            => request.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
-
         public ReflectionMethodInfusion(MethodInjectionRequest request)
         {
             this.request = request;
         }
+
+        public IDependency Dependency => request.Dependency;
 
         public void Infuse(object instance, object[] parameterList)
         {

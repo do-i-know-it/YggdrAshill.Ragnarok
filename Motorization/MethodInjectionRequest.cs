@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
@@ -37,6 +38,30 @@ namespace YggdrAshill.Ragnarok
             ImplementedType = implementedType;
             Method = method;
             ParameterList = Method.GetParameters();
+        }
+
+        private IDependency? dependency;
+        public IDependency Dependency
+        {
+            get
+            {
+                if (dependency == null)
+                {
+                    dependency = CreateDependency();
+                }
+
+                return dependency;
+            }
+        }
+        private IDependency CreateDependency()
+        {
+            if (ParameterList.Length == 0)
+            {
+                return WithoutDependency.Instance;
+            }
+
+            var argumentList = ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
+            return new WithDependency(argumentList);
         }
     }
 }

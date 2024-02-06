@@ -33,9 +33,9 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IObjectScope));
             }
 
-            var resolverBuilder = resolver.CreateBuilder();
+            var context = resolver.CreateContext();
 
-            return new ObjectContext(resolverBuilder);
+            return new ObjectContext(context);
         }
 
         public void Dispose()

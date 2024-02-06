@@ -1,9 +1,9 @@
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Defines how to select <see cref="IStatement"/> for counting.
+    /// Defines how to count <see cref="IStatement"/>s satisfied with condition.
     /// </summary>
-    public interface IStatementSelection
+    public interface ICondition
     {
         /// <summary>
         /// Detects <see cref="IStatement"/> to select.
@@ -12,7 +12,7 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="IStatement"/> to select.
         /// </param>
         /// <returns>
-        /// True if <paramref name="statement"/> is satisfied with condition.
+        /// True if <paramref name="statement"/> is satisfied with this.
         /// </returns>
         bool IsSatisfied(IStatement statement);
     }

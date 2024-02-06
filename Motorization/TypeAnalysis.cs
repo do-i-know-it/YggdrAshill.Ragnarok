@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace YggdrAshill.Ragnarok
 {
@@ -68,9 +67,7 @@ namespace YggdrAshill.Ragnarok
 
             if (activationCache.TryGetValue(current, out var constructorInjection))
             {
-                var dependentTypeList
-                    = constructorInjection.ArgumentList.Select(argument => argument.Type).Distinct();
-                foreach (var type in dependentTypeList)
+                foreach (var type in constructorInjection.Dependency.DependentTypeList)
                 {
                     if (CanResolve(resolver, type, out var description))
                     {
@@ -81,7 +78,7 @@ namespace YggdrAshill.Ragnarok
 
             if (methodInfusionCache.TryGetValue(current, out var methodInjection))
             {
-                foreach (var type in methodInjection.ArgumentList.Select(argument => argument.Type).Distinct())
+                foreach (var type in methodInjection.Dependency.DependentTypeList)
                 {
                     if (CanResolve(resolver, type, out var description))
                     {
@@ -92,7 +89,7 @@ namespace YggdrAshill.Ragnarok
 
             if (fieldInfusionCache.TryGetValue(current, out var fieldInjection))
             {
-                foreach (var type in fieldInjection.ArgumentList.Select(argument => argument.Type).Distinct())
+                foreach (var type in fieldInjection.Dependency.DependentTypeList)
                 {
                     if (CanResolve(resolver, type, out var description))
                     {
@@ -103,7 +100,7 @@ namespace YggdrAshill.Ragnarok
 
             if (propertyInfusionCache.TryGetValue(current, out var propertyInjection))
             {
-                foreach (var type in propertyInjection.ArgumentList.Select(argument => argument.Type).Distinct())
+                foreach (var type in propertyInjection.Dependency.DependentTypeList)
                 {
                     if (CanResolve(resolver, type, out var description))
                     {

@@ -3,7 +3,7 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Defines how to resolve dependencies in <see cref="IObjectScope"/>.
     /// </summary>
-    public interface IObjectContainer : IRegistration
+    public interface IObjectContainer
     {
         /// <summary>
         /// <see cref="IObjectResolver"/> to resolve dependency.
@@ -14,6 +14,11 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="ICompilation"/> to resolve dependency.
         /// </summary>
         ICompilation Compilation { get; }
+
+        /// <summary>
+        /// <see cref="IRegistration"/> to resolve dependency.
+        /// </summary>
+        IRegistration Registration { get; }
 
         /// <summary>
         /// Creates <see cref="IObjectContext"/> to resolve dependency.

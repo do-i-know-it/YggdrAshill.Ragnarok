@@ -5,12 +5,12 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Defines how to build <see cref="IScopedResolver"/>.
     /// </summary>
-    public interface IScopedResolverBuilder : IObjectResolver
+    public interface IScopedResolverContext : IObjectResolver
     {
         /// <summary>
-        /// <see cref="ICompilation"/> to resolve dependency.
+        /// <see cref="Interpretation"/> to resolve dependency.
         /// </summary>
-        ICompilation Compilation { get; }
+        IInterpretation Interpretation { get; }
 
         /// <summary>
         /// Creates a <see cref="IScopedResolver"/>.

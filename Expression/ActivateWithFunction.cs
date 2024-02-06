@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
@@ -7,13 +6,13 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly Func<object[], object> onActivated;
 
-        public IReadOnlyList<Argument> ArgumentList { get; }
+        public IDependency Dependency { get; }
 
-        public ActivateWithFunction(Func<object[], object> onActivated, IReadOnlyList<Argument> argumentList)
+        public ActivateWithFunction(Func<object[], object> onActivated, IDependency dependency)
         {
             this.onActivated = onActivated;
 
-            ArgumentList = argumentList;
+            Dependency = dependency;
         }
 
         public object Activate(object[] parameterList)

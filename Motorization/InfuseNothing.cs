@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class InfuseNothing : IInfusion
@@ -12,7 +9,7 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public IReadOnlyList<Argument> ArgumentList { get; } = Array.Empty<Argument>();
+        public IDependency Dependency => WithoutDependency.Instance;
 
         public void Infuse(object instance, object[] parameterList)
         {

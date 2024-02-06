@@ -1,19 +1,17 @@
-using System.Collections.Generic;
-
-namespace YggdrAshill.Ragnarok
+﻿namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Defines how to create instance.
+    /// Defines how to create instance with dependencies.
     /// </summary>
     public interface IActivation
     {
         /// <summary>
-        /// <see cref="Argument"/>s to instantiate.
+        /// <see cref="IDependency"/>s to instantiate.
         /// </summary>
-        IReadOnlyList<Argument> ArgumentList { get; }
+        IDependency Dependency { get; }
 
         /// <summary>
-        /// Instantiates with parameter <see cref="object"/>s.
+        /// Instantiates with <see cref="object"/>s.
         /// </summary>
         /// <param name="parameterList">
         /// <see cref="object"/>s to instantiate.

@@ -21,8 +21,10 @@ namespace YggdrAshill.Ragnarok
 
         public IInstantiation CreateInstantiation()
         {
-            var activation = compilation.GetActivation(implementedType);
-            var instantiation = parameterList == null ? activation.ToInstantiate() : activation.ToInstantiate(parameterList);
+            var request = parameterList == null ?
+                new DependencyInjectionRequest(implementedType) :
+                new DependencyInjectionRequest(implementedType, parameterList.ToArray());
+            var instantiation = compilation.CreateInstantiation(request);
 
             if (!source.CanInjectIntoInstance(out var injection))
             {

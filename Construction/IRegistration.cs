@@ -8,15 +8,15 @@ namespace YggdrAshill.Ragnarok
     public interface IRegistration
     {
         /// <summary>
-        /// Counts <see cref="IStatement"/> satisfied with <see cref="IStatementSelection"/>.
+        /// Counts <see cref="IStatement"/> satisfied with <paramref name="condition"/>.
         /// </summary>
-        /// <param name="selection">
-        /// <see cref="IStatementSelection"/> to count.
+        /// <param name="condition">
+        /// <see cref="ICondition"/> to count.
         /// </param>
         /// <returns>
         /// Count of <see cref="IStatement"/>s.
         /// </returns>
-        int Count(IStatementSelection selection);
+        int Count(ICondition condition);
 
         /// <summary>
         /// Adds <see cref="IStatement"/> to register dependencies.
@@ -27,12 +27,12 @@ namespace YggdrAshill.Ragnarok
         void Register(IStatement statement);
 
         /// <summary>
-        /// Adds <see cref="IOperation"/> to initialize <see cref="IObjectResolver"/>.
+        /// Adds <see cref="IInstruction"/> to initialize <see cref="IObjectResolver"/>.
         /// </summary>
-        /// <param name="operation">
-        /// <see cref="IOperation"/> to register.
+        /// <param name="instruction">
+        /// <see cref="IInstruction"/> to register.
         /// </param>
-        void Register(IOperation operation);
+        void Register(IInstruction instruction);
 
         /// <summary>
         /// Adds <see cref="IDisposable"/> to bind.

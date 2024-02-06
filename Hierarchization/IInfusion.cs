@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-
-namespace YggdrAshill.Ragnarok
+﻿namespace YggdrAshill.Ragnarok
 {
     /// <summary>
     /// Defines how to inject dependencies into instance.
@@ -8,9 +6,9 @@ namespace YggdrAshill.Ragnarok
     public interface IInfusion
     {
         /// <summary>
-        /// <see cref="Argument"/>s to inject.
+        /// <see cref="IDependency"/>s to instantiate.
         /// </summary>
-        IReadOnlyList<Argument> ArgumentList { get; }
+        IDependency Dependency { get; }
 
         /// <summary>
         /// Injects <see cref="object"/>s into instance.
