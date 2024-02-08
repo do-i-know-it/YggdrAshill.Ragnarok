@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class InstanceInjectionSource : IInstanceInjection
+    public sealed class InstanceInjectionSource : IFieldInjection
     {
         private readonly Type type;
         private readonly ICompilation compilation;
@@ -150,7 +150,7 @@ namespace YggdrAshill.Ragnarok
             return source.AsImplementedInterfaces();
         }
 
-        public IMethodInjection WithMethod(IParameter parameter)
+        public IParameterMethodInjection WithMethod(IParameter parameter)
         {
             if (methodParameterList == null)
             {
@@ -165,7 +165,7 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IMethodInjection WithMethodInjection()
+        public ITypeAssignment WithMethodInjection()
         {
             if (methodParameterList == null)
             {
@@ -175,7 +175,7 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IPropertyInjection WithProperty(IParameter parameter)
+        public IParameterPropertyInjection WithProperty(IParameter parameter)
         {
             if (propertyParameterList == null)
             {
@@ -190,7 +190,7 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IPropertyInjection WithPropertyInjection()
+        public IMethodInjection WithPropertyInjection()
         {
             if (propertyParameterList == null)
             {
@@ -200,7 +200,7 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IFieldInjection WithField(IParameter parameter)
+        public IParameterFieldInjection WithField(IParameter parameter)
         {
             if (fieldParameterList == null)
             {
@@ -215,7 +215,7 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IFieldInjection WithFieldInjection()
+        public IPropertyInjection WithFieldInjection()
         {
             if (fieldParameterList == null)
             {

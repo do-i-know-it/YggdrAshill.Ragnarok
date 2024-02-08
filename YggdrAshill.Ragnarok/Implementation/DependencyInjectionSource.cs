@@ -68,32 +68,32 @@ namespace YggdrAshill.Ragnarok
             return source.AsImplementedInterfaces();
         }
 
-        public IMethodInjection WithMethod(IParameter parameter)
+        public IParameterMethodInjection WithMethod(IParameter parameter)
         {
             return source.WithMethod(parameter);
         }
 
-        public IMethodInjection WithMethodInjection()
+        public ITypeAssignment WithMethodInjection()
         {
             return source.WithMethodInjection();
         }
 
-        public IPropertyInjection WithProperty(IParameter parameter)
+        public IParameterPropertyInjection WithProperty(IParameter parameter)
         {
             return source.WithProperty(parameter);
         }
 
-        public IPropertyInjection WithPropertyInjection()
+        public IMethodInjection WithPropertyInjection()
         {
             return source.WithPropertyInjection();
         }
 
-        public IFieldInjection WithField(IParameter parameter)
+        public IParameterFieldInjection WithField(IParameter parameter)
         {
             return source.WithField(parameter);
         }
 
-        public IFieldInjection WithFieldInjection()
+        public IPropertyInjection WithFieldInjection()
         {
             return source.WithFieldInjection();
         }

@@ -21,7 +21,7 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(statement);
 
-            return statement.DependencyInjection;
+            return statement.Source;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -44,7 +44,7 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(statement);
 
-            var assignment = statement.TypeAssignment;
+            var assignment = statement.Source;
 
             assignment.As<T>();
 
@@ -52,18 +52,18 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+        public static IFieldInjection RegisterInstance<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where T : notnull
         {
             var statement = new CreateInstanceStatement<T>(container.Compilation, lifetime, ownership, instantiation);
 
             container.Registration.Register(statement);
 
-            return statement.InstanceInjection;
+            return statement.Source;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+        public static IFieldInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where TInterface : notnull
             where TImplementation : TInterface
         {
@@ -82,7 +82,7 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(statement);
 
-            return statement.TypeAssignment;
+            return statement.Source;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

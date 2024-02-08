@@ -1,6 +1,6 @@
 namespace YggdrAshill.Ragnarok
 {
-    public interface IDependencyInjection : IInstanceInjection
+    public interface IDependencyInjection : IFieldInjection
     {
         IDependencyInjection WithArgument(IParameter parameter);
     }
