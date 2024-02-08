@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    public sealed class ResolveFromSubContainerStatement : IStatement
+    internal sealed class ResolveFromSubContainerStatement : IStatement
     {
         private readonly IObjectContainer container;
         private readonly IInstallation[] installationList;

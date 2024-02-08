@@ -3,10 +3,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    /// <summary>
-    /// Implementation of <see cref="IInstallation"/>.
-    /// </summary>
-    public sealed class Installation : IInstallation
+    internal sealed class Installation : IInstallation
     {
         private readonly Action<IObjectContainer> onInstalled;
 
@@ -21,18 +18,11 @@ namespace YggdrAshill.Ragnarok
             };
         }
 
-        /// <summary>
-        /// Creates <see cref="Installation"/>.
-        /// </summary>
-        /// <param name="onInstalled">
-        /// <see cref="Action{T}"/> to install <see cref="IObjectContainer"/>.
-        /// </param>
         public Installation(Action<IObjectContainer> onInstalled)
         {
             this.onInstalled = onInstalled;
         }
 
-        /// <inheritdoc/>
         public void Install(IObjectContainer container)
         {
             onInstalled.Invoke(container);

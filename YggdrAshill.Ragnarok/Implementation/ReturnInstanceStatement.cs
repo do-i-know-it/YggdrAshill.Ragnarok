@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    public sealed class ReturnInstanceStatement : IStatement
+    internal sealed class ReturnInstanceStatement : IStatement
     {
         private readonly TypeAssignmentSource source;
 

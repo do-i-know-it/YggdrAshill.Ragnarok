@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    public sealed class CreateInstanceStatement<T> : IStatement
+    internal sealed class CreateInstanceStatement<T> : IStatement
         where T : notnull
     {
         private readonly InstanceInjectionSource source;

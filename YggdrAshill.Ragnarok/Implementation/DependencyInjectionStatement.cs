@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    public sealed class DependencyInjectionStatement : IStatement
+    internal sealed class DependencyInjectionStatement : IStatement
     {
         private readonly DependencyInjectionSource source;
         private readonly Lazy<IInstantiation> instantiation;
