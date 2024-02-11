@@ -17,7 +17,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentException($"{implementedType} is not instantiatable.");
             }
 
-            var statement = new DependencyInjectionStatement(container.Compilation, implementedType, lifetime);
+            var statement = new DependencyInjectionStatement(container, implementedType, lifetime);
 
             container.Registration.Register(statement);
 
@@ -52,10 +52,10 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IFieldInjection RegisterInstance<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where T : notnull
         {
-            var statement = new CreateInstanceStatement<T>(container.Compilation, lifetime, ownership, instantiation);
+            var statement = new CreateInstanceStatement<T>(container, lifetime, ownership, instantiation);
 
             container.Registration.Register(statement);
 
@@ -63,7 +63,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IFieldInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where TInterface : notnull
             where TImplementation : TInterface
         {

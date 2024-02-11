@@ -4,16 +4,18 @@ using System.Collections.Generic;
 namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
-    public sealed class InstanceInjectionSource : IFieldInjection
+    public sealed class InstanceInjectionSource : IInstanceInjection
     {
         private readonly Type type;
         private readonly ICompilation compilation;
+        private readonly IRegistration registration;
         private readonly TypeAssignmentSource source;
 
-        public InstanceInjectionSource(Type type, ICompilation compilation)
+        public InstanceInjectionSource(Type type, IObjectContainer container)
         {
             this.type = type;
-            this.compilation = compilation;
+            compilation = container.Compilation;
+            registration = container.Registration;
             source = new TypeAssignmentSource(type);
         }
 
@@ -221,6 +223,15 @@ namespace YggdrAshill.Ragnarok
             {
                 fieldParameterList = new List<IParameter>();
             }
+
+            return this;
+        }
+
+        public IFieldInjection ResolvedImmediately()
+        {
+            var execution = new ExecuteToResolveImmediately(source);
+
+            registration.Register(execution);
 
             return this;
         }

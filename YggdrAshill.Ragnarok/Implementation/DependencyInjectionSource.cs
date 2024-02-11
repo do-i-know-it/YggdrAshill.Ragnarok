@@ -10,11 +10,11 @@ namespace YggdrAshill.Ragnarok
         private readonly ICompilation compilation;
         private readonly InstanceInjectionSource source;
 
-        public DependencyInjectionSource(Type implementedType, ICompilation compilation)
+        public DependencyInjectionSource(Type implementedType, IObjectContainer container)
         {
             this.implementedType = implementedType;
-            this.compilation = compilation;
-            source = new InstanceInjectionSource(implementedType, compilation);
+            compilation = container.Compilation;
+            source = new InstanceInjectionSource(implementedType, container);
         }
 
         private List<IParameter>? parameterList;
@@ -96,6 +96,11 @@ namespace YggdrAshill.Ragnarok
         public IPropertyInjection WithFieldInjection()
         {
             return source.WithFieldInjection();
+        }
+
+        public IFieldInjection ResolvedImmediately()
+        {
+            return source.ResolvedImmediately();
         }
     }
 }

@@ -1,6 +1,7 @@
 namespace YggdrAshill.Ragnarok
 {
-    public interface IDependencyInjection : IFieldInjection
+    // TODO: add document comments.
+    public interface IDependencyInjection : IInstanceInjection
     {
         IDependencyInjection WithArgument(IParameter parameter);
     }

@@ -10,11 +10,11 @@ namespace YggdrAshill.Ragnarok
         public Lifetime Lifetime { get; }
         public DependencyInjectionSource Source { get; }
 
-        public DependencyInjectionStatement(ICompilation compilation, Type implementedType, Lifetime lifetime)
+        public DependencyInjectionStatement(IObjectContainer container, Type implementedType, Lifetime lifetime)
         {
-            instantiation = new Lazy<IInstantiation>(() => Source.CreateInstantiation());
             Lifetime = lifetime;
-            Source = new DependencyInjectionSource(implementedType, compilation);
+            Source = new DependencyInjectionSource(implementedType, container);
+            instantiation = new Lazy<IInstantiation>(Source.CreateInstantiation);
         }
 
         public Type ImplementedType => Source.ImplementedType;

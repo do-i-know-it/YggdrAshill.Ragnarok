@@ -13,12 +13,12 @@ namespace YggdrAshill.Ragnarok
         public Ownership Ownership { get; }
         public InstanceInjectionSource Source { get; }
 
-        public CreateInstanceStatement(ICompilation compilation, Lifetime lifetime, Ownership ownership, Func<T> createInstance)
+        public CreateInstanceStatement(IObjectContainer container, Lifetime lifetime, Ownership ownership, Func<T> createInstance)
         {
             this.createInstance = createInstance;
             Lifetime = lifetime;
             Ownership = ownership;
-            Source = new InstanceInjectionSource(typeof(T), compilation);
+            Source = new InstanceInjectionSource(typeof(T), container);
             instantiationCache = new Lazy<IInstantiation>(CreateInstantiation);
         }
 

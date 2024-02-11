@@ -198,6 +198,40 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveInstanceAsRegisteredTypeImmediatelyJustAfterCreatingScope(IOperation operation)
+        {
+            var context = new DependencyContext(operation);
+
+            var executed = false;
+            context.RegisterInstance(() =>
+            {
+                executed = true;
+                return new NoDependencyService();
+            }).ResolvedImmediately();
+
+            using var scope = context.CreateScope();
+
+            Assert.That(executed, Is.True);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
+        public void ShouldResolveInstanceAsAssignedTypeImmediatelyJustAfterCreatingScope(IOperation operation)
+        {
+            var context = new DependencyContext(operation);
+
+            var executed = false;
+            context.RegisterInstance(() =>
+            {
+                executed = true;
+                return new NoDependencyService();
+            }).ResolvedImmediately().As<IService>();
+
+            using var scope = context.CreateScope();
+
+            Assert.That(executed, Is.True);
+        }
+
+        [TestCaseSource(nameof(SolverList))]
         public void ShouldResolveObjectAsInheritedType(IOperation operation)
         {
             var context = new DependencyContext(operation);
