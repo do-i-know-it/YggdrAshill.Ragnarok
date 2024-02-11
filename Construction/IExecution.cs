@@ -1,9 +1,9 @@
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Defines what to execute for <see cref="IObjectResolver"/>.
+    /// Defines what to execute for <see cref="IObjectResolver"/> just after building it.
     /// </summary>
-    public interface IInstruction
+    public interface IExecution
     {
         /// <summary>
         /// Executes for <paramref name="resolver"/>.

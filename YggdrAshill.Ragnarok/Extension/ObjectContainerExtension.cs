@@ -154,9 +154,9 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Register(this IObjectContainer container, Action<IObjectResolver> instruction)
+        public static void Register(this IObjectContainer container, Action<IObjectResolver> execution)
         {
-            container.Registration.Register(new Instruction(instruction));
+            container.Registration.Register(new Execution(execution));
         }
     }
 }

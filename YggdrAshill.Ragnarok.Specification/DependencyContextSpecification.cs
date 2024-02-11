@@ -22,9 +22,9 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             using var scope = new DependencyContext(operation).CreateScope();
 
-            var reinstruction = scope.Resolver.Resolve<IObjectResolver>();
+            var resolver = scope.Resolver.Resolve<IObjectResolver>();
 
-            Assert.That(reinstruction, Is.EqualTo(scope.Resolver));
+            Assert.That(resolver, Is.EqualTo(scope.Resolver));
         }
 
         [TestCaseSource(nameof(SolverList))]
@@ -602,7 +602,7 @@ namespace YggdrAshill.Ragnarok.Specification
             context.RegisterFromSubContainer<MultipleDependencyService>(container =>
             {
                 container.Register<NoDependencyService>(Lifetime.Global);
-                container.Register(reinstruction => service = reinstruction.Resolve<NoDependencyService>());
+                container.Register(resolver => service = resolver.Resolve<NoDependencyService>());
                 container.Register<MultipleInterfaceClass>(Lifetime.Global).AsImplementedInterfaces().AsOwnSelf();
                 container.Register<MultipleDependencyService>(Lifetime.Global);
             });
