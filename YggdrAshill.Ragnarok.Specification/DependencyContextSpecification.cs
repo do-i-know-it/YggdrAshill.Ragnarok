@@ -596,7 +596,6 @@ namespace YggdrAshill.Ragnarok.Specification
             var context = new DependencyContext(operation);
 
             context.Install<InstallationWithoutDependency>();
-            context.RegisterInstance(new object());
 
             using var scope = context.CreateScope();
 

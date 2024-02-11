@@ -9,13 +9,26 @@ namespace YggdrAshill.Ragnarok
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateChildScope(this IObjectScope scope, params IInstallation[] installationList)
         {
-            return scope.CreateContext().CreateCurrentScope(installationList);
+            var context = scope.CreateContext();
+
+            return context.CreateCurrentScope(installationList);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateChildScope(this IObjectScope scope, Action<IObjectContainer> installation)
         {
-            return scope.CreateContext().CreateCurrentScope(installation);
+            var context = scope.CreateContext();
+
+            return context.CreateCurrentScope(installation);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IObjectScope CreateChildScope<TInstallation>(this IObjectScope scope)
+            where TInstallation : IInstallation
+        {
+            var context = scope.CreateContext();
+
+            return context.CreateCurrentScope<TInstallation>();
         }
     }
 }

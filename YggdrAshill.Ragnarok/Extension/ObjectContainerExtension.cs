@@ -75,10 +75,10 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, params IInstallation[] installationList)
+        public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, IInstallation installation)
             where T : notnull
         {
-            var statement = new ResolveFromSubContainerStatement(typeof(T), container, installationList);
+            var statement = new ResolveFromSubContainerStatement(typeof(T), container, installation);
 
             container.Registration.Register(statement);
 
@@ -103,18 +103,15 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Install(this IObjectContainer container, params IInstallation[] installationList)
+        public static void Install(this IObjectContainer container, IInstallation installation)
         {
-            foreach (var installation in installationList)
-            {
-                installation.Install(container);
-            }
+            installation.Install(container);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Install(this IObjectContainer container, Action<IObjectContainer> installation)
         {
-            container.Install(new Installation(installation));
+            installation.Invoke(container);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -123,28 +120,32 @@ namespace YggdrAshill.Ragnarok
         {
             var installation = container.Resolver.Resolve<TInstallation>();
 
-            container.Install(installation);
+            installation.Install(container);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateSubScope(this IObjectContainer container, params IInstallation[] installationList)
         {
-            return container.CreateContext().CreateCurrentScope(installationList);
+            var context = container.CreateContext();
+
+            return context.CreateCurrentScope(installationList);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateSubScope(this IObjectContainer container, Action<IObjectContainer> installation)
         {
-            return container.CreateContext().CreateCurrentScope(installation);
+            var context = container.CreateContext();
+
+            return context.CreateCurrentScope(installation);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateSubScope<TInstallation>(this IObjectContainer container)
             where TInstallation : IInstallation
         {
-            var installation = container.Resolver.Resolve<TInstallation>();
+            var context = container.CreateContext();
 
-            return container.CreateSubScope(installation);
+            return context.CreateCurrentScope<TInstallation>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

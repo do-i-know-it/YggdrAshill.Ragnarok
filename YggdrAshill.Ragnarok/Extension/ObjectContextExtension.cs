@@ -9,7 +9,7 @@ namespace YggdrAshill.Ragnarok
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateCurrentScope(this IObjectContext context, params IInstallation[] installationList)
         {
-            context.Install(installationList);
+            InstallationList.Install(context, installationList);
 
             return context.CreateScope();
         }
@@ -17,7 +17,18 @@ namespace YggdrAshill.Ragnarok
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateCurrentScope(this IObjectContext context, Action<IObjectContainer> installation)
         {
-            context.Install(installation);
+            installation.Invoke(context);
+
+            return context.CreateScope();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IObjectScope CreateCurrentScope<TInstallation>(this IObjectContext context)
+            where TInstallation : IInstallation
+        {
+            var installation = context.Resolver.Resolve<TInstallation>();
+
+            installation.Install(context);
 
             return context.CreateScope();
         }

@@ -6,22 +6,26 @@ namespace YggdrAshill.Ragnarok
     internal sealed class ResolveFromSubContainerStatement : IStatement
     {
         private readonly IObjectContainer container;
-        private readonly IInstallation[] installationList;
+        private readonly IInstallation installation;
         private readonly Lazy<IInstantiation> instantiation;
 
         public SubContainerSource Source { get; }
 
-        public ResolveFromSubContainerStatement(Type type, IObjectContainer container, IInstallation[] installationList)
+        public ResolveFromSubContainerStatement(Type type, IObjectContainer container, IInstallation installation)
         {
             this.container = container;
-            this.installationList = installationList;
+            this.installation = installation;
             instantiation = new Lazy<IInstantiation>(CreateInstantiation);
             Source = new SubContainerSource(container.Registration, type);
         }
 
         private IInstantiation CreateInstantiation()
         {
-            var scope = container.CreateSubScope(installationList);
+            var context = container.CreateContext();
+
+            installation.Install(context);
+
+            var scope = context.CreateScope();
 
             container.Registration.Register(scope);
 
