@@ -10,7 +10,7 @@ namespace YggdrAshill.Ragnarok
         public static IDependencyInjection WithArgument<T>(this IDependencyInjection injection, T instance)
             where T : notnull
         {
-            var parameter = new Parameter<T>(instance);
+            var parameter = new TypedParameterByInstance<T>(instance);
 
             return injection.WithArgument(parameter);
         }
@@ -19,7 +19,7 @@ namespace YggdrAshill.Ragnarok
         public static IDependencyInjection WithArgument<T>(this IDependencyInjection injection, Func<T> instantiation)
             where T : notnull
         {
-            var parameter = new Parameter<T>(instantiation);
+            var parameter = new TypedParameterByMethod<T>(instantiation);
 
             return injection.WithArgument(parameter);
         }
@@ -28,7 +28,7 @@ namespace YggdrAshill.Ragnarok
         public static IDependencyInjection WithArgument<T>(this IDependencyInjection injection, string name, T instance)
             where T : notnull
         {
-            var parameter = new Parameter<T>(name, instance);
+            var parameter = new NamedParameterByInstance<T>(name, instance);
 
             return injection.WithArgument(parameter);
         }
@@ -37,7 +37,7 @@ namespace YggdrAshill.Ragnarok
         public static IDependencyInjection WithArgument<T>(this IDependencyInjection injection, string name, Func<T> instantiation)
             where T : notnull
         {
-            var parameter = new Parameter<T>(name, instantiation);
+            var parameter = new NamedParameterByMethod<T>(name, instantiation);
 
             return injection.WithArgument(parameter);
         }
