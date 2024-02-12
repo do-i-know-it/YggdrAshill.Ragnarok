@@ -103,9 +103,9 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Install(this IObjectContainer container, IInstallation installation)
+        public static void Install(this IObjectContainer container, params IInstallation[] installationList)
         {
-            installation.Install(container);
+            InstallationList.Install(container, installationList);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
