@@ -23,7 +23,7 @@ namespace YggdrAshill.Ragnarok
         {
             registration.Register(scope);
 
-            return new ResolveFromSubContainer(ImplementedType, scope.Resolver);
+            return new InstantiateFromSubContainer(ImplementedType, scope.Resolver);
         }
 
         public void AsOwnSelf()

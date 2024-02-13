@@ -24,7 +24,7 @@ namespace YggdrAshill.Ragnarok
 
         private IInstantiation CreateInstantiation()
         {
-            var instantiation = new CreateInstance<T>(createInstance);
+            var instantiation = new InstantiateToCreate<T>(createInstance);
 
             if (!Source.CanInjectIntoInstance(out var injection))
             {

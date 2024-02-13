@@ -1,11 +1,11 @@
 ﻿namespace YggdrAshill.Ragnarok
 {
-    internal sealed class RealizeThenActivateToInstantiate : IInstantiation
+    internal sealed class InstantiateToRealizeThenActivate : IInstantiation
     {
         private readonly IRealization realization;
         private readonly IActivation activation;
 
-        public RealizeThenActivateToInstantiate(IRealization realization, IActivation activation)
+        public InstantiateToRealizeThenActivate(IRealization realization, IActivation activation)
         {
             this.realization = realization;
             this.activation = activation;

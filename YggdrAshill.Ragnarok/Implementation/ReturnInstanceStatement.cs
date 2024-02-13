@@ -11,7 +11,7 @@ namespace YggdrAshill.Ragnarok
         public ReturnInstanceStatement(object instance)
         {
             Source = new TypeAssignmentSource(instance.GetType());
-            Instantiation = new ReturnInstance(instance);
+            Instantiation = new InstantiateToReturnInstance(instance);
         }
 
         public Type ImplementedType => Source.ImplementedType;

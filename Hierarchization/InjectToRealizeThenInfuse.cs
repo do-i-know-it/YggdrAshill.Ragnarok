@@ -1,11 +1,11 @@
 ﻿namespace YggdrAshill.Ragnarok
 {
-    internal sealed class RealizeThenInfuseToInject : IInjection
+    internal sealed class InjectToRealizeThenInfuse : IInjection
     {
         private readonly IRealization realization;
         private readonly IInfusion infusion;
 
-        public RealizeThenInfuseToInject(IRealization realization, IInfusion infusion)
+        public InjectToRealizeThenInfuse(IRealization realization, IInfusion infusion)
         {
             this.realization = realization;
             this.infusion = infusion;

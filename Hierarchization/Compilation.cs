@@ -19,12 +19,12 @@ namespace YggdrAshill.Ragnarok
 
             if (dependency.DependentTypeList.Count == 0)
             {
-                return new InstantiateWithoutObjectResolver(activation);
+                return new InstantiateToActivate(activation);
             }
 
             var realization = dependency.CreateRealization(request.ParameterList);
 
-            return new RealizeThenActivateToInstantiate(realization, activation);
+            return new InstantiateToRealizeThenActivate(realization, activation);
         }
 
         public IInjection CreateFieldInjection(DependencyInjectionRequest request)
@@ -59,7 +59,7 @@ namespace YggdrAshill.Ragnarok
 
             var realization = dependency.CreateRealization(parameterList);
 
-            return new RealizeThenInfuseToInject(realization, infusion);
+            return new InjectToRealizeThenInfuse(realization, infusion);
         }
     }
 }
