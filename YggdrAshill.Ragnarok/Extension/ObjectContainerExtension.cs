@@ -75,7 +75,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, IInstallation installation)
+        public static ISubContainerResolution RegisterFromSubContainer<T>(this IObjectContainer container, IInstallation installation)
             where T : notnull
         {
             var statement = new ResolveFromSubContainerStatement(typeof(T), container, installation);
@@ -86,14 +86,14 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, Action<IObjectContainer> installation)
+        public static ISubContainerResolution RegisterFromSubContainer<T>(this IObjectContainer container, Action<IObjectContainer> installation)
             where T : notnull
         {
             return container.RegisterFromSubContainer<T>(new Installation(installation));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ITypeAssignment RegisterFromSubContainer<TInstance, TInstallation>(this IObjectContainer container)
+        public static ISubContainerResolution RegisterFromSubContainer<TInstance, TInstallation>(this IObjectContainer container)
             where TInstance : notnull
             where TInstallation : IInstallation
         {

@@ -9,14 +9,14 @@ namespace YggdrAshill.Ragnarok
         private readonly IInstallation installation;
         private readonly Lazy<IInstantiation> instantiation;
 
-        public SubContainerSource Source { get; }
+        public SubContainerResolutionSource Source { get; }
 
         public ResolveFromSubContainerStatement(Type type, IObjectContainer container, IInstallation installation)
         {
             this.container = container;
             this.installation = installation;
             instantiation = new Lazy<IInstantiation>(CreateInstantiation);
-            Source = new SubContainerSource(container.Registration, type);
+            Source = new SubContainerResolutionSource(container.Registration, type);
         }
 
         private IInstantiation CreateInstantiation()
