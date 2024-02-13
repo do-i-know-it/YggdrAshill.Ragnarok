@@ -3,6 +3,8 @@
     // TODO: add document comments.
     public interface ISubContainerResolution : ITypeAssignment
     {
-        ITypeAssignment ResolvedImmediately();
+        IObjectResolver Resolver { get; }
+
+        ISubContainerResolution With(IInstallation installation);
     }
 }

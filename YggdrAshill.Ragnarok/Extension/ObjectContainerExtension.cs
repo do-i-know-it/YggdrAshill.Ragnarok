@@ -78,11 +78,13 @@ namespace YggdrAshill.Ragnarok
         public static ISubContainerResolution RegisterFromSubContainer<T>(this IObjectContainer container, IInstallation installation)
             where T : notnull
         {
-            var statement = new ResolveFromSubContainerStatement(typeof(T), container, installation);
+            var statement = new ResolveFromSubContainerStatement(typeof(T), container);
 
             container.Registration.Register(statement);
 
-            return statement.Source;
+            statement.With(installation);
+
+            return statement;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

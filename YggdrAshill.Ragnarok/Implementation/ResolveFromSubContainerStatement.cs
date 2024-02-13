@@ -3,38 +3,65 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ResolveFromSubContainerStatement : IStatement
+    internal sealed class ResolveFromSubContainerStatement : IStatement, ISubContainerResolution
     {
         private readonly IObjectContainer container;
-        private readonly IInstallation installation;
         private readonly Lazy<IInstantiation> instantiation;
 
-        public SubContainerResolutionSource Source { get; }
+        private readonly TypeAssignmentSource source;
 
-        public ResolveFromSubContainerStatement(Type type, IObjectContainer container, IInstallation installation)
+        public ResolveFromSubContainerStatement(Type type, IObjectContainer container)
         {
             this.container = container;
-            this.installation = installation;
             instantiation = new Lazy<IInstantiation>(CreateInstantiation);
-            Source = new SubContainerResolutionSource(container.Registration, type);
+            source = new TypeAssignmentSource(type);
+        }
+
+        private readonly List<IInstallation> installationList = new();
+
+        public IObjectResolver Resolver => container.Resolver;
+
+        public ISubContainerResolution With(IInstallation installation)
+        {
+            if (!installationList.Contains(installation))
+            {
+                installationList.Add(installation);
+            }
+
+            return this;
         }
 
         private IInstantiation CreateInstantiation()
         {
             var context = container.CreateContext();
 
-            installation.Install(context);
+            InstallationList.Install(context, installationList);
 
             var scope = context.CreateScope();
 
             container.Registration.Register(scope);
 
-            return Source.CreateInstantiation(scope);
+            return new InstantiateFromSubContainer(ImplementedType, scope.Resolver);
         }
 
-        public Type ImplementedType => Source.ImplementedType;
+        public void AsOwnSelf()
+        {
+            source.AsOwnSelf();
+        }
 
-        public IReadOnlyList<Type> AssignedTypeList => Source.AssignedTypeList;
+        public IInheritedTypeAssignment As(Type inheritedType)
+        {
+            return source.As(inheritedType);
+        }
+
+        public IOwnTypeAssignment AsImplementedInterfaces()
+        {
+            return source.AsImplementedInterfaces();
+        }
+
+        public Type ImplementedType => source.ImplementedType;
+
+        public IReadOnlyList<Type> AssignedTypeList => source.AssignedTypeList;
 
         public Lifetime Lifetime => Lifetime.Temporal;
 
