@@ -5,16 +5,16 @@ namespace YggdrAshill.Ragnarok
     internal sealed class InstantiateToCreate<T> : IInstantiation
         where T : notnull
     {
-        private readonly Func<T> onInstantiated;
+        private readonly ICreation<T> creation;
 
-        public InstantiateToCreate(Func<T> onInstantiated)
+        public InstantiateToCreate(ICreation<T> creation)
         {
-            this.onInstantiated = onInstantiated;
+            this.creation = creation;
         }
 
         public object Instantiate(IObjectResolver resolver)
         {
-            return onInstantiated.Invoke();
+            return creation.Create();
         }
     }
 }

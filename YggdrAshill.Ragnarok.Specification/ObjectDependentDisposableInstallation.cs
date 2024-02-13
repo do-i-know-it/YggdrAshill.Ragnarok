@@ -10,7 +10,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             container.Register<ObjectDependentDisposable>(Lifetime.Temporal);
             container.RegisterInstance(Instance);
-            container.RegisterCallback(resolver => Disposable = resolver.Resolve<ObjectDependentDisposable>());
+            container.RegisterCallback<ObjectDependentDisposable>(resolved => Disposable = resolved);
         }
     }
 }

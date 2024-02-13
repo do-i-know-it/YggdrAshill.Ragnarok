@@ -52,10 +52,10 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, ICreation<T> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where T : notnull
         {
-            var statement = new CreateInstanceStatement<T>(container, lifetime, ownership, instantiation);
+            var statement = new CreateInstanceStatement<T>(container, lifetime, ownership, creation);
 
             container.Registration.Register(statement);
 
@@ -63,15 +63,30 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+            where T : notnull
+        {
+            return container.RegisterInstance(new Creation<T>(creation), lifetime, ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, ICreation<TImplementation> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where TInterface : notnull
             where TImplementation : TInterface
         {
-            var injection = container.RegisterInstance(instantiation, lifetime, ownership);
+            var injection = container.RegisterInstance(creation, lifetime, ownership);
 
             injection.As<TInterface>();
 
             return injection;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+            where TInterface : notnull
+            where TImplementation : TInterface
+        {
+            return container.RegisterInstance<TInterface, TImplementation>(new Creation<TImplementation>(creation), lifetime, ownership);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -160,6 +175,22 @@ namespace YggdrAshill.Ragnarok
         public static void RegisterCallback(this IObjectContainer container, Action<IObjectResolver> execution)
         {
             container.Registration.Register(new Execution(execution));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RegisterCallback<T>(this IObjectContainer container, IInvocation<T> invocation)
+            where T : notnull
+        {
+            var execution = new ExecuteToInvoke<T>(invocation);
+
+            container.Registration.Register(execution);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RegisterCallback<T>(this IObjectContainer container, Action<T> invocation)
+            where T : notnull
+        {
+            container.RegisterCallback(new Invocation<T>(invocation));
         }
     }
 }

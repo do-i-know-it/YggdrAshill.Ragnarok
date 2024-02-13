@@ -10,16 +10,16 @@ namespace YggdrAshill.Ragnarok
         public static IParameterMethodInjection WithMethod<T>(this IParameterMethodInjection injection, T instance)
             where T : notnull
         {
-            var parameter = new TypedParameterByInstance<T>(instance);
+            var parameter = new TypedParameter<T>(instance);
 
             return injection.WithMethod(parameter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParameterMethodInjection WithMethod<T>(this IParameterMethodInjection injection, Func<T> instantiation)
+        public static IParameterMethodInjection WithMethod<T>(this IParameterMethodInjection injection, Func<T> creation)
             where T : notnull
         {
-            var parameter = new TypedParameterByMethod<T>(instantiation);
+            var parameter = new TypedParameter<T>(creation);
 
             return injection.WithMethod(parameter);
         }
@@ -28,16 +28,16 @@ namespace YggdrAshill.Ragnarok
         public static IParameterMethodInjection WithMethod<T>(this IParameterMethodInjection injection, string name, T instance)
             where T : notnull
         {
-            var parameter = new NamedParameterByInstance<T>(name, instance);
+            var parameter = new NamedParameter<T>(name, instance);
 
             return injection.WithMethod(parameter);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IParameterMethodInjection WithMethod<T>(this IParameterMethodInjection injection, string name, Func<T> instantiation)
+        public static IParameterMethodInjection WithMethod<T>(this IParameterMethodInjection injection, string name, Func<T> creation)
             where T : notnull
         {
-            var parameter = new NamedParameterByMethod<T>(name, instantiation);
+            var parameter = new NamedParameter<T>(name, creation);
 
             return injection.WithMethod(parameter);
         }

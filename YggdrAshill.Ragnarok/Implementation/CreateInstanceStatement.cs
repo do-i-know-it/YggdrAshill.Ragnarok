@@ -6,16 +6,16 @@ namespace YggdrAshill.Ragnarok
     internal sealed class CreateInstanceStatement<T> : IStatement
         where T : notnull
     {
-        private readonly Func<T> createInstance;
+        private readonly ICreation<T> creation;
         private readonly Lazy<IInstantiation> instantiationCache;
 
         public Lifetime Lifetime { get; }
         public Ownership Ownership { get; }
         public InstanceInjectionSource Source { get; }
 
-        public CreateInstanceStatement(IObjectContainer container, Lifetime lifetime, Ownership ownership, Func<T> createInstance)
+        public CreateInstanceStatement(IObjectContainer container, Lifetime lifetime, Ownership ownership, ICreation<T> creation)
         {
-            this.createInstance = createInstance;
+            this.creation = creation;
             Lifetime = lifetime;
             Ownership = ownership;
             Source = new InstanceInjectionSource(typeof(T), container);
@@ -24,7 +24,7 @@ namespace YggdrAshill.Ragnarok
 
         private IInstantiation CreateInstantiation()
         {
-            var instantiation = new InstantiateToCreate<T>(createInstance);
+            var instantiation = new InstantiateToCreate<T>(creation);
 
             if (!Source.CanInjectIntoInstance(out var injection))
             {
