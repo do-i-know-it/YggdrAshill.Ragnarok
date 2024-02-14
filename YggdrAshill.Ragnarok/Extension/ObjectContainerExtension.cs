@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace YggdrAshill.Ragnarok
@@ -120,9 +121,31 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Install(this IObjectContainer container, IReadOnlyList<IInstallation> installationList)
+        {
+            if (installationList.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var installation in installationList)
+            {
+                installation.Install(container);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Install(this IObjectContainer container, params IInstallation[] installationList)
         {
-            InstallationList.Install(container, installationList);
+            if (installationList.Length == 0)
+            {
+                return;
+            }
+
+            foreach (var installation in installationList)
+            {
+                installation.Install(container);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

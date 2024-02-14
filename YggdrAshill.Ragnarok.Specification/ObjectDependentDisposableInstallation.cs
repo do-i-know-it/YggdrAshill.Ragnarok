@@ -1,6 +1,6 @@
 namespace YggdrAshill.Ragnarok.Specification
 {
-    internal sealed class ObjectDependentDisposableInstallation : IInstallation
+    internal sealed class ObjectDependentDisposableInstallation : IInstallation, IInvocation<ObjectDependentDisposable>
     {
         public object Instance { get; } = new object();
 
@@ -10,7 +10,12 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             container.Register<ObjectDependentDisposable>(Lifetime.Temporal);
             container.RegisterInstance(Instance);
-            container.RegisterCallback<ObjectDependentDisposable>(resolved => Disposable = resolved);
+            container.RegisterCallback(this);
+        }
+
+        public void Invoke(ObjectDependentDisposable instance)
+        {
+            Disposable = instance;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace YggdrAshill.Ragnarok
         {
             var context = container.CreateContext();
 
-            InstallationList.Install(context, installationList);
+            context.Install(installationList);
 
             var scope = context.CreateScope();
 
