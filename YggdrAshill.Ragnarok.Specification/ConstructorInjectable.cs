@@ -2,10 +2,10 @@
 {
     internal sealed class ConstructorInjectable
     {
-        public NoDependencyClass Instance { get; }
+        public object Instance { get; }
 
         [Inject]
-        public ConstructorInjectable(NoDependencyClass instance)
+        public ConstructorInjectable(object instance)
         {
             Instance = instance;
         }

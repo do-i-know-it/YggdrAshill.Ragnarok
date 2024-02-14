@@ -3,6 +3,6 @@
     internal sealed class PropertyInjectable
     {
         [InjectProperty]
-        public NoDependencyClass Instance { get; private set; }
+        public object Instance { get; private set; }
     }
 }

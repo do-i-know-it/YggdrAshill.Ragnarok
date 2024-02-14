@@ -3,32 +3,61 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    public sealed class ResolveFromSubContainerStatement : IStatement
+    internal sealed class ResolveFromSubContainerStatement : IStatement, ISubContainerResolution
     {
         private readonly IObjectContainer container;
-        private readonly IInstallation[] installationList;
-        private readonly SubContainerSource source;
         private readonly Lazy<IInstantiation> instantiation;
 
-        public ResolveFromSubContainerStatement(Type type, IObjectContainer container, IInstallation[] installationList)
+        private readonly TypeAssignmentSource source;
+
+        public ResolveFromSubContainerStatement(Type type, IObjectContainer container)
         {
             this.container = container;
-            this.installationList = installationList;
-            source = new SubContainerSource(container.Registration, type);
             instantiation = new Lazy<IInstantiation>(CreateInstantiation);
+            source = new TypeAssignmentSource(type);
+        }
+
+        private readonly List<IInstallation> installationList = new();
+
+        public IObjectResolver Resolver => container.Resolver;
+
+        public ISubContainerResolution With(IInstallation installation)
+        {
+            if (!installationList.Contains(installation))
+            {
+                installationList.Add(installation);
+            }
+
+            return this;
         }
 
         private IInstantiation CreateInstantiation()
         {
-            var scope = container.CreateSubScope(installationList);
+            var context = container.CreateContext();
+
+            context.Install(installationList);
+
+            var scope = context.CreateScope();
 
             container.Registration.Register(scope);
 
-            return source.CreateInstantiation(scope);
+            return new InstantiateFromSubContainer(ImplementedType, scope.Resolver);
         }
 
-        public ITypeAssignment TypeAssignment => source;
+        public void AsOwnSelf()
+        {
+            source.AsOwnSelf();
+        }
+
+        public IInheritedTypeAssignment As(Type inheritedType)
+        {
+            return source.As(inheritedType);
+        }
+
+        public IOwnTypeAssignment AsImplementedInterfaces()
+        {
+            return source.AsImplementedInterfaces();
+        }
 
         public Type ImplementedType => source.ImplementedType;
 

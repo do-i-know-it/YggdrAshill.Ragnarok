@@ -3,7 +3,7 @@
     internal sealed class FieldInjectable
     {
         [InjectField]
-        private NoDependencyClass instance;
-        public NoDependencyClass Instance => instance;
+        private object instance;
+        public object Instance => instance;
     }
 }

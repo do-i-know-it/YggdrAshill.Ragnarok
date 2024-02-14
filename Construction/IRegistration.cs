@@ -27,12 +27,12 @@ namespace YggdrAshill.Ragnarok
         void Register(IStatement statement);
 
         /// <summary>
-        /// Adds <see cref="IInstruction"/> to initialize <see cref="IObjectResolver"/>.
+        /// Adds <see cref="IExecution"/> to initialize <see cref="IObjectResolver"/>.
         /// </summary>
-        /// <param name="instruction">
-        /// <see cref="IInstruction"/> to register.
+        /// <param name="execution">
+        /// <see cref="IExecution"/> to register.
         /// </param>
-        void Register(IInstruction instruction);
+        void Register(IExecution execution);
 
         /// <summary>
         /// Adds <see cref="IDisposable"/> to bind.

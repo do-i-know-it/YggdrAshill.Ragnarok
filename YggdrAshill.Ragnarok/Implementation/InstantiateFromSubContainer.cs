@@ -2,12 +2,12 @@
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ResolveFromSubContainer : IInstantiation
+    internal sealed class InstantiateFromSubContainer : IInstantiation
     {
         private readonly Type type;
         private readonly IObjectResolver other;
 
-        public ResolveFromSubContainer(Type type, IObjectResolver other)
+        public InstantiateFromSubContainer(Type type, IObjectResolver other)
         {
             this.type = type;
             this.other = other;

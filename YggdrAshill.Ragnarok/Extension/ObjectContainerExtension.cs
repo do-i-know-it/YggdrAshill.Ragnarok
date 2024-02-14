@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace YggdrAshill.Ragnarok
@@ -17,11 +18,11 @@ namespace YggdrAshill.Ragnarok
                 throw new ArgumentException($"{implementedType} is not instantiatable.");
             }
 
-            var statement = new DependencyInjectionStatement(container.Compilation, implementedType, lifetime);
+            var statement = new DependencyInjectionStatement(container, implementedType, lifetime);
 
             container.Registration.Register(statement);
 
-            return statement.DependencyInjection;
+            return statement.Source;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -44,7 +45,7 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(statement);
 
-            var assignment = statement.TypeAssignment;
+            var assignment = statement.Source;
 
             assignment.As<T>();
 
@@ -52,22 +53,29 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, ICreation<T> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where T : notnull
         {
-            var statement = new CreateInstanceStatement<T>(container.Compilation, lifetime, ownership, instantiation);
+            var statement = new CreateInstanceStatement<T>(container, lifetime, ownership, creation);
 
             container.Registration.Register(statement);
 
-            return statement.InstanceInjection;
+            return statement.Source;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> instantiation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+            where T : notnull
+        {
+            return container.RegisterInstance(new Creation<T>(creation), lifetime, ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, ICreation<TImplementation> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
             where TInterface : notnull
             where TImplementation : TInterface
         {
-            var injection = container.RegisterInstance(instantiation, lifetime, ownership);
+            var injection = container.RegisterInstance(creation, lifetime, ownership);
 
             injection.As<TInterface>();
 
@@ -75,25 +83,35 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, params IInstallation[] installationList)
-            where T : notnull
+        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
+            where TInterface : notnull
+            where TImplementation : TInterface
         {
-            var statement = new ResolveFromSubContainerStatement(typeof(T), container, installationList);
-
-            container.Registration.Register(statement);
-
-            return statement.TypeAssignment;
+            return container.RegisterInstance<TInterface, TImplementation>(new Creation<TImplementation>(creation), lifetime, ownership);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ITypeAssignment RegisterFromSubContainer<T>(this IObjectContainer container, Action<IObjectContainer> installation)
+        public static ISubContainerResolution RegisterFromSubContainer<T>(this IObjectContainer container, IInstallation installation)
+            where T : notnull
+        {
+            var statement = new ResolveFromSubContainerStatement(typeof(T), container);
+
+            container.Registration.Register(statement);
+
+            statement.With(installation);
+
+            return statement;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ISubContainerResolution RegisterFromSubContainer<T>(this IObjectContainer container, Action<IObjectContainer> installation)
             where T : notnull
         {
             return container.RegisterFromSubContainer<T>(new Installation(installation));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ITypeAssignment RegisterFromSubContainer<TInstance, TInstallation>(this IObjectContainer container)
+        public static ISubContainerResolution RegisterFromSubContainer<TInstance, TInstallation>(this IObjectContainer container)
             where TInstance : notnull
             where TInstallation : IInstallation
         {
@@ -103,8 +121,27 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Install(this IObjectContainer container, IReadOnlyList<IInstallation> installationList)
+        {
+            if (installationList.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var installation in installationList)
+            {
+                installation.Install(container);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Install(this IObjectContainer container, params IInstallation[] installationList)
         {
+            if (installationList.Length == 0)
+            {
+                return;
+            }
+
             foreach (var installation in installationList)
             {
                 installation.Install(container);
@@ -114,7 +151,7 @@ namespace YggdrAshill.Ragnarok
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Install(this IObjectContainer container, Action<IObjectContainer> installation)
         {
-            container.Install(new Installation(installation));
+            installation.Invoke(container);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -123,28 +160,32 @@ namespace YggdrAshill.Ragnarok
         {
             var installation = container.Resolver.Resolve<TInstallation>();
 
-            container.Install(installation);
+            installation.Install(container);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateSubScope(this IObjectContainer container, params IInstallation[] installationList)
         {
-            return container.CreateContext().CreateCurrentScope(installationList);
+            var context = container.CreateContext();
+
+            return context.CreateCurrentScope(installationList);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateSubScope(this IObjectContainer container, Action<IObjectContainer> installation)
         {
-            return container.CreateContext().CreateCurrentScope(installation);
+            var context = container.CreateContext();
+
+            return context.CreateCurrentScope(installation);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IObjectScope CreateSubScope<TInstallation>(this IObjectContainer container)
             where TInstallation : IInstallation
         {
-            var installation = container.Resolver.Resolve<TInstallation>();
+            var context = container.CreateContext();
 
-            return container.CreateSubScope(installation);
+            return context.CreateCurrentScope<TInstallation>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -154,9 +195,25 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Register(this IObjectContainer container, Action<IObjectResolver> instruction)
+        public static void RegisterCallback(this IObjectContainer container, Action<IObjectResolver> execution)
         {
-            container.Registration.Register(new Instruction(instruction));
+            container.Registration.Register(new Execution(execution));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RegisterCallback<T>(this IObjectContainer container, IInvocation<T> invocation)
+            where T : notnull
+        {
+            var execution = new ExecuteToInvoke<T>(invocation);
+
+            container.Registration.Register(execution);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RegisterCallback<T>(this IObjectContainer container, Action<T> invocation)
+            where T : notnull
+        {
+            container.RegisterCallback(new Invocation<T>(invocation));
         }
     }
 }

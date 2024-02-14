@@ -14,7 +14,7 @@ namespace YggdrAshill.Ragnarok
         }
 
         private readonly List<IStatement> statementList = new();
-        private readonly List<IInstruction> instructionList = new();
+        private readonly List<IExecution> executionList = new();
         private readonly List<IDisposable> disposableList = new();
 
         public int Count(ICondition condition)
@@ -32,14 +32,14 @@ namespace YggdrAshill.Ragnarok
             statementList.Add(statement);
         }
 
-        public void Register(IInstruction instruction)
+        public void Register(IExecution execution)
         {
-            if (instructionList.Contains(instruction))
+            if (executionList.Contains(execution))
             {
                 return;
             }
 
-            instructionList.Add(instruction);
+            executionList.Add(execution);
         }
 
         public void Register(IDisposable disposable)
@@ -61,7 +61,7 @@ namespace YggdrAshill.Ragnarok
                 resolver.Bind(disposable);
             }
 
-            foreach (var operation in instructionList)
+            foreach (var operation in executionList)
             {
                 operation.Execute(resolver);
             }

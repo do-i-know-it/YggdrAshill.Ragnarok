@@ -3,24 +3,20 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    public sealed class ReturnInstanceStatement : IStatement
+    internal sealed class ReturnInstanceStatement : IStatement
     {
-        private readonly TypeAssignmentSource source;
-
+        public TypeAssignmentSource Source { get; }
         public IInstantiation Instantiation { get; }
 
         public ReturnInstanceStatement(object instance)
         {
-            source = new TypeAssignmentSource(instance.GetType());
-            Instantiation = new ReturnInstance(instance);
+            Source = new TypeAssignmentSource(instance.GetType());
+            Instantiation = new InstantiateToReturnInstance(instance);
         }
 
-        public ITypeAssignment TypeAssignment => source;
+        public Type ImplementedType => Source.ImplementedType;
 
-        public Type ImplementedType => source.ImplementedType;
-
-        public IReadOnlyList<Type> AssignedTypeList => source.AssignedTypeList;
+        public IReadOnlyList<Type> AssignedTypeList => Source.AssignedTypeList;
 
         public Lifetime Lifetime => Lifetime.Global;
 

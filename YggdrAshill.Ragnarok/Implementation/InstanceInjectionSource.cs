@@ -8,12 +8,14 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly Type type;
         private readonly ICompilation compilation;
+        private readonly IRegistration registration;
         private readonly TypeAssignmentSource source;
 
-        public InstanceInjectionSource(Type type, ICompilation compilation)
+        public InstanceInjectionSource(Type type, IObjectContainer container)
         {
             this.type = type;
-            this.compilation = compilation;
+            compilation = container.Compilation;
+            registration = container.Registration;
             source = new TypeAssignmentSource(type);
         }
 
@@ -150,7 +152,7 @@ namespace YggdrAshill.Ragnarok
             return source.AsImplementedInterfaces();
         }
 
-        public IMethodInjection WithMethod(IParameter parameter)
+        public IParameterMethodInjection WithMethod(IParameter parameter)
         {
             if (methodParameterList == null)
             {
@@ -165,7 +167,7 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IMethodInjection WithMethodInjection()
+        public ITypeAssignment WithMethodInjection()
         {
             if (methodParameterList == null)
             {
@@ -175,7 +177,7 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IPropertyInjection WithProperty(IParameter parameter)
+        public IParameterPropertyInjection WithProperty(IParameter parameter)
         {
             if (propertyParameterList == null)
             {
@@ -190,7 +192,7 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IPropertyInjection WithPropertyInjection()
+        public IMethodInjection WithPropertyInjection()
         {
             if (propertyParameterList == null)
             {
@@ -200,7 +202,7 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IFieldInjection WithField(IParameter parameter)
+        public IParameterFieldInjection WithField(IParameter parameter)
         {
             if (fieldParameterList == null)
             {
@@ -215,12 +217,21 @@ namespace YggdrAshill.Ragnarok
             return this;
         }
 
-        public IFieldInjection WithFieldInjection()
+        public IPropertyInjection WithFieldInjection()
         {
             if (fieldParameterList == null)
             {
                 fieldParameterList = new List<IParameter>();
             }
+
+            return this;
+        }
+
+        public IFieldInjection ResolvedImmediately()
+        {
+            var execution = new ExecuteToResolveImmediately(source);
+
+            registration.Register(execution);
 
             return this;
         }

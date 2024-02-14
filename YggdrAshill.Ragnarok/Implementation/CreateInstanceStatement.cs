@@ -3,31 +3,30 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    public sealed class CreateInstanceStatement<T> : IStatement
+    internal sealed class CreateInstanceStatement<T> : IStatement
         where T : notnull
     {
-        private readonly InstanceInjectionSource source;
-        private readonly Func<T> createInstance;
+        private readonly ICreation<T> creation;
         private readonly Lazy<IInstantiation> instantiationCache;
 
         public Lifetime Lifetime { get; }
         public Ownership Ownership { get; }
+        public InstanceInjectionSource Source { get; }
 
-        public CreateInstanceStatement(ICompilation compilation, Lifetime lifetime, Ownership ownership, Func<T> createInstance)
+        public CreateInstanceStatement(IObjectContainer container, Lifetime lifetime, Ownership ownership, ICreation<T> creation)
         {
-            this.createInstance = createInstance;
+            this.creation = creation;
             Lifetime = lifetime;
             Ownership = ownership;
-            source = new InstanceInjectionSource(typeof(T), compilation);
+            Source = new InstanceInjectionSource(typeof(T), container);
             instantiationCache = new Lazy<IInstantiation>(CreateInstantiation);
         }
 
         private IInstantiation CreateInstantiation()
         {
-            var instantiation = new CreateInstance<T>(createInstance);
+            var instantiation = new InstantiateToCreate<T>(creation);
 
-            if (!source.CanInjectIntoInstance(out var injection))
+            if (!Source.CanInjectIntoInstance(out var injection))
             {
                 return instantiation;
             }
@@ -35,11 +34,9 @@ namespace YggdrAshill.Ragnarok
             return injection.ToInstantiate(instantiation);
         }
 
-        public IInstanceInjection InstanceInjection => source;
+        public Type ImplementedType => Source.ImplementedType;
 
-        public Type ImplementedType => source.ImplementedType;
-
-        public IReadOnlyList<Type> AssignedTypeList => source.AssignedTypeList;
+        public IReadOnlyList<Type> AssignedTypeList => Source.AssignedTypeList;
 
         public IInstantiation Instantiation => instantiationCache.Value;
     }

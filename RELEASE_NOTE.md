@@ -1,6 +1,8 @@
-# Release notes for version 0.12.0
+# Release notes for version 0.13.0
 
-- Modified definitions for Construction and Hierachization.
-- Rearranged IParameter.
-- Fixed to resolve implementations that inherits `IInstallation`.
-- Added document comments.
+- Added definitions for experimental.
+- Added definitions for Fabrication.
+- Modified definitions for Fabrication.
+- Modified implementations of IParameter.
+- Modified implementations for extension.
+- Renamed `IInstruction` to `IExecution`.

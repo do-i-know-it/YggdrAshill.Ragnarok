@@ -10,11 +10,11 @@ namespace YggdrAshill.Ragnarok
         private readonly ICompilation compilation;
         private readonly InstanceInjectionSource source;
 
-        public DependencyInjectionSource(Type implementedType, ICompilation compilation)
+        public DependencyInjectionSource(Type implementedType, IObjectContainer container)
         {
             this.implementedType = implementedType;
-            this.compilation = compilation;
-            source = new InstanceInjectionSource(implementedType, compilation);
+            compilation = container.Compilation;
+            source = new InstanceInjectionSource(implementedType, container);
         }
 
         private List<IParameter>? parameterList;
@@ -68,34 +68,39 @@ namespace YggdrAshill.Ragnarok
             return source.AsImplementedInterfaces();
         }
 
-        public IMethodInjection WithMethod(IParameter parameter)
+        public IParameterMethodInjection WithMethod(IParameter parameter)
         {
             return source.WithMethod(parameter);
         }
 
-        public IMethodInjection WithMethodInjection()
+        public ITypeAssignment WithMethodInjection()
         {
             return source.WithMethodInjection();
         }
 
-        public IPropertyInjection WithProperty(IParameter parameter)
+        public IParameterPropertyInjection WithProperty(IParameter parameter)
         {
             return source.WithProperty(parameter);
         }
 
-        public IPropertyInjection WithPropertyInjection()
+        public IMethodInjection WithPropertyInjection()
         {
             return source.WithPropertyInjection();
         }
 
-        public IFieldInjection WithField(IParameter parameter)
+        public IParameterFieldInjection WithField(IParameter parameter)
         {
             return source.WithField(parameter);
         }
 
-        public IFieldInjection WithFieldInjection()
+        public IPropertyInjection WithFieldInjection()
         {
             return source.WithFieldInjection();
+        }
+
+        public IFieldInjection ResolvedImmediately()
+        {
+            return source.ResolvedImmediately();
         }
     }
 }

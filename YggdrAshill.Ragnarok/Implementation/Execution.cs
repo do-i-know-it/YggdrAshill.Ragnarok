@@ -2,11 +2,11 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class Instruction : IInstruction
+    internal sealed class Execution : IExecution
     {
         private readonly Action<IObjectResolver> onExecuted;
 
-        public Instruction(Action<IObjectResolver> onExecuted)
+        public Execution(Action<IObjectResolver> onExecuted)
         {
             this.onExecuted = onExecuted;
         }

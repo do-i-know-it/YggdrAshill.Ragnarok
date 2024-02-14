@@ -3,26 +3,23 @@ using System.Collections.Generic;
 
 namespace YggdrAshill.Ragnarok
 {
-    // TODO: add document comments.
-    public sealed class DependencyInjectionStatement : IStatement
+    internal sealed class DependencyInjectionStatement : IStatement
     {
-        private readonly DependencyInjectionSource source;
         private readonly Lazy<IInstantiation> instantiation;
 
         public Lifetime Lifetime { get; }
+        public DependencyInjectionSource Source { get; }
 
-        public DependencyInjectionStatement(ICompilation compilation, Type implementedType, Lifetime lifetime)
+        public DependencyInjectionStatement(IObjectContainer container, Type implementedType, Lifetime lifetime)
         {
-            source = new DependencyInjectionSource(implementedType, compilation);
-            instantiation = new Lazy<IInstantiation>(() => source.CreateInstantiation());
             Lifetime = lifetime;
+            Source = new DependencyInjectionSource(implementedType, container);
+            instantiation = new Lazy<IInstantiation>(Source.CreateInstantiation);
         }
 
-        public IDependencyInjection DependencyInjection => source;
+        public Type ImplementedType => Source.ImplementedType;
 
-        public Type ImplementedType => source.ImplementedType;
-
-        public IReadOnlyList<Type> AssignedTypeList => source.AssignedTypeList;
+        public IReadOnlyList<Type> AssignedTypeList => Source.AssignedTypeList;
 
         public Ownership Ownership => Ownership.Internal;
 

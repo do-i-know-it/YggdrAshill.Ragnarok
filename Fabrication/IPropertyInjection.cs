@@ -1,9 +1,8 @@
 namespace YggdrAshill.Ragnarok
 {
-    public interface IPropertyInjection : IMethodInjection
+    // TODO: add document comments.
+    public interface IPropertyInjection : IParameterPropertyInjection
     {
-        IMethodInjection WithMethodInjection();
-
-        IPropertyInjection WithProperty(IParameter parameter);
+        IMethodInjection WithPropertyInjection();
     }
 }
