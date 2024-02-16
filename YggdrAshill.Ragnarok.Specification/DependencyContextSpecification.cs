@@ -726,7 +726,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationList))]
-        public void ShouldResolveFromSubContainerByInstallationInstance(IOperation operation)
+        public void ShouldResolveFromSubContainer(IOperation operation)
         {
             var context = new DependencyContext(operation);
 
@@ -749,52 +749,6 @@ namespace YggdrAshill.Ragnarok.Specification
             scope.Dispose();
 
             Assert.That(installation.Disposable!.IsDisposed, Is.True);
-        }
-
-        [TestCaseSource(nameof(OperationList))]
-        public void ShouldResolveFromSubContainerByInstallationMethod(IOperation operation)
-        {
-            var context = new DependencyContext(operation);
-
-            var installation = new ObjectDependentDisposableInstallation();
-
-            context.RegisterFromSubContainer<ObjectDependentDisposable>(installation.Install);
-
-            var scope = context.CreateScope();
-
-            Assert.That(() =>
-            {
-                _ = scope.Resolver.Resolve<ObjectDependentDisposable>();
-            }, Throws.Nothing);
-
-            Assert.That(() =>
-            {
-                _ = scope.Resolver.Resolve<object>();
-            }, Throws.TypeOf<RagnarokNotRegisteredException>());
-
-            scope.Dispose();
-
-            Assert.That(installation.Disposable!.IsDisposed, Is.True);
-        }
-
-        [TestCaseSource(nameof(OperationList))]
-        public void ShouldResolveFromSubContainerByResolvedInstallation(IOperation operation)
-        {
-            var context = new DependencyContext(operation);
-
-            context.RegisterFromSubContainer<ObjectDependentDisposable, ObjectDependentDisposableInstallation>();
-
-            using var scope = context.CreateScope();
-
-            Assert.That(() =>
-            {
-                _ = scope.Resolver.Resolve<ObjectDependentDisposable>();
-            }, Throws.Nothing);
-
-            Assert.That(() =>
-            {
-                _ = scope.Resolver.Resolve<object>();
-            }, Throws.TypeOf<RagnarokNotRegisteredException>());
         }
 
         [TestCaseSource(nameof(OperationAndOwnershipMatrix))]
