@@ -35,24 +35,28 @@ namespace YggdrAshill.Ragnarok
         }
     }
 
-    internal sealed class InternalFactory<TInput, TOutput> : IFactory<TInput, TOutput>, IDisposable, IInstallation, ICreation<TInput>
+    internal sealed class InternalFactory<TInput, TOutput> : IFactory<TInput, TOutput>, IDisposable
         where TInput : notnull
         where TOutput : notnull
     {
-        private readonly IObjectContext context;
+        private readonly IObjectContainer container;
+        private readonly IReadOnlyList<IInstallation> installationList;
 
-        public InternalFactory(IObjectContext context)
+        public InternalFactory(IObjectContainer container, IReadOnlyList<IInstallation> installationList)
         {
-            this.context = context;
+            this.container = container;
+            this.installationList = installationList;
         }
 
         private readonly List<IDisposable> disposableList = new();
 
-        private TInput? cache;
-
         public TOutput Create(TInput input)
         {
-            cache = input;
+            var context = container.CreateContext();
+
+            context.Install(installationList);
+
+            context.RegisterInstance(input);
 
             var scope = context.CreateScope();
 
@@ -69,21 +73,6 @@ namespace YggdrAshill.Ragnarok
             }
 
             disposableList.Clear();
-        }
-
-        public void Install(IObjectContainer container)
-        {
-            container.RegisterInstance(this, Lifetime.Temporal);
-        }
-
-        public TInput Create()
-        {
-            if (cache == null)
-            {
-                throw new RagnarokNotRegisteredException(typeof(TInput));
-            }
-
-            return cache;
         }
     }
 }

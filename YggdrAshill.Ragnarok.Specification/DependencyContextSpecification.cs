@@ -798,7 +798,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndOwnershipMatrix))]
-        public void ShouldResolveFactoryByInstallation(IOperation operation, Ownership ownership)
+        public void ShouldResolveFactory(IOperation operation, Ownership ownership)
         {
             var context = new DependencyContext(operation);
 
@@ -820,6 +820,35 @@ namespace YggdrAshill.Ragnarok.Specification
             scope.Dispose();
 
             Assert.That(instance.IsDisposed, Is.EqualTo(ownership is Ownership.Internal));
+        }
+
+        [TestCaseSource(nameof(OperationAndOwnershipMatrix))]
+        public void ShouldResolveFactoryToCreateOutputFromInput(IOperation operation, Ownership ownership)
+        {
+            var context = new DependencyContext(operation);
+
+            var installation = new DisposableOutputInstallation();
+
+            context.RegisterFactory<object, DisposableOutput>(installation, ownership);
+
+            var scope = context.CreateScope();
+
+            var factory = scope.Resolver.Resolve<IFactory<object, DisposableOutput>>();
+
+            var input = new object();
+
+            var output = factory.Create(input);
+
+            Assert.That(output.Instance, Is.EqualTo(input));
+
+            Assert.That(() =>
+            {
+                _ = scope.Resolver.Resolve<DisposableOutput>();
+            }, Throws.TypeOf<RagnarokNotRegisteredException>());
+
+            scope.Dispose();
+
+            Assert.That(output.IsDisposed, Is.EqualTo(ownership is Ownership.Internal));
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]

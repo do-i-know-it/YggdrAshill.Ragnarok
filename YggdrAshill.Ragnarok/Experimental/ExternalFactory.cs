@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class ExternalFactory<T> : IFactory<T>
@@ -18,41 +20,30 @@ namespace YggdrAshill.Ragnarok
         }
     }
 
-    internal sealed class ExternalFactory<TInput, TOutput> : IFactory<TInput, TOutput>, IInstallation, ICreation<TInput>
+    internal sealed class ExternalFactory<TInput, TOutput> : IFactory<TInput, TOutput>
         where TInput : notnull
         where TOutput : notnull
     {
-        private readonly IObjectContext context;
+        private readonly IObjectContainer container;
+        private readonly IReadOnlyList<IInstallation> installationList;
 
-        public ExternalFactory(IObjectContext context)
+        public ExternalFactory(IObjectContainer container, IReadOnlyList<IInstallation> installationList)
         {
-            this.context = context;
+            this.container = container;
+            this.installationList = installationList;
         }
-
-        private TInput? cache;
 
         public TOutput Create(TInput input)
         {
-            cache = input;
+            var context = container.CreateContext();
+
+            context.Install(installationList);
+
+            context.RegisterInstance(input);
 
             var scope = context.CreateScope();
 
             return scope.Resolver.Resolve<TOutput>();
-        }
-
-        public void Install(IObjectContainer container)
-        {
-            container.RegisterInstance(this, Lifetime.Temporal);
-        }
-
-        public TInput Create()
-        {
-            if (cache == null)
-            {
-                throw new RagnarokNotRegisteredException(typeof(TInput));
-            }
-
-            return cache;
         }
     }
 }
