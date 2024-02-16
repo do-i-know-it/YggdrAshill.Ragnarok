@@ -78,9 +78,11 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(statement);
 
-            statement.With(installation);
+            var source = statement.Source;
 
-            return statement;
+            source.With(installation);
+
+            return source;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
