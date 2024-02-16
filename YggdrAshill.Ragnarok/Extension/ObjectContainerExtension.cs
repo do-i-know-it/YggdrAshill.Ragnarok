@@ -138,7 +138,7 @@ namespace YggdrAshill.Ragnarok
         public static void RegisterFactory<T>(this IObjectContainer container, Func<T> creation)
             where T : notnull
         {
-            container.RegisterInstance(new Factory<T>(creation));
+            container.RegisterInstance<IFactory<T>>(new Factory<T>(creation));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -181,7 +181,7 @@ namespace YggdrAshill.Ragnarok
             where TInput : notnull
             where TOutput : notnull
         {
-            container.RegisterInstance(new Factory<TInput, TOutput>(creation));
+            container.RegisterInstance<IFactory<TInput, TOutput>>(new Factory<TInput, TOutput>(creation));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
