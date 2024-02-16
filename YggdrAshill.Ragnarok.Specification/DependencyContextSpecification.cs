@@ -797,6 +797,31 @@ namespace YggdrAshill.Ragnarok.Specification
             }, Throws.TypeOf<RagnarokNotRegisteredException>());
         }
 
+        [TestCaseSource(nameof(OperationAndOwnershipMatrix))]
+        public void ShouldResolveFactoryByInstallation(IOperation operation, Ownership ownership)
+        {
+            var context = new DependencyContext(operation);
+
+            var installation = new IndependentDisposableInstallation();
+
+            context.RegisterFactory<IndependentDisposable>(installation, ownership);
+
+            var scope = context.CreateScope();
+
+            var factory = scope.Resolver.Resolve<IFactory<IndependentDisposable>>();
+
+            var instance = factory.Create();
+
+            Assert.That(() =>
+            {
+                _ = scope.Resolver.Resolve<IndependentDisposable>();
+            }, Throws.TypeOf<RagnarokNotRegisteredException>());
+
+            scope.Dispose();
+
+            Assert.That(instance.IsDisposed, Is.EqualTo(ownership is Ownership.Internal));
+        }
+
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
         public void ShouldCreateScopeWithoutCircularDependency(IOperation operation, Lifetime lifetime)
         {

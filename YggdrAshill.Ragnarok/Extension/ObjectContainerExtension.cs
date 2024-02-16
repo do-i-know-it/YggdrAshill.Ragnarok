@@ -121,6 +121,38 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IFactoryResolution RegisterFactory<T>(this IObjectContainer container, IInstallation installation, Ownership ownership)
+            where T : notnull
+        {
+            var statement = new ReturnFactoryStatement<T>(container, ownership);
+
+            container.Registration.Register(statement);
+
+            var source = statement.Source;
+
+            source.With(installation);
+
+            return source;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IFactoryResolution RegisterFactory<T>(this IObjectContainer container, Action<IObjectContainer> installation, Ownership ownership)
+            where T : notnull
+        {
+            return container.RegisterFactory<T>(new Installation(installation), ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IFactoryResolution RegisterFactory<TInstance, TInstallation>(this IObjectContainer container, Ownership ownership)
+            where TInstance : notnull
+            where TInstallation : IInstallation
+        {
+            var installation = container.Resolver.Resolve<TInstallation>();
+
+            return container.RegisterFactory<TInstance>(installation, ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Install(this IObjectContainer container, IReadOnlyList<IInstallation> installationList)
         {
             if (installationList.Count == 0)
