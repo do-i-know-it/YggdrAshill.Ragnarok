@@ -172,7 +172,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentContext = new DependencyContext(operation);
 
-            parentContext.RegisterInstance(CreateObject.Instance, lifetime);
+            parentContext.Register(CreateObject.Instance, lifetime);
 
             using var parentScope = parentContext.CreateScope();
 
@@ -194,7 +194,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyContext(operation);
 
-            context.RegisterInstance(() => new IndependentDisposable(), lifetime, ownership);
+            context.Register(() => new IndependentDisposable(), lifetime, ownership);
 
             var scope = context.CreateScope();
 
@@ -205,17 +205,17 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(instance.IsDisposed, Is.EqualTo(ownership is Ownership.Internal));
         }
 
-        [TestCaseSource(nameof(OperationList))]
-        public void ShouldResolveObjectImmediatelyJustAfterCreatingScope(IOperation operation)
+        [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
+        public void ShouldResolveObjectImmediatelyJustAfterCreatingScope(IOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
             var executed = false;
-            context.RegisterInstance(() =>
+            context.Register(() =>
             {
                 executed = true;
                 return new IndependentDisposable();
-            }).ResolvedImmediately().As<IDisposable>();
+            }, lifetime).ResolvedImmediately().As<IDisposable>();
 
             using var scope = context.CreateScope();
 

@@ -38,6 +38,24 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IInstanceInjection Register<T>(this IObjectContainer container, ICreation<T> creation, Lifetime lifetime, Ownership ownership = Ownership.Internal)
+            where T : notnull
+        {
+            var statement = new CreateInstanceStatement<T>(container, lifetime, ownership, creation);
+
+            container.Registration.Register(statement);
+
+            return statement.Source;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IInstanceInjection Register<T>(this IObjectContainer container, Func<T> creation, Lifetime lifetime, Ownership ownership = Ownership.Internal)
+            where T : notnull
+        {
+            return container.Register(new Creation<T>(creation), lifetime, ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ITypeAssignment RegisterInstance<T>(this IObjectContainer container, T instance)
             where T : notnull
         {
@@ -50,24 +68,6 @@ namespace YggdrAshill.Ragnarok
             assignment.As<T>();
 
             return assignment;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, ICreation<T> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
-            where T : notnull
-        {
-            var statement = new CreateInstanceStatement<T>(container, lifetime, ownership, creation);
-
-            container.Registration.Register(statement);
-
-            return statement.Source;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
-            where T : notnull
-        {
-            return container.RegisterInstance(new Creation<T>(creation), lifetime, ownership);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
