@@ -71,26 +71,6 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, ICreation<TImplementation> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
-            where TInterface : notnull
-            where TImplementation : TInterface
-        {
-            var injection = container.RegisterInstance(creation, lifetime, ownership);
-
-            injection.As<TInterface>();
-
-            return injection;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
-            where TInterface : notnull
-            where TImplementation : TInterface
-        {
-            return container.RegisterInstance<TInterface, TImplementation>(new Creation<TImplementation>(creation), lifetime, ownership);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ISubContainerResolution RegisterFromSubContainer<T>(this IObjectContainer container, IInstallation installation)
             where T : notnull
         {
