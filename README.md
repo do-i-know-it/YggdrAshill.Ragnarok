@@ -225,6 +225,26 @@ var sender = scope.Resolver.Resolve<ISender>(); // RagnarokNotRegisteredExceptio
 
 Sub containers (inspired by [Zenject/Extenject/UniDi](https://github.com/UniDi/UniDi)) help you making dependency scopes more smaller.
 
+### __Resolving factory to create instance on demand__
+
+You can resolve instance using sub containers like:
+
+```cs
+var context = new DependencyInjectionContext();
+
+context.RegisterFactory<Service, ServiceInstallation>(Ownership.External);
+
+using var scope = context.CreateScope();
+
+var facotry = scope.Resolver.Resolve<IFactory<Service>>();
+
+var service = factory.Create();
+
+service.Run();
+```
+
+Registering factories (inspired by [Zenject/Extenject/UniDi](https://github.com/UniDi/UniDi) and [VContainer](https://vcontainer.hadashikick.jp/)) help you creating instances on demand.
+
 ## Architecture
 
 Now writing...

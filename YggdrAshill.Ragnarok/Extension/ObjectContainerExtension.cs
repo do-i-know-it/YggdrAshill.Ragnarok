@@ -38,6 +38,24 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IInstanceInjection Register<T>(this IObjectContainer container, ICreation<T> creation, Lifetime lifetime, Ownership ownership = Ownership.Internal)
+            where T : notnull
+        {
+            var statement = new CreateInstanceStatement<T>(container, lifetime, ownership, creation);
+
+            container.Registration.Register(statement);
+
+            return statement.Source;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IInstanceInjection Register<T>(this IObjectContainer container, Func<T> creation, Lifetime lifetime, Ownership ownership = Ownership.Internal)
+            where T : notnull
+        {
+            return container.Register(new Creation<T>(creation), lifetime, ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ITypeAssignment RegisterInstance<T>(this IObjectContainer container, T instance)
             where T : notnull
         {
@@ -53,44 +71,6 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, ICreation<T> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
-            where T : notnull
-        {
-            var statement = new CreateInstanceStatement<T>(container, lifetime, ownership, creation);
-
-            container.Registration.Register(statement);
-
-            return statement.Source;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
-            where T : notnull
-        {
-            return container.RegisterInstance(new Creation<T>(creation), lifetime, ownership);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, ICreation<TImplementation> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
-            where TInterface : notnull
-            where TImplementation : TInterface
-        {
-            var injection = container.RegisterInstance(creation, lifetime, ownership);
-
-            injection.As<TInterface>();
-
-            return injection;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<TInterface, TImplementation>(this IObjectContainer container, Func<TImplementation> creation, Lifetime lifetime = Lifetime.Global, Ownership ownership = Ownership.External)
-            where TInterface : notnull
-            where TImplementation : TInterface
-        {
-            return container.RegisterInstance<TInterface, TImplementation>(new Creation<TImplementation>(creation), lifetime, ownership);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ISubContainerResolution RegisterFromSubContainer<T>(this IObjectContainer container, IInstallation installation)
             where T : notnull
         {
@@ -98,9 +78,11 @@ namespace YggdrAshill.Ragnarok
 
             container.Registration.Register(statement);
 
-            statement.With(installation);
+            var source = statement.Source;
 
-            return statement;
+            source.With(installation);
+
+            return source;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -118,6 +100,88 @@ namespace YggdrAshill.Ragnarok
             var installation = container.Resolver.Resolve<TInstallation>();
 
             return container.RegisterFromSubContainer<TInstance>(installation);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IFactoryResolution RegisterFactory<T>(this IObjectContainer container, IInstallation installation, Ownership ownership)
+            where T : notnull
+        {
+            var statement = new ReturnFactoryStatement<T>(container, ownership);
+
+            container.Registration.Register(statement);
+
+            var source = statement.Source;
+
+            source.With(installation);
+
+            return source;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IFactoryResolution RegisterFactory<T>(this IObjectContainer container, Action<IObjectContainer> installation, Ownership ownership)
+            where T : notnull
+        {
+            return container.RegisterFactory<T>(new Installation(installation), ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IFactoryResolution RegisterFactory<TInstance, TInstallation>(this IObjectContainer container, Ownership ownership)
+            where TInstance : notnull
+            where TInstallation : IInstallation
+        {
+            var installation = container.Resolver.Resolve<TInstallation>();
+
+            return container.RegisterFactory<TInstance>(installation, ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RegisterFactory<T>(this IObjectContainer container, Func<T> creation)
+            where T : notnull
+        {
+            container.RegisterInstance<IFactory<T>>(new Factory<T>(creation));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IFactoryResolution RegisterFactory<TInput, TOutput>(this IObjectContainer container, IInstallation installation, Ownership ownership)
+            where TInput : notnull
+            where TOutput : notnull
+        {
+            var statement = new ReturnFactoryStatement<TInput, TOutput>(container, ownership);
+
+            container.Registration.Register(statement);
+
+            var source = statement.Source;
+
+            source.With(installation);
+
+            return source;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IFactoryResolution RegisterFactory<TInput, TOutput>(this IObjectContainer container, Action<IObjectContainer> installation, Ownership ownership)
+            where TInput : notnull
+            where TOutput : notnull
+        {
+            return container.RegisterFactory<TInput, TOutput>(new Installation(installation), ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IFactoryResolution RegisterFactory<TInput, TOutput, TInstallation>(this IObjectContainer container, Ownership ownership)
+            where TInput : notnull
+            where TOutput : notnull
+            where TInstallation : IInstallation
+        {
+            var installation = container.Resolver.Resolve<TInstallation>();
+
+            return container.RegisterFactory<TInput, TOutput>(installation, ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RegisterFactory<TInput, TOutput>(this IObjectContainer container, Func<TInput, TOutput> creation)
+            where TInput : notnull
+            where TOutput : notnull
+        {
+            container.RegisterInstance<IFactory<TInput, TOutput>>(new Factory<TInput, TOutput>(creation));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
