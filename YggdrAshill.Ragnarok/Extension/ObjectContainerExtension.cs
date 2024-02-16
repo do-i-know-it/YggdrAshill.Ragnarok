@@ -135,6 +135,13 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RegisterFactory<T>(this IObjectContainer container, Func<T> creation)
+            where T : notnull
+        {
+            container.RegisterInstance(new Factory<T>(creation));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IFactoryResolution RegisterFactory<TInput, TOutput>(this IObjectContainer container, IInstallation installation, Ownership ownership)
             where TInput : notnull
             where TOutput : notnull
@@ -167,6 +174,14 @@ namespace YggdrAshill.Ragnarok
             var installation = container.Resolver.Resolve<TInstallation>();
 
             return container.RegisterFactory<TInput, TOutput>(installation, ownership);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void RegisterFactory<TInput, TOutput>(this IObjectContainer container, Func<TInput, TOutput> creation)
+            where TInput : notnull
+            where TOutput : notnull
+        {
+            container.RegisterInstance(new Factory<TInput, TOutput>(creation));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
