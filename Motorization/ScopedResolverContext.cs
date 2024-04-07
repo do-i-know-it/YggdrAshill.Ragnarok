@@ -42,7 +42,7 @@ namespace YggdrAshill.Ragnarok
 
             if (InstallationDescription.CanResolve(type))
             {
-                var activation = interpretation.ActivationOf(type);
+                var activation = interpretation.GetActivation(type);
 
                 return InstallationDescription.Resolve(activation, this);
             }

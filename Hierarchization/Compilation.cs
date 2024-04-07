@@ -13,7 +13,7 @@ namespace YggdrAshill.Ragnarok
 
         public IInstantiation CreateInstantiation(DependencyInjectionRequest request)
         {
-            var activation = interpretation.ActivationOf(request.ImplementedType);
+            var activation = interpretation.GetActivation(request.ImplementedType);
 
             var dependency = activation.Dependency;
 
@@ -29,21 +29,21 @@ namespace YggdrAshill.Ragnarok
 
         public IInjection CreateFieldInjection(DependencyInjectionRequest request)
         {
-            var infusion = interpretation.FieldInfusionOf(request.ImplementedType);
+            var infusion = interpretation.GetFieldInfusion(request.ImplementedType);
 
             return CreateInjection(infusion, request.ParameterList);
         }
 
         public IInjection CreatePropertyInjection(DependencyInjectionRequest request)
         {
-            var infusion = interpretation.PropertyInfusionOf(request.ImplementedType);
+            var infusion = interpretation.GetPropertyInfusion(request.ImplementedType);
 
             return CreateInjection(infusion, request.ParameterList);
         }
 
         public IInjection CreateMethodInjection(DependencyInjectionRequest request)
         {
-            var infusion = interpretation.MethodInfusionOf(request.ImplementedType);
+            var infusion = interpretation.GetMethodInfusion(request.ImplementedType);
 
             return CreateInjection(infusion, request.ParameterList);
         }

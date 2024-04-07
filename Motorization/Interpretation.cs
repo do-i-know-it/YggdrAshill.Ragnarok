@@ -23,7 +23,7 @@ namespace YggdrAshill.Ragnarok
             createMethodInfusion = CreateMethodInfusion;
         }
 
-        public IActivation ActivationOf(Type type)
+        public IActivation GetActivation(Type type)
         {
             return TypeAnalysis.GetActivation(type, createActivation);
         }
@@ -46,7 +46,7 @@ namespace YggdrAshill.Ragnarok
             return operation.CreateActivation(request);
         }
 
-        public IInfusion FieldInfusionOf(Type type)
+        public IInfusion GetFieldInfusion(Type type)
         {
             return TypeAnalysis.GetFieldInfusion(type, createFieldInfusion);
         }
@@ -57,7 +57,7 @@ namespace YggdrAshill.Ragnarok
             return request.FieldList.Length == 0 ? InfuseNothing.Instance : operation.CreateFieldInfusion(request);
         }
 
-        public IInfusion PropertyInfusionOf(Type type)
+        public IInfusion GetPropertyInfusion(Type type)
         {
             return TypeAnalysis.GetPropertyInfusion(type, createPropertyInfusion);
         }
@@ -68,7 +68,7 @@ namespace YggdrAshill.Ragnarok
             return request.PropertyList.Length == 0 ? InfuseNothing.Instance : operation.CreatePropertyInfusion(request);
         }
 
-        public IInfusion MethodInfusionOf(Type type)
+        public IInfusion GetMethodInfusion(Type type)
         {
             return TypeAnalysis.GetMethodInfusion(type, createMethodInfusion);
         }
