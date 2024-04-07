@@ -2,11 +2,11 @@ using System;
 
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class Condition : ICondition
+    internal sealed class StatementCondition : IStatementCondition
     {
         private readonly Func<IStatement, bool> condition;
 
-        public Condition(Func<IStatement, bool> condition)
+        public StatementCondition(Func<IStatement, bool> condition)
         {
             this.condition = condition;
         }

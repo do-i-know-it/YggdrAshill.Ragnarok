@@ -255,7 +255,7 @@ namespace YggdrAshill.Ragnarok
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int Count(this IObjectContainer container, Func<IStatement, bool> condition)
         {
-            return container.Registration.Count(new Condition(condition));
+            return container.Registration.Count(new StatementCondition(condition));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

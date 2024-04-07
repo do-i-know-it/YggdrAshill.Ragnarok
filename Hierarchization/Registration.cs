@@ -17,7 +17,7 @@ namespace YggdrAshill.Ragnarok
         private readonly List<IExecution> executionList = new();
         private readonly List<IDisposable> disposableList = new();
 
-        public int Count(ICondition condition)
+        public int Count(IStatementCondition condition)
         {
             return statementList.Where(condition.IsSatisfied).Count();
         }
