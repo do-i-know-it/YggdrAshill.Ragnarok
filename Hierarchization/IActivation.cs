@@ -6,11 +6,6 @@
     public interface IActivation
     {
         /// <summary>
-        /// <see cref="IDependency"/>s to instantiate.
-        /// </summary>
-        IDependency Dependency { get; }
-
-        /// <summary>
         /// Instantiates with <see cref="object"/>s.
         /// </summary>
         /// <param name="parameterList">

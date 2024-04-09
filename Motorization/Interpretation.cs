@@ -7,10 +7,10 @@ namespace YggdrAshill.Ragnarok
         private readonly IDecision decision;
         private readonly IOperation operation;
 
-        private readonly Func<Type, IActivation> createActivation;
-        private readonly Func<Type, IInfusion> createFieldInfusion;
-        private readonly Func<Type, IInfusion> createPropertyInfusion;
-        private readonly Func<Type, IInfusion> createMethodInfusion;
+        private readonly Func<Type, InstantiationRequest> createActivation;
+        private readonly Func<Type, InjectionRequest> createFieldInfusion;
+        private readonly Func<Type, InjectionRequest> createPropertyInfusion;
+        private readonly Func<Type, InjectionRequest> createMethodInfusion;
 
         public Interpretation(IDecision decision, IOperation operation)
         {
@@ -23,60 +23,61 @@ namespace YggdrAshill.Ragnarok
             createMethodInfusion = CreateMethodInfusion;
         }
 
-        public IActivation GetActivation(Type type)
+        public InstantiationRequest GetInstantiationRequest(Type type)
         {
-            return TypeAnalysis.GetActivation(type, createActivation);
+            return TypeAnalysis.GetInstantiationRequest(type, createActivation);
         }
-        private IActivation CreateActivation(Type type)
+        private InstantiationRequest CreateActivation(Type type)
         {
             if (CollectionDescription.CanResolve(type, out var arrayElementType))
             {
-                return operation.CreateCollectionActivation(new CollectionInjectionRequest(arrayElementType));
+                var collectionActivation = operation.CreateCollectionActivation(arrayElementType);
+                return new InstantiationRequest(WithoutDependency.Instance, collectionActivation);
             }
 
             if (ServiceBundleDescription.CanResolve(type, out var bundleElementType))
             {
                 var bundleRequest = decision.RequestServiceBundleInjection(bundleElementType);
-
-                return operation.CreateActivation(bundleRequest);
+                var bundleActivation = operation.CreateActivation(bundleRequest);
+                return new InstantiationRequest(bundleRequest.Dependency, bundleActivation);
             }
 
             var request = decision.RequestDependencyInjection(type);
-
-            return operation.CreateActivation(request);
+            var activation = operation.CreateActivation(request);
+            return new InstantiationRequest(request.Dependency, activation);
         }
 
-        public IInfusion GetFieldInfusion(Type type)
+        public InjectionRequest GetFieldInjectionRequest(Type type)
         {
-            return TypeAnalysis.GetFieldInfusion(type, createFieldInfusion);
+            return TypeAnalysis.GetFieldInjectionRequest(type, createFieldInfusion);
         }
-        private IInfusion CreateFieldInfusion(Type type)
+        private InjectionRequest CreateFieldInfusion(Type type)
         {
             var request = decision.RequestFieldInjection(type);
-
-            return request.FieldList.Length == 0 ? InfuseNothing.Instance : operation.CreateFieldInfusion(request);
+            var infusion = request.FieldList.Length == 0 ? InfuseNothing.Instance : operation.CreateFieldInfusion(request);
+            return new InjectionRequest(request.Dependency, infusion);
         }
 
-        public IInfusion GetPropertyInfusion(Type type)
+        public InjectionRequest GetPropertyInjectionRequest(Type type)
         {
-            return TypeAnalysis.GetPropertyInfusion(type, createPropertyInfusion);
+            return TypeAnalysis.GetPropertyInjectionRequest(type, createPropertyInfusion);
         }
-        private IInfusion CreatePropertyInfusion(Type type)
+        private InjectionRequest CreatePropertyInfusion(Type type)
         {
             var request = decision.RequestPropertyInjection(type);
-
-            return request.PropertyList.Length == 0 ? InfuseNothing.Instance : operation.CreatePropertyInfusion(request);
+            var infusion = request.PropertyList.Length == 0 ? InfuseNothing.Instance : operation.CreatePropertyInfusion(request);
+            return new InjectionRequest(request.Dependency, infusion);
         }
 
-        public IInfusion GetMethodInfusion(Type type)
+        public InjectionRequest GetMethodInjectionRequest(Type type)
         {
-            return TypeAnalysis.GetMethodInfusion(type, createMethodInfusion);
+            return TypeAnalysis.GetMethodInjectionRequest(type, createMethodInfusion);
         }
-        private IInfusion CreateMethodInfusion(Type type)
+        private InjectionRequest CreateMethodInfusion(Type type)
         {
             var request = decision.RequestMethodInjection(type);
-
-            return request.ParameterList.Length == 0 ? InfuseNothing.Instance : operation.CreateMethodInfusion(request);
+            var infusion = request.ParameterList.Length == 0 ? InfuseNothing.Instance : operation.CreateMethodInfusion(request);
+            return new InjectionRequest(request.Dependency, infusion);
         }
     }
 }

@@ -42,9 +42,8 @@ namespace YggdrAshill.Ragnarok
 
             if (InstallationDescription.CanResolve(type))
             {
-                var activation = interpretation.GetActivation(type);
-
-                return InstallationDescription.Resolve(activation, this);
+                var request = interpretation.GetInstantiationRequest(type);
+                return InstallationDescription.Resolve(request, this);
             }
 
             throw new RagnarokNotRegisteredException(type);

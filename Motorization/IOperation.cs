@@ -54,12 +54,12 @@ namespace YggdrAshill.Ragnarok
         /// <summary>
         /// Creates <see cref="IActivation"/> for collection of <see cref="Type"/>.
         /// </summary>
-        /// <param name="request">
-        /// <see cref="CollectionInjectionRequest"/> for request.
+        /// <param name="elementType">
+        /// <see cref="Type"/> for request.
         /// </param>
         /// <returns>
         /// <see cref="IActivation"/> created.
         /// </returns>
-        IActivation CreateCollectionActivation(CollectionInjectionRequest request);
+        IActivation CreateCollectionActivation(Type elementType);
     }
 }

@@ -6,28 +6,28 @@ namespace YggdrAshill.Ragnarok
 {
     internal static class TypeAnalysis
     {
-        private static readonly ConcurrentDictionary<Type, IActivation> activationCache = new();
-        public static IActivation GetActivation(Type type, Func<Type, IActivation> creation)
+        private static readonly ConcurrentDictionary<Type, InstantiationRequest> instantiationRequestCache = new();
+        public static InstantiationRequest GetInstantiationRequest(Type type, Func<Type, InstantiationRequest> creation)
         {
-            return activationCache.GetOrAdd(type, creation);
+            return instantiationRequestCache.GetOrAdd(type, creation);
         }
 
-        private static readonly ConcurrentDictionary<Type, IInfusion> fieldInfusionCache = new();
-        public static IInfusion GetFieldInfusion(Type type, Func<Type, IInfusion> creation)
+        private static readonly ConcurrentDictionary<Type, InjectionRequest> fieldInjectionRequestCache = new();
+        public static InjectionRequest GetFieldInjectionRequest(Type type, Func<Type, InjectionRequest> creation)
         {
-            return fieldInfusionCache.GetOrAdd(type, creation);
+            return fieldInjectionRequestCache.GetOrAdd(type, creation);
         }
 
-        private static readonly ConcurrentDictionary<Type, IInfusion> propertyInfusionCache = new();
-        public static IInfusion GetPropertyInfusion(Type type, Func<Type, IInfusion> creation)
+        private static readonly ConcurrentDictionary<Type, InjectionRequest> propertyInjectionRequestCache = new();
+        public static InjectionRequest GetPropertyInjectionRequest(Type type, Func<Type, InjectionRequest> creation)
         {
-            return propertyInfusionCache.GetOrAdd(type, creation);
+            return propertyInjectionRequestCache.GetOrAdd(type, creation);
         }
 
-        private static readonly ConcurrentDictionary<Type, IInfusion> methodInfusionCache = new();
-        public static IInfusion GetMethodInfusion(Type type, Func<Type, IInfusion> creation)
+        private static readonly ConcurrentDictionary<Type, InjectionRequest> methodInjectionRequestCache = new();
+        public static InjectionRequest GetMethodInjectionRequest(Type type, Func<Type, InjectionRequest> creation)
         {
-            return methodInfusionCache.GetOrAdd(type, creation);
+            return methodInjectionRequestCache.GetOrAdd(type, creation);
         }
 
         [ThreadStatic]
@@ -65,9 +65,9 @@ namespace YggdrAshill.Ragnarok
 
             stack.Push(current);
 
-            if (activationCache.TryGetValue(current, out var constructorInjection))
+            if (instantiationRequestCache.TryGetValue(current, out var instantiationRequest))
             {
-                foreach (var type in constructorInjection.Dependency.DependentTypeList)
+                foreach (var type in instantiationRequest.Dependency.DependentTypeList)
                 {
                     if (CanResolve(resolver, type, out var description))
                     {
@@ -76,7 +76,7 @@ namespace YggdrAshill.Ragnarok
                 }
             }
 
-            if (methodInfusionCache.TryGetValue(current, out var methodInjection))
+            if (methodInjectionRequestCache.TryGetValue(current, out var methodInjection))
             {
                 foreach (var type in methodInjection.Dependency.DependentTypeList)
                 {
@@ -87,7 +87,7 @@ namespace YggdrAshill.Ragnarok
                 }
             }
 
-            if (fieldInfusionCache.TryGetValue(current, out var fieldInjection))
+            if (fieldInjectionRequestCache.TryGetValue(current, out var fieldInjection))
             {
                 foreach (var type in fieldInjection.Dependency.DependentTypeList)
                 {
@@ -98,7 +98,7 @@ namespace YggdrAshill.Ragnarok
                 }
             }
 
-            if (propertyInfusionCache.TryGetValue(current, out var propertyInjection))
+            if (propertyInjectionRequestCache.TryGetValue(current, out var propertyInjection))
             {
                 foreach (var type in propertyInjection.Dependency.DependentTypeList)
                 {

@@ -37,7 +37,7 @@ namespace YggdrAshill.Ragnarok
 
             var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList).Compile();
 
-            return new ActivateWithFunction(lambda, request.Dependency);
+            return new ActivateWithFunction(lambda);
         }
 
         /// <inheritdoc/>
@@ -63,7 +63,7 @@ namespace YggdrAshill.Ragnarok
 
             var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
 
-            return new InfuseWithAction(lambda, request.Dependency);
+            return new InfuseWithAction(lambda);
         }
 
         /// <inheritdoc/>
@@ -90,7 +90,7 @@ namespace YggdrAshill.Ragnarok
 
             var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
 
-            return new InfuseWithAction(lambda, request.Dependency);
+            return new InfuseWithAction(lambda);
         }
 
         /// <inheritdoc/>
@@ -115,13 +115,12 @@ namespace YggdrAshill.Ragnarok
 
             var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
 
-            return new InfuseWithAction(lambda, request.Dependency);
+            return new InfuseWithAction(lambda);
         }
 
         /// <inheritdoc/>
-        public IActivation CreateCollectionActivation(CollectionInjectionRequest request)
+        public IActivation CreateCollectionActivation(Type elementType)
         {
-            var elementType = request.ElementType;
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
             var length = Expression.Parameter(typeof(int), "length");
             var assignParameterListLength = Expression.Assign(length, Expression.ArrayLength(parameterList));
@@ -150,7 +149,7 @@ namespace YggdrAshill.Ragnarok
 
             var method = lambda.Compile();
 
-            return new ActivateWithFunction(method, request.Dependency);
+            return new ActivateWithFunction(method);
         }
     }
 }

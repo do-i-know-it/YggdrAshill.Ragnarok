@@ -9,8 +9,6 @@ namespace YggdrAshill.Ragnarok
             this.request = request;
         }
 
-        public IDependency Dependency => request.Dependency;
-
         public object Activate(object[] parameterList)
         {
             var constructor = request.Constructor;

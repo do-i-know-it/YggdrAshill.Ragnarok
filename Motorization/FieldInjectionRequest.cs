@@ -35,27 +35,27 @@ namespace YggdrAshill.Ragnarok
         }
 
         private IDependency? dependency;
+
+        /// <summary>
+        /// <see cref="IDependency"/> for <see cref="ImplementedType"/>.
+        /// </summary>
         public IDependency Dependency
         {
             get
             {
-                if (dependency == null)
+                if (dependency != null)
                 {
-                    dependency = CreateDependency();
+                    return dependency;
                 }
 
-                return dependency;
-            }
-        }
-        private IDependency CreateDependency()
-        {
-            if (FieldList.Length == 0)
-            {
-                return WithoutDependency.Instance;
-            }
+                if (FieldList.Length == 0)
+                {
+                    return dependency = WithoutDependency.Instance;
+                }
 
-            var argumentList = FieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray();
-            return new WithDependency(argumentList);
+                var argumentList = FieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray();
+                return dependency = new WithDependency(argumentList);
+            }
         }
     }
 }

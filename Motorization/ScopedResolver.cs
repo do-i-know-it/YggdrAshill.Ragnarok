@@ -127,14 +127,14 @@ namespace YggdrAshill.Ragnarok
 
             description = descriptionCache.GetOrAdd(type, _ =>
             {
-                var activation = interpretation.GetActivation(type);
+                var request = interpretation.GetInstantiationRequest(type);
 
                 if (!CanResolve(elementType, out var elementDescription))
                 {
-                    return new CollectionDescription(elementType, activation, Array.Empty<IDescription>());
+                    return new CollectionDescription(elementType, request.Activation, Array.Empty<IDescription>());
                 }
 
-                return new CollectionDescription(elementType, activation, new[] { elementDescription! });
+                return new CollectionDescription(elementType, request.Activation, new[] { elementDescription! });
             });
 
             return true;
@@ -155,9 +155,9 @@ namespace YggdrAshill.Ragnarok
             {
                 description = descriptionCache.GetOrAdd(type, _ =>
                 {
-                    var activation = interpretation.GetActivation(type);
+                    var request = interpretation.GetInstantiationRequest(type);
 
-                    return new ServiceBundleDescription(type, activation, collection);
+                    return new ServiceBundleDescription(type, request.Activation, collection);
                 });
 
                 return true;
@@ -177,9 +177,8 @@ namespace YggdrAshill.Ragnarok
 
             description = descriptionCache.GetOrAdd(type, _ =>
             {
-                var activation = interpretation.GetActivation(type);
-
-                return new InstallationDescription(type, activation);
+                var request = interpretation.GetInstantiationRequest(type);
+                return new InstallationDescription(type, request);
             });
 
             return true;

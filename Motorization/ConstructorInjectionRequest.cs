@@ -20,11 +20,6 @@ namespace YggdrAshill.Ragnarok
         public ConstructorInfo Constructor { get; }
 
         /// <summary>
-        /// <see cref="ParameterInfo"/>s for <see cref="ImplementedType"/>.
-        /// </summary>
-        public ParameterInfo[] ParameterList { get; }
-
-        /// <summary>
         /// Constructor of <see cref="ConstructorInjectionRequest"/>.
         /// </summary>
         /// <param name="implementedType">
@@ -37,31 +32,37 @@ namespace YggdrAshill.Ragnarok
         {
             ImplementedType = implementedType;
             Constructor = constructor;
-            ParameterList = Constructor.GetParameters();
         }
 
+        private ParameterInfo[]? parameterList;
+
+        /// <summary>
+        /// <see cref="ParameterInfo"/>s for <see cref="ImplementedType"/>.
+        /// </summary>
+        public ParameterInfo[] ParameterList => parameterList ??= Constructor.GetParameters();
+
         private IDependency? dependency;
+
+        /// <summary>
+        /// <see cref="IDependency"/> for <see cref="ImplementedType"/>.
+        /// </summary>
         public IDependency Dependency
         {
             get
             {
-                if (dependency == null)
+                if (dependency != null)
                 {
-                    dependency = CreateDependency();
+                    return dependency;
                 }
 
-                return dependency;
-            }
-        }
-        private IDependency CreateDependency()
-        {
-            if (ParameterList.Length == 0)
-            {
-                return WithoutDependency.Instance;
-            }
+                if (ParameterList.Length == 0)
+                {
+                    return dependency = WithoutDependency.Instance;
+                }
 
-            var argumentList = ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
-            return new WithDependency(argumentList);
+                var argumentList = ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
+                return dependency = new WithDependency(argumentList);
+            }
         }
     }
 }

@@ -9,8 +9,6 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public IDependency Dependency => WithoutDependency.Instance;
-
         public void Infuse(object instance, object[] parameterList)
         {
 

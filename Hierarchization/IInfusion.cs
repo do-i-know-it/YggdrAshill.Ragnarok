@@ -6,11 +6,6 @@
     public interface IInfusion
     {
         /// <summary>
-        /// <see cref="IDependency"/>s to instantiate.
-        /// </summary>
-        IDependency Dependency { get; }
-
-        /// <summary>
         /// Injects <see cref="object"/>s into instance.
         /// </summary>
         /// <param name="instance">

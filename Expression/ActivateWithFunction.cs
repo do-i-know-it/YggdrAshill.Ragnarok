@@ -6,13 +6,9 @@ namespace YggdrAshill.Ragnarok
     {
         private readonly Func<object[], object> onActivated;
 
-        public IDependency Dependency { get; }
-
-        public ActivateWithFunction(Func<object[], object> onActivated, IDependency dependency)
+        public ActivateWithFunction(Func<object[], object> onActivated)
         {
             this.onActivated = onActivated;
-
-            Dependency = dependency;
         }
 
         public object Activate(object[] parameterList)

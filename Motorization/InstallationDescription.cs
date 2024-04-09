@@ -9,11 +9,11 @@ namespace YggdrAshill.Ragnarok
             return TypeCache.Installation.IsAssignableFrom(type);
         }
 
-        public static object Resolve(IActivation activation, IObjectResolver resolver)
+        public static object Resolve(InstantiationRequest request, IObjectResolver resolver)
         {
-            var realization = activation.Dependency.CreateRealization(Array.Empty<IParameter>());
+            var realization = request.Dependency.CreateRealization(Array.Empty<IParameter>());
             var instanceList = realization.Realize(resolver);
-            return activation.Activate(instanceList);
+            return request.Activation.Activate(instanceList);
         }
 
         private readonly IRealization realization;
@@ -21,11 +21,11 @@ namespace YggdrAshill.Ragnarok
 
         public Type ImplementedType { get; }
 
-        public InstallationDescription(Type implementedType, IActivation activation)
+        public InstallationDescription(Type implementedType, InstantiationRequest request)
         {
             ImplementedType = implementedType;
-            this.activation = activation;
-            realization = activation.Dependency.CreateRealization(Array.Empty<IParameter>());
+            activation = request.Activation;
+            realization = request.Dependency.CreateRealization(Array.Empty<IParameter>());
         }
 
         public Lifetime Lifetime => Lifetime.Temporal;

@@ -97,9 +97,9 @@ namespace YggdrAshill.Ragnarok
             {
                 var implementedType = TypeCache.ArrayTypeOf(elementType);
 
-                var activation = interpretation.GetActivation(implementedType);
+                var request = interpretation.GetInstantiationRequest(implementedType);
 
-                var collection = new CollectionDescription(elementType, activation, registrationList.ToArray());
+                var collection = new CollectionDescription(elementType, request.Activation, registrationList.ToArray());
 
                 foreach (var assignedType in CollectionDescription.AssignedTypeListOf(elementType))
                 {

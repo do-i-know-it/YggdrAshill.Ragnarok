@@ -1,3 +1,5 @@
+using System;
+
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
@@ -40,9 +42,9 @@ namespace YggdrAshill.Ragnarok
         }
 
         /// <inheritdoc/>
-        public IActivation CreateCollectionActivation(CollectionInjectionRequest request)
+        public IActivation CreateCollectionActivation(Type elementType)
         {
-            return new CollectionActivation(request);
+            return new CollectionActivation(elementType);
         }
     }
 }
