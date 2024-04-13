@@ -5,13 +5,13 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Defines how to activate or infuse instance.
     /// </summary>
-    public interface IOperation
+    public interface IDependencyOperation
     {
         /// <summary>
-        /// Creates <see cref="IActivation"/> for <see cref="ConstructorInjectionRequest"/>.
+        /// Creates <see cref="IActivation"/> for <paramref name="request"/>.
         /// </summary>
         /// <param name="request">
-        /// <see cref="ConstructorInjectionRequest"/> for request.
+        /// <see cref="ConstructorInjectionRequest"/> to create.
         /// </param>
         /// <returns>
         /// <see cref="IActivation"/> created.
@@ -19,10 +19,10 @@ namespace YggdrAshill.Ragnarok
         IActivation CreateActivation(ConstructorInjectionRequest request);
 
         /// <summary>
-        /// Creates <see cref="IInfusion"/> for <see cref="FieldInjectionRequest"/>.
+        /// Creates <see cref="IInfusion"/> for <paramref name="request"/>.
         /// </summary>
         /// <param name="request">
-        /// <see cref="FieldInjectionRequest"/> for request.
+        /// <see cref="FieldInjectionRequest"/> to create.
         /// </param>
         /// <returns>
         /// <see cref="IInfusion"/> created.
@@ -30,10 +30,10 @@ namespace YggdrAshill.Ragnarok
         IInfusion CreateFieldInfusion(FieldInjectionRequest request);
 
         /// <summary>
-        /// Creates <see cref="IInfusion"/> for <see cref="PropertyInjectionRequest"/>.
+        /// Creates <see cref="IInfusion"/> for <paramref name="request"/>.
         /// </summary>
         /// <param name="request">
-        /// <see cref="PropertyInjectionRequest"/> for request.
+        /// <see cref="PropertyInjectionRequest"/> to create.
         /// </param>
         /// <returns>
         /// <see cref="IInfusion"/> created.
@@ -41,10 +41,10 @@ namespace YggdrAshill.Ragnarok
         IInfusion CreatePropertyInfusion(PropertyInjectionRequest request);
 
         /// <summary>
-        /// Creates <see cref="IInfusion"/> for <see cref="MethodInjectionRequest"/>.
+        /// Creates <see cref="IInfusion"/> for <paramref name="request"/>.
         /// </summary>
         /// <param name="request">
-        /// <see cref="MethodInjectionRequest"/> for request.
+        /// <see cref="MethodInjectionRequest"/> to create.
         /// </param>
         /// <returns>
         /// <see cref="IInfusion"/> created.
@@ -52,10 +52,21 @@ namespace YggdrAshill.Ragnarok
         IInfusion CreateMethodInfusion(MethodInjectionRequest request);
 
         /// <summary>
-        /// Creates <see cref="IActivation"/> for collection of <see cref="Type"/>.
+        /// Creates <see cref="IActivation"/> for <paramref name="type"/>.
+        /// </summary>
+        /// <param name="type">
+        /// <see cref="Type"/> to create.
+        /// </param>
+        /// <returns>
+        /// <see cref="IActivation"/> created.
+        /// </returns>
+        IActivation CreateActivation(Type type);
+
+        /// <summary>
+        /// Creates <see cref="IActivation"/> for collection of <paramref name="elementType"/>.
         /// </summary>
         /// <param name="elementType">
-        /// <see cref="Type"/> for request.
+        /// <see cref="Type"/> to create.
         /// </param>
         /// <returns>
         /// <see cref="IActivation"/> created.

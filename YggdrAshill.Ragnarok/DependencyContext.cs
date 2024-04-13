@@ -34,13 +34,16 @@ namespace YggdrAshill.Ragnarok
         /// <summary>
         /// Creates <see cref="DependencyContext"/>.
         /// </summary>
-        /// <param name="decision">
-        /// <see cref="IDecision"/> for <see cref="DependencyContext"/>.
+        /// <param name="enumeration">
+        /// <see cref="IDependencyEnumeration"/> for <see cref="ScopedResolverContext"/>.
+        /// </param>
+        /// <param name="selection">
+        /// <see cref="IDependencySelection"/> for <see cref="ScopedResolverContext"/>.
         /// </param>
         /// <param name="operation">
-        /// <see cref="IOperation"/> for <see cref="DependencyContext"/>.
+        /// <see cref="IDependencyOperation"/> for <see cref="ScopedResolverContext"/>.
         /// </param>
-        public DependencyContext(IDecision decision, IOperation operation) : this(new ScopedResolverContext(decision, operation))
+        public DependencyContext(IDependencyEnumeration enumeration, IDependencySelection selection, IDependencyOperation operation) : this(new ScopedResolverContext(enumeration, selection, operation))
         {
 
         }
@@ -49,12 +52,13 @@ namespace YggdrAshill.Ragnarok
         /// Creates <see cref="DependencyContext"/>.
         /// </summary>
         /// <param name="operation">
-        /// <see cref="IOperation"/> for <see cref="DependencyContext"/>.
+        /// <see cref="IDependencyOperation"/> for <see cref="ScopedResolverContext"/>.
         /// </param>
         /// <remarks>
-        /// <see cref="IDecision"/> is <see cref="AnnotateToDecide"/>.
+        /// <see cref="IDependencyEnumeration"/> is <see cref="DependencyEnumeration"/> and
+        /// <see cref="IDependencySelection"/> is <see cref="AnnotateToSelect"/>.
         /// </remarks>
-        public DependencyContext(IOperation operation) : this(AnnotateToDecide.Instance, operation)
+        public DependencyContext(IDependencyOperation operation) : this(DependencyEnumeration.Instance, AnnotateToSelect.Instance, operation)
         {
 
         }
@@ -63,10 +67,11 @@ namespace YggdrAshill.Ragnarok
         /// Creates <see cref="DependencyContext"/>.
         /// </summary>
         /// <remarks>
-        /// <see cref="IDecision"/> is <see cref="AnnotateToDecide"/>, and
-        /// <see cref="IOperation"/> is <see cref="ExpressionToOperate"/>.
+        /// <see cref="IDependencyEnumeration"/> is <see cref="DependencyEnumeration"/>,
+        /// <see cref="IDependencySelection"/> is <see cref="AnnotateToSelect"/> and
+        /// <see cref="IDependencyOperation"/> is <see cref="ExpressionToOperate"/>.
         /// </remarks>
-        public DependencyContext() : this(AnnotateToDecide.Instance, ExpressionToOperate.Instance)
+        public DependencyContext() : this(DependencyEnumeration.Instance, AnnotateToSelect.Instance, ExpressionToOperate.Instance)
         {
 
         }

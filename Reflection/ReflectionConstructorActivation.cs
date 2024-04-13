@@ -1,10 +1,10 @@
 namespace YggdrAshill.Ragnarok
 {
-    internal sealed class ReflectionActivation : IActivation
+    internal sealed class ReflectionConstructorActivation : IActivation
     {
         private readonly ConstructorInjectionRequest request;
 
-        public ReflectionActivation(ConstructorInjectionRequest request)
+        public ReflectionConstructorActivation(ConstructorInjectionRequest request)
         {
             this.request = request;
         }

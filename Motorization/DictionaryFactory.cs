@@ -5,12 +5,12 @@ namespace YggdrAshill.Ragnarok
 {
     internal readonly struct DictionaryFactory : IDisposable
     {
-        private readonly IInterpretation interpretation;
+        private readonly Interpretation interpretation;
         private readonly IEnumerable<IStatement> statementList;
         private readonly Dictionary<Type, IDescription?> tableOfTypeToDescription;
         private readonly Dictionary<Type, List<IDescription>> tableOfTypeToDescriptionList;
 
-        public DictionaryFactory(IInterpretation interpretation, IEnumerable<IStatement> statementList)
+        public DictionaryFactory(Interpretation interpretation, IEnumerable<IStatement> statementList)
         {
             this.interpretation = interpretation;
             this.statementList = statementList;
@@ -95,13 +95,8 @@ namespace YggdrAshill.Ragnarok
         {
             foreach (var (elementType, registrationList) in tableOfTypeToDescriptionList)
             {
-                var implementedType = TypeCache.ArrayTypeOf(elementType);
-
-                var request = interpretation.GetInstantiationRequest(implementedType);
-
-                var collection = new CollectionDescription(elementType, request.Activation, registrationList.ToArray());
-
-                foreach (var assignedType in CollectionDescription.AssignedTypeListOf(elementType))
+                var collection = interpretation.CreateCollectionDescription(elementType, registrationList.ToArray());
+                foreach (var assignedType in interpretation.GetAssignedTypeList(elementType))
                 {
                     if (tableOfTypeToDescription.TryGetValue(assignedType, out _))
                     {

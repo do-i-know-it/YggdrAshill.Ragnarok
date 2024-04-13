@@ -76,7 +76,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationList))]
-        public void ShouldResolveResolver(IOperation operation)
+        public void ShouldResolveResolver(IDependencyOperation operation)
         {
             using var scope = new DependencyContext(operation).CreateScope();
 
@@ -86,7 +86,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldResolveObject(IOperation operation, Lifetime lifetime)
+        public void ShouldResolveObject(IDependencyOperation operation, Lifetime lifetime)
         {
             var parentContext = new DependencyContext(operation);
 
@@ -108,7 +108,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldDisposeResolvedObjectWhenHasDisposed(IOperation operation, Lifetime lifetime)
+        public void ShouldDisposeResolvedObjectWhenHasDisposed(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -124,7 +124,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationList))]
-        public void ShouldResolveInstance(IOperation operation)
+        public void ShouldResolveInstance(IDependencyOperation operation)
         {
             var parentContext = new DependencyContext(operation);
 
@@ -148,7 +148,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationList))]
-        public void ShouldNotDisposeInstanceWhenHasDisposed(IOperation operation)
+        public void ShouldNotDisposeInstanceWhenHasDisposed(IDependencyOperation operation)
         {
             var context = new DependencyContext(operation);
 
@@ -168,7 +168,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldCreateObject(IOperation operation, Lifetime lifetime)
+        public void ShouldCreateObject(IDependencyOperation operation, Lifetime lifetime)
         {
             var parentContext = new DependencyContext(operation);
 
@@ -190,7 +190,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeAndOwnershipMatrix))]
-        public void ShouldManageCreatedObjectWhenHasDisposed(IOperation operation, Lifetime lifetime, Ownership ownership)
+        public void ShouldManageCreatedObjectWhenHasDisposed(IDependencyOperation operation, Lifetime lifetime, Ownership ownership)
         {
             var context = new DependencyContext(operation);
 
@@ -206,7 +206,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldResolveObjectImmediatelyJustAfterCreatingScope(IOperation operation, Lifetime lifetime)
+        public void ShouldResolveObjectImmediatelyJustAfterCreatingScope(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -223,7 +223,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldResolveObjectAsInheritedType(IOperation operation, Lifetime lifetime)
+        public void ShouldResolveObjectAsInheritedType(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -248,7 +248,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldResolveObjectAsImplementedInterfaces(IOperation operation, Lifetime lifetime)
+        public void ShouldResolveObjectAsImplementedInterfaces(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -273,7 +273,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldResolveObjectAsInheritedAndOwnType(IOperation operation, Lifetime lifetime)
+        public void ShouldResolveObjectAsInheritedAndOwnType(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -298,7 +298,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldResolveObjectAsImplementedInterfacesAndOwnType(IOperation operation, Lifetime lifetime)
+        public void ShouldResolveObjectAsImplementedInterfacesAndOwnType(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -323,7 +323,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldResolveDependencyFromGlobalScope(IOperation operation, Lifetime lifetime)
+        public void ShouldResolveDependencyFromGlobalScope(IDependencyOperation operation, Lifetime lifetime)
         {
             var parentContext = new DependencyContext(operation);
 
@@ -350,7 +350,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationList))]
-        public void ShouldResolveCollection(IOperation operation)
+        public void ShouldResolveCollection(IDependencyOperation operation)
         {
             var parentInjectionCount = new Random().Next(MinMultipleInjectionCount, MaxMultipleInjectionCount);
 
@@ -380,7 +380,7 @@ namespace YggdrAshill.Ragnarok.Specification
             var parentReadOnlyList = parentScope.Resolver.Resolve<IReadOnlyList<IService>>();
             var parentReadOnlyCollection = parentScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
             var parentEnumerable = parentScope.Resolver.Resolve<IEnumerable<IService>>();
-            var parentPackage = parentScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
+            var parentPackage = parentScope.Resolver.Resolve<ServiceBundle<IService>>().Package;
 
             Assert.That(parentArray.Length, Is.EqualTo(totalParentInjectionAmount));
             Assert.That(parentReadOnlyList.Count, Is.EqualTo(totalParentInjectionAmount));
@@ -410,7 +410,7 @@ namespace YggdrAshill.Ragnarok.Specification
             var childReadOnlyList = childScope.Resolver.Resolve<IReadOnlyList<IService>>();
             var childReadOnlyCollection = childScope.Resolver.Resolve<IReadOnlyCollection<IService>>();
             var childEnumerable = childScope.Resolver.Resolve<IEnumerable<IService>>();
-            var childPackage = childScope.Resolver.Resolve<IServiceBundle<IService>>().Package;
+            var childPackage = childScope.Resolver.Resolve<ServiceBundle<IService>>().Package;
 
             var totalChildPackageAmount = parentInjectionCount + childInjectionCount;
             var totalChildInjectionAmount = parentInjectionCount + childInjectionCount + 1;
@@ -423,7 +423,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldInjectDependencyIntoField(IOperation operation, Lifetime lifetime)
+        public void ShouldInjectDependencyIntoField(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -440,7 +440,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldInjectDependencyIntoProperty(IOperation operation, Lifetime lifetime)
+        public void ShouldInjectDependencyIntoProperty(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -457,7 +457,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldInjectDependencyIntoMethod(IOperation operation, Lifetime lifetime)
+        public void ShouldInjectDependencyIntoMethod(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -474,7 +474,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldInjectInstance(IOperation operation, Lifetime lifetime)
+        public void ShouldInjectInstance(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -490,7 +490,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldInjectInstanceIntoField(IOperation operation, Lifetime lifetime)
+        public void ShouldInjectInstanceIntoField(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -506,7 +506,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldInjectInstanceIntoProperty(IOperation operation, Lifetime lifetime)
+        public void ShouldInjectInstanceIntoProperty(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -522,7 +522,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldInjectInstanceIntoMethod(IOperation operation, Lifetime lifetime)
+        public void ShouldInjectInstanceIntoMethod(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -538,7 +538,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationList))]
-        public void ShouldRegisterInstallationInRootContext(IOperation operation)
+        public void ShouldRegisterInstallationInRootContext(IDependencyOperation operation)
         {
             var context = new DependencyContext(operation);
 
@@ -553,7 +553,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationList))]
-        public void ShouldRegisterInstallationInChildContext(IOperation operation)
+        public void ShouldRegisterInstallationInChildContext(IDependencyOperation operation)
         {
             var parentContext = new DependencyContext(operation);
             parentContext.RegisterInstance(0);
@@ -573,7 +573,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationList))]
-        public void ShouldResolveFromSubContainer(IOperation operation)
+        public void ShouldResolveFromSubContainer(IDependencyOperation operation)
         {
             var context = new DependencyContext(operation);
 
@@ -599,7 +599,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndOwnershipMatrix))]
-        public void ShouldResolveFactory(IOperation operation, Ownership ownership)
+        public void ShouldResolveFactory(IDependencyOperation operation, Ownership ownership)
         {
             var context = new DependencyContext(operation);
 
@@ -624,7 +624,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndOwnershipMatrix))]
-        public void ShouldResolveFactoryToCreateOutputFromInput(IOperation operation, Ownership ownership)
+        public void ShouldResolveFactoryToCreateOutputFromInput(IDependencyOperation operation, Ownership ownership)
         {
             var context = new DependencyContext(operation);
 
@@ -653,7 +653,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldCreateScopeWithoutCircularDependency(IOperation operation, Lifetime lifetime)
+        public void ShouldCreateScopeWithoutCircularDependency(IDependencyOperation operation, Lifetime lifetime)
         {
             var parentContext = new DependencyContext(operation);
             parentContext.Register<CircularDependencyClass1>(lifetime);
@@ -680,7 +680,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldDetectCircularDependencyInLocalScope(IOperation operation, Lifetime lifetime)
+        public void ShouldDetectCircularDependencyInLocalScope(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
@@ -702,7 +702,7 @@ namespace YggdrAshill.Ragnarok.Specification
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldDetectCircularDependencyInGlobalScope(IOperation operation, Lifetime lifetime)
+        public void ShouldDetectCircularDependencyInGlobalScope(IDependencyOperation operation, Lifetime lifetime)
         {
             var parentContext = new DependencyContext(operation);
 

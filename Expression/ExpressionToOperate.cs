@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="IOperation"/> with <see cref="Expression"/>.
+    /// Implementation of <see cref="IDependencyOperation"/> with <see cref="Expression"/>.
     /// </summary>
-    public sealed class ExpressionToOperate : IOperation
+    public sealed class ExpressionToOperate : IDependencyOperation
     {
         /// <summary>
         /// Singleton instance of <see cref="ExpressionToOperate"/>.
@@ -29,14 +29,11 @@ namespace YggdrAshill.Ragnarok
             var convertedParameterList = argumentList.Select((argument, index) =>
             {
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
-
                 return Expression.Convert(parameter, argument.ParameterType);
             });
 
             var body = Expression.New(constructor, convertedParameterList);
-
             var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList).Compile();
-
             return new ActivateWithFunction(lambda);
         }
 
@@ -55,14 +52,11 @@ namespace YggdrAshill.Ragnarok
                 var field = Expression.Field(convertedInstance, fieldInfo);
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
                 var convertedParameter = Expression.Convert(parameter, fieldInfo.FieldType);
-
                 return Expression.Assign(field, convertedParameter);
             });
 
             var body = Expression.Block(assignedFieldList);
-
             var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
-
             return new InfuseWithAction(lambda);
         }
 
@@ -76,20 +70,16 @@ namespace YggdrAshill.Ragnarok
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
 
             var convertedInstance = Expression.Convert(instance, implementedType);
-
             var assignedPropertyList = propertyList.Select((propertyInfo, index) =>
             {
                 var property = Expression.Property(convertedInstance, propertyInfo);
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
                 var convertedParameter = Expression.Convert(parameter, propertyInfo.PropertyType);
-
                 return Expression.Assign(property, convertedParameter);
             });
 
             var body = Expression.Block(assignedPropertyList);
-
             var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
-
             return new InfuseWithAction(lambda);
         }
 
@@ -107,15 +97,20 @@ namespace YggdrAshill.Ragnarok
             var convertedParameterList = argumentList.Select((argument, index) =>
             {
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
-
                 return Expression.Convert(parameter, argument.ParameterType);
             });
 
             var body = Expression.Call(convertedInstance, method, convertedParameterList);
-
             var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
-
             return new InfuseWithAction(lambda);
+        }
+
+        public IActivation CreateActivation(Type type)
+        {
+            var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
+            var body = Expression.New(type);
+            var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList).Compile();
+            return new ActivateWithFunction(lambda);
         }
 
         /// <inheritdoc/>
@@ -146,9 +141,7 @@ namespace YggdrAshill.Ragnarok
             var body
                 = Expression.Block(typeof(object), new[]{ length , array}, assignParameterListLength, assignArray, loop, array);
             var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList);
-
             var method = lambda.Compile();
-
             return new ActivateWithFunction(method);
         }
     }

@@ -6,7 +6,7 @@ namespace YggdrAshill.Ragnarok
     {
         public static bool CanResolve(Type type)
         {
-            return TypeCache.Installation.IsAssignableFrom(type);
+            return typeof(IInstallation).IsAssignableFrom(type);
         }
 
         public static object Resolve(InstantiationRequest request, IObjectResolver resolver)

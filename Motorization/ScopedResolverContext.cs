@@ -20,14 +20,17 @@ namespace YggdrAshill.Ragnarok
         /// <summary>
         /// Constructor of <see cref="ScopedResolverContext"/> for root <see cref="IScopedResolver"/>.
         /// </summary>
-        /// <param name="decision">
-        /// <see cref="IDecision"/> for <see cref="ScopedResolverContext"/>.
+        /// <param name="enumeration">
+        /// <see cref="IDependencyEnumeration"/> for <see cref="ScopedResolverContext"/>.
         /// </param>
-        /// /// <param name="operation">
-        /// <see cref="IOperation"/> for <see cref="ScopedResolverContext"/>.
+        /// <param name="selection">
+        /// <see cref="IDependencySelection"/> for <see cref="ScopedResolverContext"/>.
         /// </param>
-        public ScopedResolverContext(IDecision decision, IOperation operation)
-            : this(new Interpretation(decision, operation), null)
+        /// <param name="operation">
+        /// <see cref="IDependencyOperation"/> for <see cref="ScopedResolverContext"/>.
+        /// </param>
+        public ScopedResolverContext(IDependencyEnumeration enumeration, IDependencySelection selection, IDependencyOperation operation)
+            : this(new Interpretation(enumeration, selection, operation), null)
         {
 
         }
@@ -56,13 +59,9 @@ namespace YggdrAshill.Ragnarok
         public IScopedResolver Build(IReadOnlyList<IStatement> statementList)
         {
             using var factory = new DictionaryFactory(interpretation, statementList);
-
             var content = factory.Create();
-
             var resolver = new ScopedResolver(content, interpretation, parent);
-
-            TypeAnalysis.Validate(statementList, resolver);
-
+            interpretation.Validate(statementList, resolver);
             return resolver;
         }
     }
