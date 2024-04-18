@@ -24,6 +24,7 @@ namespace YggdrAshill.Ragnarok
         {
             var constructor = request.Constructor;
             var argumentList = request.ParameterList;
+            var implementedType = request.ImplementedType;
 
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
             var convertedParameterList = argumentList.Select((argument, index) =>
@@ -32,7 +33,11 @@ namespace YggdrAshill.Ragnarok
                 return Expression.Convert(parameter, argument.ParameterType);
             });
 
-            var body = Expression.New(constructor, convertedParameterList);
+            var body = (Expression)Expression.New(constructor, convertedParameterList);
+            if (implementedType.IsValueType)
+            {
+                body = Expression.Convert(body, typeof(object));
+            }
             var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList).Compile();
             return new ActivateWithFunction(lambda);
         }
@@ -108,7 +113,11 @@ namespace YggdrAshill.Ragnarok
         public IActivation CreateActivation(Type type)
         {
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
-            var body = Expression.New(type);
+            var body = (Expression)Expression.New(type);
+            if (type.IsValueType)
+            {
+                body = Expression.Convert(body, typeof(object));
+            }
             var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList).Compile();
             return new ActivateWithFunction(lambda);
         }
