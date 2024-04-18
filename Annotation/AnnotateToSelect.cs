@@ -25,13 +25,13 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public bool IsValid(FieldInfo info)
         {
-            return info.IsDefined(typeof(InjectFieldAttribute), true) && !info.IsLiteral &&!info.IsInitOnly;
+            return info.IsDefined(typeof(InjectFieldAttribute), true);
         }
 
         /// <inheritdoc/>
         public bool IsValid(PropertyInfo info)
         {
-            return info.IsDefined(typeof(InjectPropertyAttribute), true) && info.SetMethod != null;
+            return info.IsDefined(typeof(InjectPropertyAttribute), true);
         }
 
         /// <inheritdoc/>

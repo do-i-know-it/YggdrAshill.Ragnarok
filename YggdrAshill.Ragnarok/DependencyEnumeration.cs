@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace YggdrAshill.Ragnarok
 {
@@ -30,13 +31,13 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public IEnumerable<FieldInfo> GetFieldList(Type type)
         {
-            return type.GetFields(Binding);
+            return type.GetFields(Binding).Where(info => !info.IsLiteral &&!info.IsInitOnly && !info.IsDefined(typeof(CompilerGeneratedAttribute), false));
         }
 
         /// <inheritdoc/>
         public IEnumerable<PropertyInfo> GetPropertyList(Type type)
         {
-            return type.GetProperties(Binding);
+            return type.GetProperties(Binding).Where(info => info.SetMethod != null && info.GetIndexParameters().Length == 0);
         }
 
         /// <inheritdoc/>
