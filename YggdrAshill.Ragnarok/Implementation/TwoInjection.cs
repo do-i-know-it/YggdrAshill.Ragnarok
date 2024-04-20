@@ -11,10 +11,10 @@ namespace YggdrAshill.Ragnarok
             this.second = second;
         }
 
-        public void Inject(IObjectResolver resolver, object instance)
+        public void Inject(IObjectResolver resolver, ref object instance)
         {
-            first.Inject(resolver, instance);
-            second.Inject(resolver, instance);
+            first.Inject(resolver, ref instance);
+            second.Inject(resolver, ref instance);
         }
     }
 }

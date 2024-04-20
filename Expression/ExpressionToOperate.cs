@@ -30,7 +30,7 @@ namespace YggdrAshill.Ragnarok
             var convertedParameterList = argumentList.Select((argument, index) =>
             {
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
-                return Expression.Convert(parameter, argument.ParameterType);
+                return argument.ParameterType.IsValueType ? Expression.Convert(parameter, argument.ParameterType) : Expression.TypeAs(parameter, argument.ParameterType);
             });
 
             var body = (Expression)Expression.New(constructor, convertedParameterList);
@@ -48,20 +48,27 @@ namespace YggdrAshill.Ragnarok
             var implementedType = request.ImplementedType;
             var fieldList = request.FieldList;
 
-            var instance = Expression.Parameter(typeof(object), "instance");
+            var instance = Expression.Parameter(typeof(object).MakeByRefType(), "instance");
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
+            var convertedVariable = Expression.Variable(implementedType);
 
             var convertedInstance = Expression.Convert(instance, implementedType);
+            var assignedInstance = Expression.Assign(convertedVariable, convertedInstance);
+
             var assignedFieldList = fieldList.Select((fieldInfo, index) =>
             {
-                var field = Expression.Field(convertedInstance, fieldInfo);
+                var field = Expression.Field(convertedVariable, fieldInfo);
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
                 var convertedParameter = Expression.Convert(parameter, fieldInfo.FieldType);
                 return Expression.Assign(field, convertedParameter);
             });
 
-            var body = Expression.Block(assignedFieldList);
-            var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
+            var reconvertedInstance = Expression.Convert(convertedVariable, typeof(object));
+            var reassignedInstance = Expression.Assign(instance, reconvertedInstance);
+            var blockList = Array.Empty<Expression>().Append(assignedInstance).Concat(assignedFieldList).Append(reassignedInstance);
+
+            var body = Expression.Block(new[] { convertedVariable }, blockList);
+            var lambda = Expression.Lambda<ActionToInfuse>(body, instance, parameterList).Compile();
             return new InfuseWithAction(lambda);
         }
 
@@ -71,20 +78,27 @@ namespace YggdrAshill.Ragnarok
             var implementedType = request.ImplementedType;
             var propertyList = request.PropertyList;
 
-            var instance = Expression.Parameter(typeof(object), "instance");
+            var instance = Expression.Parameter(typeof(object).MakeByRefType(), "instance");
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
+            var convertedVariable = Expression.Variable(implementedType);
 
             var convertedInstance = Expression.Convert(instance, implementedType);
+            var assignedInstance = Expression.Assign(convertedVariable, convertedInstance);
+
             var assignedPropertyList = propertyList.Select((propertyInfo, index) =>
             {
-                var property = Expression.Property(convertedInstance, propertyInfo);
+                var property = Expression.Property(convertedVariable, propertyInfo);
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
                 var convertedParameter = Expression.Convert(parameter, propertyInfo.PropertyType);
                 return Expression.Assign(property, convertedParameter);
             });
 
-            var body = Expression.Block(assignedPropertyList);
-            var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
+            var reconvertedInstance = Expression.Convert(convertedVariable, typeof(object));
+            var reassignedInstance = Expression.Assign(instance, reconvertedInstance);
+            var blockList = Array.Empty<Expression>().Append(assignedInstance).Concat(assignedPropertyList).Append(reassignedInstance);
+
+            var body = Expression.Block(new[] { convertedVariable }, blockList);
+            var lambda = Expression.Lambda<ActionToInfuse>(body, instance, parameterList).Compile();
             return new InfuseWithAction(lambda);
         }
 
@@ -95,18 +109,31 @@ namespace YggdrAshill.Ragnarok
             var method = request.Method;
             var argumentList = request.ParameterList;
 
-            var instance = Expression.Parameter(typeof(object), "instance");
+            var instance = Expression.Parameter(typeof(object).MakeByRefType(), "instance");
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
+            var convertedVariable = Expression.Variable(implementedType);
 
             var convertedInstance = Expression.Convert(instance, implementedType);
+            var assignedInstance = Expression.Assign(convertedVariable, convertedInstance);
+
             var convertedParameterList = argumentList.Select((argument, index) =>
             {
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
                 return Expression.Convert(parameter, argument.ParameterType);
             });
 
-            var body = Expression.Call(convertedInstance, method, convertedParameterList);
-            var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
+            var reconvertedInstance = Expression.Convert(convertedVariable, typeof(object));
+            var reassignedInstance = Expression.Assign(instance, reconvertedInstance);
+
+            var blockList = new Expression[]
+            {
+                assignedInstance,
+                Expression.Call(convertedVariable, method, convertedParameterList),
+                reassignedInstance
+            };
+
+            var body = Expression.Block(new[] { convertedVariable }, blockList);
+            var lambda = Expression.Lambda<ActionToInfuse>(body, instance, parameterList).Compile();
             return new InfuseWithAction(lambda);
         }
 

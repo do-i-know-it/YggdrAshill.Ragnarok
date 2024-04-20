@@ -9,7 +9,7 @@ namespace YggdrAshill.Ragnarok
 
         }
 
-        public void Infuse(object instance, object[] parameterList)
+        public void Infuse(ref object instance, object[] parameterList)
         {
 
         }

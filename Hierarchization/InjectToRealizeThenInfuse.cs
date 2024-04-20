@@ -11,11 +11,11 @@
             this.infusion = infusion;
         }
 
-        public void Inject(IObjectResolver resolver, object instance)
+        public void Inject(IObjectResolver resolver, ref object instance)
         {
             var parameterList = realization.Realize(resolver);
 
-            infusion.Infuse(instance, parameterList);
+            infusion.Infuse(ref instance, parameterList);
         }
     }
 }

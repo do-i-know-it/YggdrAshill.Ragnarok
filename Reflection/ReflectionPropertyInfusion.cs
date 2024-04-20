@@ -9,7 +9,7 @@ namespace YggdrAshill.Ragnarok
             this.request = request;
         }
 
-        public void Infuse(object instance, object[] parameterList)
+        public void Infuse(ref object instance, object[] parameterList)
         {
             var implementedType = request.ImplementedType;
             var propertyList = request.PropertyList;

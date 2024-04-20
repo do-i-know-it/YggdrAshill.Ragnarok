@@ -1,20 +1,17 @@
-using System;
-using System.Collections.Generic;
-
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class InfuseWithAction : IInfusion
     {
-        private readonly Action<object, object[]> onInfused;
+        private readonly ActionToInfuse onInfused;
 
-        public InfuseWithAction(Action<object, object[]> onInfused)
+        public InfuseWithAction(ActionToInfuse onInfused)
         {
             this.onInfused = onInfused;
         }
 
-        public void Infuse(object instance, object[] parameterList)
+        public void Infuse(ref object instance, object[] parameterList)
         {
-            onInfused.Invoke(instance, parameterList);
+            onInfused.Invoke(ref instance, parameterList);
         }
     }
 }

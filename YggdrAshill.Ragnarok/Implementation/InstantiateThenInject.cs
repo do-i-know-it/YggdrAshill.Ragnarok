@@ -15,7 +15,7 @@ namespace YggdrAshill.Ragnarok
         {
             var instance = instantiation.Instantiate(resolver);
 
-            injection.Inject(resolver, instance);
+            injection.Inject(resolver, ref instance);
 
             return instance;
         }
