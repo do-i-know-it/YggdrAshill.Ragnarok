@@ -21,7 +21,7 @@ namespace YggdrAshill.Ragnarok
 
         public IReadOnlyList<Type> AssignedTypeList => Source.AssignedTypeList;
 
-        public Ownership Ownership => Ownership.Internal;
+        public Ownership Ownership => Lifetime is Lifetime.Temporal ? Ownership.External : Ownership.Internal;
 
         public IInstantiation Instantiation => instantiation.Value;
     }

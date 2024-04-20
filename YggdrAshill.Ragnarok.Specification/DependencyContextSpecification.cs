@@ -120,7 +120,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             scope.Dispose();
 
-            Assert.That(instance.IsDisposed, Is.True);
+            Assert.That(instance.IsDisposed, Is.EqualTo(lifetime != Lifetime.Temporal));
         }
 
         [TestCaseSource(nameof(OperationList))]
@@ -572,12 +572,12 @@ namespace YggdrAshill.Ragnarok.Specification
             }, Throws.Nothing);
         }
 
-        [TestCaseSource(nameof(OperationList))]
-        public void ShouldResolveFromSubContainer(IDependencyOperation operation)
+        [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
+        public void ShouldResolveFromSubContainer(IDependencyOperation operation, Lifetime lifetime)
         {
             var context = new DependencyContext(operation);
 
-            var installation = new ObjectDependentDisposableInstallation();
+            var installation = new ObjectDependentDisposableInstallation(lifetime);
 
             context.RegisterFromSubContainer<ObjectDependentDisposable>(installation);
 
@@ -595,7 +595,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             scope.Dispose();
 
-            Assert.That(installation.Disposable!.IsDisposed, Is.True);
+            Assert.That(installation.Disposable!.IsDisposed, Is.EqualTo(lifetime != Lifetime.Temporal));
         }
 
         [TestCaseSource(nameof(OperationAndOwnershipMatrix))]
@@ -623,12 +623,12 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(instance.IsDisposed, Is.EqualTo(ownership is Ownership.Internal));
         }
 
-        [TestCaseSource(nameof(OperationAndOwnershipMatrix))]
-        public void ShouldResolveFactoryToCreateOutputFromInput(IDependencyOperation operation, Ownership ownership)
+        [TestCaseSource(nameof(OperationAndLifetimeAndOwnershipMatrix))]
+        public void ShouldResolveFactoryToCreateOutputFromInput(IDependencyOperation operation, Lifetime lifetime, Ownership ownership)
         {
             var context = new DependencyContext(operation);
 
-            var installation = new DisposableOutputInstallation();
+            var installation = new DisposableOutputInstallation(lifetime);
 
             context.RegisterFactory<object, DisposableOutput>(installation, ownership);
 
@@ -649,7 +649,7 @@ namespace YggdrAshill.Ragnarok.Specification
 
             scope.Dispose();
 
-            Assert.That(output.IsDisposed, Is.EqualTo(ownership is Ownership.Internal));
+            Assert.That(output.IsDisposed, Is.EqualTo(ownership is Ownership.Internal && lifetime != Lifetime.Temporal));
         }
 
         [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
