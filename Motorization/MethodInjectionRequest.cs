@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
@@ -40,29 +39,5 @@ namespace YggdrAshill.Ragnarok
         /// <see cref="ParameterInfo"/>s for <see cref="ImplementedType"/>.
         /// </summary>
         public ParameterInfo[] ParameterList => parameterList ??= Method.GetParameters();
-
-        private IDependency? dependency;
-
-        /// <summary>
-        /// <see cref="IDependency"/> for <see cref="ImplementedType"/>.
-        /// </summary>
-        public IDependency Dependency
-        {
-            get
-            {
-                if (dependency != null)
-                {
-                    return dependency;
-                }
-
-                if (ParameterList.Length == 0)
-                {
-                    return dependency = WithoutDependency.Instance;
-                }
-
-                var argumentList = ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
-                return dependency = new WithDependency(argumentList);
-            }
-        }
     }
 }

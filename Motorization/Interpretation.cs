@@ -12,6 +12,7 @@ namespace YggdrAshill.Ragnarok
         private readonly IDependencyOperation operation;
 
         private readonly Func<Type, InstantiationRequest> createActivation;
+        private readonly Func<Type, InstantiationRequest> createServiceBundleActivation;
         private readonly Func<Type, InjectionRequest> createFieldInfusion;
         private readonly Func<Type, InjectionRequest> createPropertyInfusion;
         private readonly Func<Type, InjectionRequest> createMethodInfusion;
@@ -23,6 +24,7 @@ namespace YggdrAshill.Ragnarok
             this.operation = operation;
 
             createActivation = CreateActivation;
+            createServiceBundleActivation = CreateServiceBundleActivation;
             createFieldInfusion = CreateFieldInfusion;
             createPropertyInfusion = CreatePropertyInfusion;
             createMethodInfusion = CreateMethodInfusion;
@@ -88,8 +90,18 @@ namespace YggdrAshill.Ragnarok
 
         public ServiceBundleDescription CreateServiceBundleDescription(Type type, CollectionDescription collection)
         {
-            var activation = GetInstantiationRequest(type).Activation;
+            var activation = analysis.GetInstantiationRequest(type, createServiceBundleActivation).Activation;
             return new ServiceBundleDescription(type, activation, collection);
+        }
+
+        private InstantiationRequest CreateServiceBundleActivation(Type type)
+        {
+            var constructor = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public)[0];
+            var request = new ConstructorInjectionRequest(type, constructor);
+            var activation = operation.CreateActivation(request);
+            var argumentList = request.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
+            var dependency = new WithDependency(argumentList);
+            return new InstantiationRequest(dependency, activation);
         }
 
         public void Validate(IEnumerable<IStatement> statementList, IScopedResolver resolver)
@@ -108,50 +120,27 @@ namespace YggdrAshill.Ragnarok
                 var activation = operation.CreateCollectionActivation(elementType);
                 return new InstantiationRequest(WithoutDependency.Instance, activation);
             }
-
-            var selectedConstructor = default(ConstructorInfo);
-            var defaultConstructor = default(ConstructorInfo);
-            foreach (var info in enumeration.GetConstructorList(type))
-            {
-                if (selection.IsValid(info))
-                {
-                    if (selectedConstructor != null)
-                    {
-                        throw new RagnarokAlreadySelectedException(type, $"Multiple injectable constructors in {type}.");
-                    }
-
-                    selectedConstructor = info;
-                    continue;
-                }
-
-                if (defaultConstructor == null)
-                {
-                    defaultConstructor = info;
-                    continue;
-                }
-
-                if (defaultConstructor.GetParameters().Length < info.GetParameters().Length)
-                {
-                    defaultConstructor = info;
-                }
-            }
-            if (selectedConstructor != null)
-            {
-                var request = new ConstructorInjectionRequest(type, selectedConstructor);
-                var activation = request.ParameterList.Length == 0 ? operation.CreateActivation(type) : operation.CreateActivation(request);
-                return new InstantiationRequest(request.Dependency, activation);
-            }
-            if (defaultConstructor != null)
-            {
-                var request = new ConstructorInjectionRequest(type, defaultConstructor);
-                var activation = request.ParameterList.Length == 0 ? operation.CreateActivation(type) : operation.CreateActivation(request);
-                return new InstantiationRequest(request.Dependency, activation);
-            }
-            else
+            var constructorList = enumeration.GetConstructorList(type).Where(selection.IsValid).ToArray();
+            if (constructorList.Length == 0)
             {
                 var activation = operation.CreateActivation(type);
                 return new InstantiationRequest(WithoutDependency.Instance, activation);
             }
+            if (constructorList.Length == 1)
+            {
+                var request = new ConstructorInjectionRequest(type, constructorList[0]);
+                var activation = operation.CreateActivation(request);
+                if (request.ParameterList.Length == 0)
+                {
+                    return new InstantiationRequest(WithoutDependency.Instance, activation);
+                }
+
+                var argumentList = request.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
+                var dependency = new WithDependency(argumentList);
+                return new InstantiationRequest(dependency, activation);
+            }
+
+            throw new RagnarokAlreadySelectedException(type, $"Multiple injectable constructors in {type}.");
         }
 
         public InjectionRequest GetFieldInjectionRequest(Type type)
@@ -165,9 +154,12 @@ namespace YggdrAshill.Ragnarok
             {
                 return new InjectionRequest(WithoutDependency.Instance, InfuseNothing.Instance);
             }
+
             var request = new FieldInjectionRequest(type, fieldList);
             var infusion = operation.CreateFieldInfusion(request);
-            return new InjectionRequest(request.Dependency, infusion);
+            var argumentList = fieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray();
+            var dependency = new WithDependency(argumentList);
+            return new InjectionRequest(dependency, infusion);
         }
 
         public InjectionRequest GetPropertyInjectionRequest(Type type)
@@ -181,9 +173,12 @@ namespace YggdrAshill.Ragnarok
             {
                 return new InjectionRequest(WithoutDependency.Instance, InfuseNothing.Instance);
             }
+
             var request = new PropertyInjectionRequest(type, propertyList);
             var infusion = operation.CreatePropertyInfusion(request);
-            return new InjectionRequest(request.Dependency, infusion);
+            var argumentList = propertyList.Select(info => new Argument(info.Name, info.PropertyType)).ToArray();
+            var dependency = new WithDependency(argumentList);
+            return new InjectionRequest(dependency, infusion);
         }
 
         public InjectionRequest GetMethodInjectionRequest(Type type)
@@ -200,8 +195,15 @@ namespace YggdrAshill.Ragnarok
             if (methodList.Length == 1)
             {
                 var request = new MethodInjectionRequest(type, methodList[0]);
-                var infusion = request.ParameterList.Length == 0 ? InfuseNothing.Instance : operation.CreateMethodInfusion(request);
-                return new InjectionRequest(request.Dependency, infusion);
+                var infusion = operation.CreateMethodInfusion(request);
+                if (request.ParameterList.Length == 0)
+                {
+                    return new InjectionRequest(WithoutDependency.Instance, infusion);
+                }
+
+                var argumentList = request.ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
+                var dependency = new WithDependency(argumentList);
+                return new InjectionRequest(dependency, infusion);
             }
 
             throw new RagnarokAlreadySelectedException(type, $"Multiple injectable methods in {type}.");
