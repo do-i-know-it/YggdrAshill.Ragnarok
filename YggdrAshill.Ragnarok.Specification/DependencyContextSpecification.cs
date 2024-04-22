@@ -167,12 +167,12 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(instance.IsDisposed, Is.False);
         }
 
-        [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldCreateObject(IDependencyOperation operation, Lifetime lifetime)
+        [TestCaseSource(nameof(OperationList))]
+        public void ShouldCreateObject(IDependencyOperation operation)
         {
             var parentContext = new DependencyContext(operation);
 
-            parentContext.Register(CreateObject.Instance, lifetime);
+            parentContext.Register(CreateObject.Instance);
 
             using var parentScope = parentContext.CreateScope();
 
@@ -184,17 +184,17 @@ namespace YggdrAshill.Ragnarok.Specification
 
             var instance3 = childScope.Resolver.Resolve<object>();
 
-            Assert.That(instance1 == instance2, Is.EqualTo(lifetime == Lifetime.Local || lifetime ==  Lifetime.Global));
-            Assert.That(instance2 == instance3, Is.EqualTo(lifetime == Lifetime.Global));
-            Assert.That(instance3 == instance1, Is.EqualTo(lifetime == Lifetime.Global));
+            Assert.That(instance1, Is.EqualTo(instance2));
+            Assert.That(instance2, Is.EqualTo(instance3));
+            Assert.That(instance3, Is.EqualTo(instance1));
         }
 
-        [TestCaseSource(nameof(OperationAndLifetimeAndOwnershipMatrix))]
-        public void ShouldManageCreatedObjectWhenHasDisposed(IDependencyOperation operation, Lifetime lifetime, Ownership ownership)
+        [TestCaseSource(nameof(OperationAndOwnershipMatrix))]
+        public void ShouldManageCreatedObjectWhenHasDisposed(IDependencyOperation operation, Ownership ownership)
         {
             var context = new DependencyContext(operation);
 
-            context.Register(() => new IndependentDisposable(), lifetime, ownership);
+            context.Register(() => new IndependentDisposable(), ownership);
 
             var scope = context.CreateScope();
 
@@ -205,8 +205,8 @@ namespace YggdrAshill.Ragnarok.Specification
             Assert.That(instance.IsDisposed, Is.EqualTo(ownership is Ownership.Internal));
         }
 
-        [TestCaseSource(nameof(OperationAndLifetimeMatrix))]
-        public void ShouldResolveObjectImmediatelyJustAfterCreatingScope(IDependencyOperation operation, Lifetime lifetime)
+        [TestCaseSource(nameof(OperationList))]
+        public void ShouldResolveObjectImmediatelyJustAfterCreatingScope(IDependencyOperation operation)
         {
             var context = new DependencyContext(operation);
 
@@ -215,7 +215,7 @@ namespace YggdrAshill.Ragnarok.Specification
             {
                 executed = true;
                 return new IndependentDisposable();
-            }, lifetime).ResolvedImmediately().As<IDisposable>();
+            }).ResolvedImmediately().As<IDisposable>();
 
             using var scope = context.CreateScope();
 

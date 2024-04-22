@@ -9,14 +9,12 @@ namespace YggdrAshill.Ragnarok
         private readonly ICreation<T> creation;
         private readonly Lazy<IInstantiation> instantiationCache;
 
-        public Lifetime Lifetime { get; }
         public Ownership Ownership { get; }
         public InstanceInjectionSource Source { get; }
 
-        public CreateInstanceStatement(IObjectContainer container, Lifetime lifetime, Ownership ownership, ICreation<T> creation)
+        public CreateInstanceStatement(IObjectContainer container, Ownership ownership, ICreation<T> creation)
         {
             this.creation = creation;
-            Lifetime = lifetime;
             Ownership = ownership;
             Source = new InstanceInjectionSource(typeof(T), container);
             instantiationCache = new Lazy<IInstantiation>(CreateInstantiation);
@@ -37,6 +35,8 @@ namespace YggdrAshill.Ragnarok
         public Type ImplementedType => Source.ImplementedType;
 
         public IReadOnlyList<Type> AssignedTypeList => Source.AssignedTypeList;
+
+        public Lifetime Lifetime => Lifetime.Global;
 
         public IInstantiation Instantiation => instantiationCache.Value;
     }
