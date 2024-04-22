@@ -40,9 +40,9 @@ namespace YggdrAshill.Ragnarok
             }
             if (analysis.IsGeneric(type, out var openedGenericType))
             {
-                if (openedGenericType == typeof(IEnumerable<>) ||
+                if (openedGenericType == typeof(IReadOnlyList<>) ||
                     openedGenericType == typeof(IReadOnlyCollection<>) ||
-                    openedGenericType == typeof(IReadOnlyList<>))
+                    openedGenericType == typeof(IEnumerable<>))
                 {
                     elementType = analysis.GetGenericTypeParameterList(type)[0];
                     return true;
