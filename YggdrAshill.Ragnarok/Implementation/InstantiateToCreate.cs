@@ -1,5 +1,3 @@
-using System;
-
 namespace YggdrAshill.Ragnarok
 {
     internal sealed class InstantiateToCreate<T> : IInstantiation

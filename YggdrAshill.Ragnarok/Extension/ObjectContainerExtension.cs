@@ -38,21 +38,14 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection Register<T>(this IObjectContainer container, ICreation<T> creation, Ownership ownership = Ownership.Internal)
+        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> creation, Ownership ownership = Ownership.Internal)
             where T : notnull
         {
-            var statement = new CreateInstanceStatement<T>(container, ownership, creation);
+            var statement = new CreateInstanceStatement<T>(container, ownership, new Creation<T>(creation));
 
             container.Registration.Register(statement);
 
             return statement.Source;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection Register<T>(this IObjectContainer container, Func<T> creation, Ownership ownership = Ownership.Internal)
-            where T : notnull
-        {
-            return container.Register(new Creation<T>(creation), ownership);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
