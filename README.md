@@ -63,7 +63,6 @@ class Service
     public void Run()
     {
         var message = sender.Send();
-
         receiver.Receive(message);
     }
 }
@@ -137,9 +136,7 @@ class ServiceInstallation : IInstallation
     public void Install(IObjectContainer container)
     {
         container.Register<ISender, ConsoleSender>(Lifetime.Local).WithArgument("announcement", "Enter any text");
-
         container.Register<IReceiver, ConsoleReceiver>(Lifetime.Global).WithField("header", "Recieved");
-
         container.Register<Service>(Lifetime.Temporal);
     }
 }
@@ -237,7 +234,6 @@ context.RegisterFactory<Service, ServiceInstallation>(Ownership.External);
 using var scope = context.CreateScope();
 
 var facotry = scope.Resolver.Resolve<IFactory<Service>>();
-
 var service = factory.Create();
 
 service.Run();
