@@ -172,7 +172,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var parentContext = new DependencyContext(operation);
 
-            parentContext.RegisterInstance(() => new object());
+            parentContext.Register(() => new object());
 
             using var parentScope = parentContext.CreateScope();
 
@@ -194,7 +194,7 @@ namespace YggdrAshill.Ragnarok.Specification
         {
             var context = new DependencyContext(operation);
 
-            context.RegisterInstance(() => new IndependentDisposable(), ownership);
+            context.Register(() => new IndependentDisposable(), ownership);
 
             var scope = context.CreateScope();
 
@@ -211,7 +211,7 @@ namespace YggdrAshill.Ragnarok.Specification
             var context = new DependencyContext(operation);
 
             var executed = false;
-            context.RegisterInstance(() =>
+            context.Register(() =>
             {
                 executed = true;
                 return new IndependentDisposable();

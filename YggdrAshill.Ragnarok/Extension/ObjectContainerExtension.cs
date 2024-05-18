@@ -32,6 +32,15 @@ namespace YggdrAshill.Ragnarok
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IInstanceInjection Register<T>(this IObjectContainer container, Func<T> onCreated, Ownership ownership = Ownership.External)
+            where T : notnull
+        {
+            var statement = new CreateInstanceStatement<T>(container, ownership, onCreated);
+            container.Registration.Register(statement);
+            return statement.Source;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IInstanceInjection Register<TInput, TOutput>(this IObjectContainer container, Func<TInput, TOutput> onConverted, Ownership ownership = Ownership.External)
             where TInput : notnull
             where TOutput : notnull
@@ -50,15 +59,6 @@ namespace YggdrAshill.Ragnarok
             var assignment = statement.Source;
             assignment.As<T>();
             return assignment;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IInstanceInjection RegisterInstance<T>(this IObjectContainer container, Func<T> onCreated, Ownership ownership = Ownership.External)
-            where T : notnull
-        {
-            var statement = new CreateInstanceStatement<T>(container, ownership, onCreated);
-            container.Registration.Register(statement);
-            return statement.Source;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
