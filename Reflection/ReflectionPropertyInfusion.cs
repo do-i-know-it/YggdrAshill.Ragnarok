@@ -9,9 +9,7 @@ namespace YggdrAshill.Ragnarok
             this.request = request;
         }
 
-        public IDependency Dependency => request.Dependency;
-
-        public void Infuse(object instance, object[] parameterList)
+        public void Infuse(ref object instance, object[] parameterList)
         {
             var implementedType = request.ImplementedType;
             var propertyList = request.PropertyList;

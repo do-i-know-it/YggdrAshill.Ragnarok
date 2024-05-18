@@ -4,18 +4,15 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class CollectionActivation : IActivation
     {
-        private readonly CollectionInjectionRequest request;
+        private readonly Type elementType;
 
-        public CollectionActivation(CollectionInjectionRequest request)
+        public CollectionActivation(Type elementType)
         {
-            this.request = request;
+            this.elementType = elementType;
         }
-
-        public IDependency Dependency => request.Dependency;
 
         public object Activate(object[] parameterList)
         {
-            var elementType = request.ElementType;
             var array = Array.CreateInstance(elementType, parameterList.Length);
 
             for (var index = 0; index < parameterList.Length; index++)

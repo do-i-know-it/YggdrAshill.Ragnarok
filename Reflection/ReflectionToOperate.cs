@@ -1,9 +1,11 @@
+using System;
+
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation <see cref="IOperation"/> with Reflection.
+    /// Implementation <see cref="IDependencyOperation"/> with Reflection.
     /// </summary>
-    public sealed class ReflectionToOperate : IOperation
+    public sealed class ReflectionToOperate : IDependencyOperation
     {
         /// <summary>
         /// Singleton instance of <see cref="ReflectionToOperate"/>.
@@ -18,7 +20,7 @@ namespace YggdrAshill.Ragnarok
         /// <inheritdoc/>
         public IActivation CreateActivation(ConstructorInjectionRequest request)
         {
-            return new ReflectionActivation(request);
+            return new ReflectionConstructorActivation(request);
         }
 
         /// <inheritdoc/>
@@ -39,10 +41,15 @@ namespace YggdrAshill.Ragnarok
             return new ReflectionMethodInfusion(request);
         }
 
-        /// <inheritdoc/>
-        public IActivation CreateCollectionActivation(CollectionInjectionRequest request)
+        public IActivation CreateActivation(Type type)
         {
-            return new CollectionActivation(request);
+            return new ReflectionTypeActivation(type);
+        }
+
+        /// <inheritdoc/>
+        public IActivation CreateCollectionActivation(Type elementType)
+        {
+            return new CollectionActivation(elementType);
         }
     }
 }

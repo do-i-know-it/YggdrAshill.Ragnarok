@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
@@ -32,30 +31,6 @@ namespace YggdrAshill.Ragnarok
         {
             ImplementedType = implementedType;
             FieldList = fieldList;
-        }
-
-        private IDependency? dependency;
-        public IDependency Dependency
-        {
-            get
-            {
-                if (dependency == null)
-                {
-                    dependency = CreateDependency();
-                }
-
-                return dependency;
-            }
-        }
-        private IDependency CreateDependency()
-        {
-            if (FieldList.Length == 0)
-            {
-                return WithoutDependency.Instance;
-            }
-
-            var argumentList = FieldList.Select(info => new Argument(info.Name, info.FieldType)).ToArray();
-            return new WithDependency(argumentList);
         }
     }
 }

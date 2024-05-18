@@ -1,6 +1,6 @@
 ﻿namespace YggdrAshill.Ragnarok.Specification
 {
-    internal sealed class MethodInjectable
+    internal struct MethodInjectable
     {
         public object Instance { get; private set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace YggdrAshill.Ragnarok.Specification
 {
-    internal sealed class FieldInjectable
+    internal struct FieldInjectable
     {
         [InjectField]
         private object instance;

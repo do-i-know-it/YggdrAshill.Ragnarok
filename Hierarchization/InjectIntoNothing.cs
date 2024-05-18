@@ -9,7 +9,7 @@
 
         }
 
-        public void Inject(IObjectResolver resolver, object instance)
+        public void Inject(IObjectResolver resolver, ref object instance)
         {
 
         }

@@ -71,12 +71,10 @@ namespace YggdrAshill.Ragnarok
             {
                 case Ownership.Internal:
                     var instance = description.Instantiate(this);
-
                     if (instance is IDisposable disposable)
                     {
                         Bind(disposable);
                     }
-
                     return instance;
                 case Ownership.External:
                     return description.Instantiate(this);
@@ -93,7 +91,6 @@ namespace YggdrAshill.Ragnarok
             }
 
             resolver = parent!;
-
             return parent != null;
         }
 
@@ -107,7 +104,6 @@ namespace YggdrAshill.Ragnarok
             if (dictionary.TryGetValue(type, out var found))
             {
                 description = found!;
-
                 return found != null;
             }
 
@@ -118,70 +114,54 @@ namespace YggdrAshill.Ragnarok
 
         private bool CanResolveCollection(Type type, out IDescription description)
         {
-            description = default!;
-
-            if (!CollectionDescription.CanResolve(type, out var elementType))
+            if (!interpretation.CanResolveAsArray(type, out var elementType))
             {
+                description = default!;
                 return false;
             }
 
             description = descriptionCache.GetOrAdd(type, _ =>
             {
-                var activation = interpretation.ActivationOf(type);
-
-                if (!CanResolve(elementType, out var elementDescription))
+                if (CanResolve(elementType, out var elementDescription))
                 {
-                    return new CollectionDescription(elementType, activation, Array.Empty<IDescription>());
+                    return interpretation.CreateCollectionDescription(elementType, elementDescription);
                 }
-
-                return new CollectionDescription(elementType, activation, new[] { elementDescription! });
+                return interpretation.CreateCollectionDescription(elementType);
             });
-
             return true;
         }
 
         private bool CanResolveServiceBundle(Type type, out IDescription description)
         {
-            description = default!;
-
-            if (!ServiceBundleDescription.CanResolve(type, out var elementType))
+            if (!interpretation.IsServiceBundle(type, out var elementType))
             {
+                description = default!;
+                return false;
+            }
+            var targetType = interpretation.GetReadOnlyList(elementType);
+            if (!CanResolve(targetType, out var found) || found is not CollectionDescription collection)
+            {
+                description = default!;
                 return false;
             }
 
-            var targetType = TypeCache.ReadOnlyListOf(elementType);
-
-            if (CanResolve(targetType, out var found) && found is CollectionDescription collection)
-            {
-                description = descriptionCache.GetOrAdd(type, _ =>
-                {
-                    var activation = interpretation.ActivationOf(type);
-
-                    return new ServiceBundleDescription(type, activation, collection);
-                });
-
-                return true;
-            }
-
-            return false;
+            description = descriptionCache.GetOrAdd(type, _ => interpretation.CreateServiceBundleDescription(type, collection));
+            return true;
         }
 
         private bool CanResolveInstallation(Type type, out IDescription description)
         {
-            description = default!;
-
             if (!InstallationDescription.CanResolve(type))
             {
+                description = default!;
                 return false;
             }
 
             description = descriptionCache.GetOrAdd(type, _ =>
             {
-                var activation = interpretation.ActivationOf(type);
-
-                return new InstallationDescription(type, activation);
+                var request = interpretation.GetInstantiationRequest(type);
+                return new InstallationDescription(type, request);
             });
-
             return true;
         }
 
@@ -226,12 +206,7 @@ namespace YggdrAshill.Ragnarok
                 throw new ObjectDisposedException(nameof(IScopedResolver));
             }
 
-            if (context == null)
-            {
-                context = new ScopedResolverContext(interpretation, this);
-            }
-
-            return context;
+            return context ??= new ScopedResolverContext(interpretation, this);
         }
 
         public void Dispose()
@@ -242,11 +217,8 @@ namespace YggdrAshill.Ragnarok
             }
 
             compositeDisposable.Dispose();
-
             descriptionCache.Clear();
-
             instanceCache.Clear();
-
             dictionary.Clear();
 
             isDisposed = false;

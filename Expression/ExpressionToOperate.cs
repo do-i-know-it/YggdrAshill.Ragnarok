@@ -5,9 +5,9 @@ using System.Linq.Expressions;
 namespace YggdrAshill.Ragnarok
 {
     /// <summary>
-    /// Implementation of <see cref="IOperation"/> with <see cref="Expression"/>.
+    /// Implementation of <see cref="IDependencyOperation"/> with <see cref="Expression"/>.
     /// </summary>
-    public sealed class ExpressionToOperate : IOperation
+    public sealed class ExpressionToOperate : IDependencyOperation
     {
         /// <summary>
         /// Singleton instance of <see cref="ExpressionToOperate"/>.
@@ -24,20 +24,22 @@ namespace YggdrAshill.Ragnarok
         {
             var constructor = request.Constructor;
             var argumentList = request.ParameterList;
+            var implementedType = request.ImplementedType;
 
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
             var convertedParameterList = argumentList.Select((argument, index) =>
             {
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
-
-                return Expression.Convert(parameter, argument.ParameterType);
+                return argument.ParameterType.IsValueType ? Expression.Convert(parameter, argument.ParameterType) : Expression.TypeAs(parameter, argument.ParameterType);
             });
 
-            var body = Expression.New(constructor, convertedParameterList);
-
+            var body = (Expression)Expression.New(constructor, convertedParameterList);
+            if (implementedType.IsValueType)
+            {
+                body = Expression.Convert(body, typeof(object));
+            }
             var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList).Compile();
-
-            return new ActivateWithFunction(lambda, request.Dependency);
+            return new ActivateWithFunction(lambda);
         }
 
         /// <inheritdoc/>
@@ -46,24 +48,28 @@ namespace YggdrAshill.Ragnarok
             var implementedType = request.ImplementedType;
             var fieldList = request.FieldList;
 
-            var instance = Expression.Parameter(typeof(object), "instance");
+            var instance = Expression.Parameter(typeof(object).MakeByRefType(), "instance");
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
+            var convertedVariable = Expression.Variable(implementedType);
 
             var convertedInstance = Expression.Convert(instance, implementedType);
+            var assignedInstance = Expression.Assign(convertedVariable, convertedInstance);
+
             var assignedFieldList = fieldList.Select((fieldInfo, index) =>
             {
-                var field = Expression.Field(convertedInstance, fieldInfo);
+                var field = Expression.Field(convertedVariable, fieldInfo);
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
                 var convertedParameter = Expression.Convert(parameter, fieldInfo.FieldType);
-
                 return Expression.Assign(field, convertedParameter);
             });
 
-            var body = Expression.Block(assignedFieldList);
+            var reconvertedInstance = Expression.Convert(convertedVariable, typeof(object));
+            var reassignedInstance = Expression.Assign(instance, reconvertedInstance);
+            var blockList = Array.Empty<Expression>().Append(assignedInstance).Concat(assignedFieldList).Append(reassignedInstance);
 
-            var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
-
-            return new InfuseWithAction(lambda, request.Dependency);
+            var body = Expression.Block(new[] { convertedVariable }, blockList);
+            var lambda = Expression.Lambda<ActionToInfuse>(body, instance, parameterList).Compile();
+            return new InfuseWithAction(lambda);
         }
 
         /// <inheritdoc/>
@@ -72,25 +78,28 @@ namespace YggdrAshill.Ragnarok
             var implementedType = request.ImplementedType;
             var propertyList = request.PropertyList;
 
-            var instance = Expression.Parameter(typeof(object), "instance");
+            var instance = Expression.Parameter(typeof(object).MakeByRefType(), "instance");
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
+            var convertedVariable = Expression.Variable(implementedType);
 
             var convertedInstance = Expression.Convert(instance, implementedType);
+            var assignedInstance = Expression.Assign(convertedVariable, convertedInstance);
 
             var assignedPropertyList = propertyList.Select((propertyInfo, index) =>
             {
-                var property = Expression.Property(convertedInstance, propertyInfo);
+                var property = Expression.Property(convertedVariable, propertyInfo);
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
                 var convertedParameter = Expression.Convert(parameter, propertyInfo.PropertyType);
-
                 return Expression.Assign(property, convertedParameter);
             });
 
-            var body = Expression.Block(assignedPropertyList);
+            var reconvertedInstance = Expression.Convert(convertedVariable, typeof(object));
+            var reassignedInstance = Expression.Assign(instance, reconvertedInstance);
+            var blockList = Array.Empty<Expression>().Append(assignedInstance).Concat(assignedPropertyList).Append(reassignedInstance);
 
-            var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
-
-            return new InfuseWithAction(lambda, request.Dependency);
+            var body = Expression.Block(new[] { convertedVariable }, blockList);
+            var lambda = Expression.Lambda<ActionToInfuse>(body, instance, parameterList).Compile();
+            return new InfuseWithAction(lambda);
         }
 
         /// <inheritdoc/>
@@ -100,28 +109,49 @@ namespace YggdrAshill.Ragnarok
             var method = request.Method;
             var argumentList = request.ParameterList;
 
-            var instance = Expression.Parameter(typeof(object), "instance");
+            var instance = Expression.Parameter(typeof(object).MakeByRefType(), "instance");
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
+            var convertedVariable = Expression.Variable(implementedType);
 
             var convertedInstance = Expression.Convert(instance, implementedType);
+            var assignedInstance = Expression.Assign(convertedVariable, convertedInstance);
+
             var convertedParameterList = argumentList.Select((argument, index) =>
             {
                 var parameter = Expression.ArrayIndex(parameterList, Expression.Constant(index));
-
                 return Expression.Convert(parameter, argument.ParameterType);
             });
 
-            var body = Expression.Call(convertedInstance, method, convertedParameterList);
+            var reconvertedInstance = Expression.Convert(convertedVariable, typeof(object));
+            var reassignedInstance = Expression.Assign(instance, reconvertedInstance);
 
-            var lambda = Expression.Lambda<Action<object, object[]>>(body, instance, parameterList).Compile();
+            var blockList = new Expression[]
+            {
+                assignedInstance,
+                Expression.Call(convertedVariable, method, convertedParameterList),
+                reassignedInstance
+            };
 
-            return new InfuseWithAction(lambda, request.Dependency);
+            var body = Expression.Block(new[] { convertedVariable }, blockList);
+            var lambda = Expression.Lambda<ActionToInfuse>(body, instance, parameterList).Compile();
+            return new InfuseWithAction(lambda);
+        }
+
+        public IActivation CreateActivation(Type type)
+        {
+            var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
+            var body = (Expression)Expression.New(type);
+            if (type.IsValueType)
+            {
+                body = Expression.Convert(body, typeof(object));
+            }
+            var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList).Compile();
+            return new ActivateWithFunction(lambda);
         }
 
         /// <inheritdoc/>
-        public IActivation CreateCollectionActivation(CollectionInjectionRequest request)
+        public IActivation CreateCollectionActivation(Type elementType)
         {
-            var elementType = request.ElementType;
             var parameterList = Expression.Parameter(typeof(object[]), "parameterList");
             var length = Expression.Parameter(typeof(int), "length");
             var assignParameterListLength = Expression.Assign(length, Expression.ArrayLength(parameterList));
@@ -147,10 +177,8 @@ namespace YggdrAshill.Ragnarok
             var body
                 = Expression.Block(typeof(object), new[]{ length , array}, assignParameterListLength, assignArray, loop, array);
             var lambda = Expression.Lambda<Func<object[], object>>(body, parameterList);
-
             var method = lambda.Compile();
-
-            return new ActivateWithFunction(method, request.Dependency);
+            return new ActivateWithFunction(method);
         }
     }
 }

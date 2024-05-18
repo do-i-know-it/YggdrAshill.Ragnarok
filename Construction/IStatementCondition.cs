@@ -3,7 +3,7 @@ namespace YggdrAshill.Ragnarok
     /// <summary>
     /// Defines how to count <see cref="IStatement"/>s satisfied with condition.
     /// </summary>
-    public interface ICondition
+    public interface IStatementCondition
     {
         /// <summary>
         /// Detects <see cref="IStatement"/> to select.

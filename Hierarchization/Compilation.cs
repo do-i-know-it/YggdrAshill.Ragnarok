@@ -13,52 +13,47 @@ namespace YggdrAshill.Ragnarok
 
         public IInstantiation CreateInstantiation(DependencyInjectionRequest request)
         {
-            var activation = interpretation.ActivationOf(request.ImplementedType);
+            var instantiationRequest = interpretation.GetInstantiationRequest(request.ImplementedType);
 
-            var dependency = activation.Dependency;
-
+            var dependency = instantiationRequest.Dependency;
+            var activation = instantiationRequest.Activation;
             if (dependency.DependentTypeList.Count == 0)
             {
                 return new InstantiateToActivate(activation);
             }
 
             var realization = dependency.CreateRealization(request.ParameterList);
-
             return new InstantiateToRealizeThenActivate(realization, activation);
         }
 
         public IInjection CreateFieldInjection(DependencyInjectionRequest request)
         {
-            var infusion = interpretation.FieldInfusionOf(request.ImplementedType);
-
-            return CreateInjection(infusion, request.ParameterList);
+            var injection = interpretation.GetFieldInjectionRequest(request.ImplementedType);
+            return CreateInjection(injection, request.ParameterList);
         }
 
         public IInjection CreatePropertyInjection(DependencyInjectionRequest request)
         {
-            var infusion = interpretation.PropertyInfusionOf(request.ImplementedType);
-
-            return CreateInjection(infusion, request.ParameterList);
+            var injectionRequest = interpretation.GetPropertyInjectionRequest(request.ImplementedType);
+            return CreateInjection(injectionRequest, request.ParameterList);
         }
 
         public IInjection CreateMethodInjection(DependencyInjectionRequest request)
         {
-            var infusion = interpretation.MethodInfusionOf(request.ImplementedType);
-
-            return CreateInjection(infusion, request.ParameterList);
+            var injectionRequest = interpretation.GetMethodInjectionRequest(request.ImplementedType);
+            return CreateInjection(injectionRequest, request.ParameterList);
         }
 
-        private static IInjection CreateInjection(IInfusion infusion, IReadOnlyList<IParameter> parameterList)
+        private static IInjection CreateInjection(InjectionRequest request, IReadOnlyList<IParameter> parameterList)
         {
-            var dependency = infusion.Dependency;
-
+            var dependency = request.Dependency;
+            var infusion = request.Infusion;
             if (dependency.DependentTypeList.Count == 0)
             {
                 return InjectIntoNothing.Instance;
             }
 
             var realization = dependency.CreateRealization(parameterList);
-
             return new InjectToRealizeThenInfuse(realization, infusion);
         }
     }

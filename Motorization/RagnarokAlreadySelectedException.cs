@@ -5,15 +5,15 @@ namespace YggdrAshill.Ragnarok
 {
     // TODO: add document comments.
     [Serializable]
-    public class RagnarokNotAnnotatedException : RagnarokException
+    public class RagnarokAlreadySelectedException : RagnarokException
     {
-        public RagnarokNotAnnotatedException(Type invalidType, string message)
+        public RagnarokAlreadySelectedException(Type invalidType, string message)
             : base(invalidType, message)
         {
 
         }
 
-        protected RagnarokNotAnnotatedException(SerializationInfo info, StreamingContext context)
+        protected RagnarokAlreadySelectedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
 

@@ -6,50 +6,6 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class CollectionDescription : IDescription
     {
-        public static IEnumerable<Type> AssignedTypeListOf(Type elementType)
-        {
-            return new[]
-            {
-                TypeCache.ArrayTypeOf(elementType),
-                TypeCache.EnumerableOf(elementType),
-                TypeCache.ReadOnlyCollectionOf(elementType),
-                TypeCache.ReadOnlyListOf(elementType),
-            };
-        }
-
-        public static bool CanResolve(Type type, out Type elementType)
-        {
-            elementType = default!;
-
-            if (type.IsArray)
-            {
-                elementType = type.GetElementType()!;
-
-                return true;
-            }
-
-            if (!type.IsConstructedGenericType)
-            {
-                return false;
-            }
-
-            var openGenericType = TypeCache.OpenGenericTypeOf(type);
-
-            var isCollectionType
-                = openGenericType == TypeCache.OpenGenericEnumerable ||
-                  openGenericType == TypeCache.OpenGenericReadOnlyCollection ||
-                  openGenericType == TypeCache.OpenGenericReadOnlyList;
-
-            if (!isCollectionType)
-            {
-                return false;
-            }
-
-            elementType = TypeCache.GenericTypeParameterListOf(type)[0];
-
-            return true;
-        }
-
         private readonly IActivation activation;
         private readonly IDescription[] descriptionList;
 
@@ -57,12 +13,11 @@ namespace YggdrAshill.Ragnarok
         public Lifetime Lifetime => Lifetime.Temporal;
         public Ownership Ownership => Ownership.External;
 
-        public CollectionDescription(Type elementType, IActivation activation, IDescription[] descriptionList)
+        public CollectionDescription(Type implementedType, IActivation activation, IDescription[] descriptionList)
         {
+            ImplementedType = implementedType;
             this.activation = activation;
             this.descriptionList = descriptionList;
-
-            ImplementedType = TypeCache.ArrayTypeOf(elementType);
         }
 
         internal IEnumerable<IDescription> Collect(IScopedResolver resolver, bool localOnly)

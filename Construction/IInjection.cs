@@ -14,6 +14,6 @@ namespace YggdrAshill.Ragnarok
         /// <param name="instance">
         /// <see cref="object"/> to inject.
         /// </param>
-        void Inject(IObjectResolver resolver, object instance);
+        void Inject(IObjectResolver resolver, ref object instance);
     }
 }

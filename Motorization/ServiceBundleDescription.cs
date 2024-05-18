@@ -4,27 +4,6 @@ namespace YggdrAshill.Ragnarok
 {
     internal sealed class ServiceBundleDescription : IDescription
     {
-        public static bool CanResolve(Type type, out Type elementType)
-        {
-            elementType = default!;
-
-            if (!type.IsConstructedGenericType)
-            {
-                return false;
-            }
-
-            var openGenericType = TypeCache.OpenGenericTypeOf(type);
-
-            if (openGenericType != TypeCache.OpenGenericServiceBundle)
-            {
-                return false;
-            }
-
-            elementType = TypeCache.GenericTypeParameterListOf(type)[0];
-
-            return true;
-        }
-
         private readonly IActivation activation;
         private readonly CollectionDescription collection;
 

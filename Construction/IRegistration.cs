@@ -11,12 +11,12 @@ namespace YggdrAshill.Ragnarok
         /// Counts <see cref="IStatement"/> satisfied with <paramref name="condition"/>.
         /// </summary>
         /// <param name="condition">
-        /// <see cref="ICondition"/> to count.
+        /// <see cref="IStatementCondition"/> to count.
         /// </param>
         /// <returns>
         /// Count of <see cref="IStatement"/>s.
         /// </returns>
-        int Count(ICondition condition);
+        int Count(IStatementCondition condition);
 
         /// <summary>
         /// Adds <see cref="IStatement"/> to register dependencies.

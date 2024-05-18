@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Reflection;
 
 namespace YggdrAshill.Ragnarok
@@ -20,11 +19,6 @@ namespace YggdrAshill.Ragnarok
         public ConstructorInfo Constructor { get; }
 
         /// <summary>
-        /// <see cref="ParameterInfo"/>s for <see cref="ImplementedType"/>.
-        /// </summary>
-        public ParameterInfo[] ParameterList { get; }
-
-        /// <summary>
         /// Constructor of <see cref="ConstructorInjectionRequest"/>.
         /// </summary>
         /// <param name="implementedType">
@@ -37,31 +31,13 @@ namespace YggdrAshill.Ragnarok
         {
             ImplementedType = implementedType;
             Constructor = constructor;
-            ParameterList = Constructor.GetParameters();
         }
 
-        private IDependency? dependency;
-        public IDependency Dependency
-        {
-            get
-            {
-                if (dependency == null)
-                {
-                    dependency = CreateDependency();
-                }
+        private ParameterInfo[]? parameterList;
 
-                return dependency;
-            }
-        }
-        private IDependency CreateDependency()
-        {
-            if (ParameterList.Length == 0)
-            {
-                return WithoutDependency.Instance;
-            }
-
-            var argumentList = ParameterList.Select(info => new Argument(info.Name, info.ParameterType)).ToArray();
-            return new WithDependency(argumentList);
-        }
+        /// <summary>
+        /// <see cref="ParameterInfo"/>s for <see cref="ImplementedType"/>.
+        /// </summary>
+        public ParameterInfo[] ParameterList => parameterList ??= Constructor.GetParameters();
     }
 }
